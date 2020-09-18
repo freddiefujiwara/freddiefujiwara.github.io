@@ -101,7 +101,7 @@ const workExperiences = {
     },
     {
       role: "Assistant manager of development",   
-      company: "Quora",
+      company: "Kakaku.com",
       companylogo: require("./assets/images/kakaku.jpg"),
       date: "Nov 2007 – Jul 2010",
       desc: ""
