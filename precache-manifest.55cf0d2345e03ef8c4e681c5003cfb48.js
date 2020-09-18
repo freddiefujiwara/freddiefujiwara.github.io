@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "4f94da73b1ef533d99e8a63cb8929a28",
+    "revision": "ade281d39ecabf2965909a76dfabc2cb",
     "url": "/index.html"
   },
   {
@@ -12,7 +12,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/css/4.54df59d4.chunk.css"
   },
   {
-    "revision": "cee7f533f5d36a5abf0a",
+    "revision": "317553d0121ed0d77f6b",
     "url": "/static/css/main.91308f57.chunk.css"
   },
   {
@@ -28,8 +28,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/js/4.184f86bd.chunk.js"
   },
   {
-    "revision": "cee7f533f5d36a5abf0a",
-    "url": "/static/js/main.de648a60.chunk.js"
+    "revision": "317553d0121ed0d77f6b",
+    "url": "/static/js/main.a84223a6.chunk.js"
   },
   {
     "revision": "869ecfb375b935e3da17",
@@ -44,10 +44,6 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/media/Montserrat-Regular.ee653992.ttf"
   },
   {
-    "revision": "c59720d63dc3595a12e1c7e641a1bfa5",
-    "url": "/static/media/airbnbLogo.c59720d6.png"
-  },
-  {
     "revision": "47a7a717679b640ceb1b05d38c480a61",
     "url": "/static/media/codeInLogo.47a7a717.webp"
   },
@@ -58,10 +54,6 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
     "revision": "59389695208d7454c6607bed51ed4316",
     "url": "/static/media/developerActivity.59389695.svg"
-  },
-  {
-    "revision": "8ddf76a14a2e3ad3ba62b46d49a75a74",
-    "url": "/static/media/facebookLogo.8ddf76a1.png"
   },
   {
     "revision": "e79c639294c805688be731921368c8f8",
@@ -84,8 +76,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/media/pwaLogo.ee62cb58.webp"
   },
   {
-    "revision": "4b2938b9f5ea2f1ddbd45dccaff628bc",
-    "url": "/static/media/quoraLogo.4b2938b9.png"
+    "revision": "bec6ee062bfcbf03a4dc41c3611bdf16",
+    "url": "/static/media/rakuten.bec6ee06.png"
   },
   {
     "revision": "25018d29d5ab115bc51c3e9a2d92f90f",
@@ -98,5 +90,9 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
     "revision": "13780cdd0144cacdef25486e2c2503f8",
     "url": "/static/media/talksCardBack.13780cdd.svg"
+  },
+  {
+    "revision": "3282a8c6c9d652edfddd3b94ab10865e",
+    "url": "/static/media/yj.3282a8c6.png"
   }
 ]);
