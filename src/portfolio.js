@@ -91,7 +91,7 @@ const workExperiences = {
     {
       role: "Test Manager ",  
       company: "Rakuten",
-      companylogo: require("https://media.glassdoor.com/sqll/40197/rakuten-squarelogo-1565816891841.png"),
+      companylogo: require("./assets/images/rakuten.png"),
       date: "Aug 2010 – Present",
       desc: "",
       descBullets: [
@@ -102,14 +102,14 @@ const workExperiences = {
     {
       role: "Assistant manager of development",   
       company: "Quora",
-      companylogo: require("https://corporate.kakaku.com/wordpress/wp-content/uploads/2014/07/kakaku_logo200x200.jpg"),
+      companylogo: require("./assets/images/kakaku.jpg"),
       date: "Nov 2007 – Jul 2010",
       desc: ""
     },
     {
       role: "Software Engineer",  
       company: "Yahoo! Japan",
-      companylogo: require("https://media.glassdoor.com/sqll/38080/yahoo-japan-squarelogo.png"),
+      companylogo: require("./assets/images/yj.png"),
       date: "Apr 2004 – Oct 2007",
       desc: ""
     },
