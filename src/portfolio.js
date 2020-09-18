@@ -9,7 +9,7 @@ const greeting = {
   /* Your Summary And Greeting Section */
   username: "Freddie Fujiwara",
   title: "Hi all, I'm Freddie",
-  subTitle: emoji("A hobby Software Developer 🚀 having an experience of building Web and Mobile applications with JavaScript /Ruby / Nodejs and some other cool libraries and frameworks."),
+  subTitle: emoji("A professional software testing manager and A hobby Software Developer 🚀 having certificates ISTQB CTAL-TA and TM and an experience of building Web and Mobile applications with JavaScript /Ruby / PHP / Nodejs and some other cool libraries and frameworks."),
   resumeLink: "https://www.linkedin.com/in/freddiefujiwara/"
 };
 
@@ -28,11 +28,11 @@ const socialMediaLinks = {
 
 const skillsSection = {
   title: "What i do",
-  subTitle: "CRAZY FULL STACK DEVELOPER WHO WANTS TO EXPLORE EVERY TECH STACK",
+  subTitle: "Passionate test manager and crazy NO CODE lover and hobby developer.",
   skills: [
-    emoji("⚡ Develop highly interactive Front end / User Interfaces for your web and mobile applications"),
-    emoji("⚡ Progressive Web Applications ( PWA ) in normal and SPA Stacks"),
-    emoji("⚡ Integration of third party services such as Firebase/ AWS / Digital Ocean")
+    emoji("⚡ Test management for large scaled products"),
+    emoji("⚡ Develop cool stuff w/ GAS and glideapps"),
+    emoji("⚡ Develop cool CLI w/ nodejs")
   ],
 
 /* Make Sure You include correct Font Awesome Classname to view your icon
@@ -89,29 +89,29 @@ const workExperiences = {
   viewExperiences: true, //Set it to true to show workExperiences Section
   experience: [
     {
-      role: "Software Engineer",  
-      company: "Facebook",
-      companylogo: require("./assets/images/facebookLogo.png"),
-      date: "June 2018 – Present",
-      desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      role: "Test Manager ",  
+      company: "Rakuten",
+      companylogo: require("https://media.glassdoor.com/sqll/40197/rakuten-squarelogo-1565816891841.png"),
+      date: "Aug 2010 – Present",
+      desc: "",
       descBullets: [
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+        "",
+        ""
       ]
     },
     {
-      role: "Front-End Developer",   
+      role: "Assistant manager of development",   
       company: "Quora",
-      companylogo: require("./assets/images/quoraLogo.png"),
-      date: "May 2017 – May 2018",
-      desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+      companylogo: require("https://corporate.kakaku.com/wordpress/wp-content/uploads/2014/07/kakaku_logo200x200.jpg"),
+      date: "Nov 2007 – Jul 2010",
+      desc: ""
     },
     {
-      role: "Software Engineer Intern",  
-      company: "Airbnb",
-      companylogo: require("./assets/images/airbnbLogo.png"),
-      date: "Jan 2015 – Sep 2015",
-      desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+      role: "Software Engineer",  
+      company: "Yahoo! Japan",
+      companylogo: require("https://media.glassdoor.com/sqll/38080/yahoo-japan-squarelogo.png"),
+      date: "Apr 2004 – Oct 2007",
+      desc: ""
     },
   ]
 };
