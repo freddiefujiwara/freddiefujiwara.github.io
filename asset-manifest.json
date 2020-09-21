@@ -1,20 +1,20 @@
 {
   "files": {
     "main.css": "/static/css/main.91308f57.chunk.css",
-    "main.js": "/static/js/main.065b39d3.chunk.js",
-    "main.js.map": "/static/js/main.065b39d3.chunk.js.map",
-    "runtime-main.js": "/static/js/runtime-main.6ca2a438.js",
-    "runtime-main.js.map": "/static/js/runtime-main.6ca2a438.js.map",
-    "static/js/2.fcdc6190.chunk.js": "/static/js/2.fcdc6190.chunk.js",
-    "static/js/2.fcdc6190.chunk.js.map": "/static/js/2.fcdc6190.chunk.js.map",
+    "main.js": "/static/js/main.6399df7f.chunk.js",
+    "main.js.map": "/static/js/main.6399df7f.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.c11e1e5c.js",
+    "runtime-main.js.map": "/static/js/runtime-main.c11e1e5c.js.map",
+    "static/js/2.29ba9c24.chunk.js": "/static/js/2.29ba9c24.chunk.js",
+    "static/js/2.29ba9c24.chunk.js.map": "/static/js/2.29ba9c24.chunk.js.map",
     "static/css/3.c7b31c95.chunk.css": "/static/css/3.c7b31c95.chunk.css",
-    "static/js/3.e87cb3bc.chunk.js": "/static/js/3.e87cb3bc.chunk.js",
-    "static/js/3.e87cb3bc.chunk.js.map": "/static/js/3.e87cb3bc.chunk.js.map",
+    "static/js/3.3d87127d.chunk.js": "/static/js/3.3d87127d.chunk.js",
+    "static/js/3.3d87127d.chunk.js.map": "/static/js/3.3d87127d.chunk.js.map",
     "static/css/4.54df59d4.chunk.css": "/static/css/4.54df59d4.chunk.css",
-    "static/js/4.184f86bd.chunk.js": "/static/js/4.184f86bd.chunk.js",
-    "static/js/4.184f86bd.chunk.js.map": "/static/js/4.184f86bd.chunk.js.map",
+    "static/js/4.0a5cc402.chunk.js": "/static/js/4.0a5cc402.chunk.js",
+    "static/js/4.0a5cc402.chunk.js.map": "/static/js/4.0a5cc402.chunk.js.map",
     "index.html": "/index.html",
-    "precache-manifest.abcaf93e8a7234a10677a57d9477125a.js": "/precache-manifest.abcaf93e8a7234a10677a57d9477125a.js",
+    "precache-manifest.5014c0b10f23d29c092485951e7999fa.js": "/precache-manifest.5014c0b10f23d29c092485951e7999fa.js",
     "service-worker.js": "/service-worker.js",
     "static/css/3.c7b31c95.chunk.css.map": "/static/css/3.c7b31c95.chunk.css.map",
     "static/css/4.54df59d4.chunk.css.map": "/static/css/4.54df59d4.chunk.css.map",
@@ -29,15 +29,14 @@
     "static/media/nextuLogo.webp": "/static/media/nextuLogo.829ad0a1.webp",
     "static/media/pwaLogo.webp": "/static/media/pwaLogo.ee62cb58.webp",
     "static/media/rakuten.png": "/static/media/rakuten.bec6ee06.png",
-    "static/media/saayaHealthLogo.webp": "/static/media/saayaHealthLogo.25018d29.webp",
     "static/media/skill.svg": "/static/media/skill.34409398.svg",
     "static/media/TalkCard.css": "/static/media/talksCardBack.13780cdd.svg",
     "static/media/yj.png": "/static/media/yj.3282a8c6.png"
   },
   "entrypoints": [
-    "static/js/runtime-main.6ca2a438.js",
-    "static/js/2.fcdc6190.chunk.js",
+    "static/js/runtime-main.c11e1e5c.js",
+    "static/js/2.29ba9c24.chunk.js",
     "static/css/main.91308f57.chunk.css",
-    "static/js/main.065b39d3.chunk.js"
+    "static/js/main.6399df7f.chunk.js"
   ]
 }
