@@ -128,7 +128,7 @@ const openSource = {
 
 // Some Big Projects You have worked with your company
 
-const  personalProjects = {
+const  bigProjects = {
   title: "My Personal Projects",
   subtitle: "SOME STARTUPS AND COMPANIES THAT I HELPED TO CREATE THEIR TECH",
   projects: [
@@ -252,4 +252,4 @@ const twitterDetails = {
   userName : "freddiefujiwara"//Replace "twitter" with your twitter username without @
   
 };
-export { greeting, socialMediaLinks, skillsSection, techStack, workExperiences, openSource, personalProjects, achievementSection, blogSection, talkSection, podcastSection, contactInfo , twitterDetails};
+export { greeting, socialMediaLinks, skillsSection, techStack, workExperiences, openSource, bigProjects, achievementSection, blogSection, talkSection, podcastSection, contactInfo , twitterDetails};
