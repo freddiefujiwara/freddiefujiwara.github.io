@@ -128,17 +128,29 @@ const openSource = {
 
 // Some Big Projects You have worked with your company
 
-const bigProjects = {
-  title: "Big Projects",
+const  personalProjects = {
+  title: "My Personal Projects",
   subtitle: "SOME STARTUPS AND COMPANIES THAT I HELPED TO CREATE THEIR TECH",
   projects: [
     {
-      image: require("./assets/images/saayaHealthLogo.webp"),
-      link: "http://saayahealth.com/"
+ //     image: require("./assets/images/saayaHealthLogo.webp"),
+      link: "https://freddiefujiwara.github.io/ahcd/"
     },
     {
       image: require("./assets/images/nextuLogo.webp"),
-      link: "http://nextu.se/"
+      link: "https://freddiefujiwara.github.io/hellocycling-history/"
+    },
+    {
+      image: require("./assets/images/nextuLogo.webp"),
+      link: "https://freddiefujiwara.github.io/node-qict"
+    },
+    {
+      image: require("./assets/images/nextuLogo.webp"),
+      link: "https://freddiefujiwara.github.io/dtdt"
+    },
+    {
+      image: require("./assets/images/nextuLogo.webp"),
+      link: "http://freddiefujiwara.github.io/smtc"
     }
   ]
 };
@@ -240,4 +252,4 @@ const twitterDetails = {
   userName : "freddiefujiwara"//Replace "twitter" with your twitter username without @
   
 };
-export { greeting, socialMediaLinks, skillsSection, techStack, workExperiences, openSource, bigProjects, achievementSection, blogSection, talkSection, podcastSection, contactInfo , twitterDetails};
+export { greeting, socialMediaLinks, skillsSection, techStack, workExperiences, openSource, personalProjects, achievementSection, blogSection, talkSection, podcastSection, contactInfo , twitterDetails};
