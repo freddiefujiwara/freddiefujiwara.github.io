@@ -132,27 +132,27 @@ const  bigProjects = {
   subtitle: "SOME STARTUPS AND COMPANIES THAT I HELPED TO CREATE THEIR TECH",
   projects: [
     {
-      image: require("./assets/images/saayaHealthLogo.webp"),
+      image: require("./assets/images/ahcd.png"),
       link: "https://freddiefujiwara.com/ahcd/"
     },
     {
-      image: require("./assets/images/saayaHealthLogo.webp"),
+      image: require("./assets/images/prisma.jpg"),
       link: "https://github.com/freddiefujiwara/prisma"
     },
     {
-      image: require("./assets/images/nextuLogo.webp"),
+      image: require("./assets/images/hello.png"),
       link: "https://freddiefujiwara.com/hellocycling-history/"
     },
     {
-      image: require("./assets/images/nextuLogo.webp"),
+      image: require("./assets/images/qict.png"),
       link: "https://freddiefujiwara.com/node-qict"
     },
     {
-      image: require("./assets/images/nextuLogo.webp"),
+      image: require("./assets/images/dtdt.png"),
       link: "https://freddiefujiwara.com/dtdt"
     },
     {
-      image: require("./assets/images/nextuLogo.webp"),
+      image: require("./assets/images/smtc.png"),
       link: "http://freddiefujiwara.com/smtc"
     }
   ]
