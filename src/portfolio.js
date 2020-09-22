@@ -1,4 +1,3 @@
-﻿
 /* Change this file to get your personal Portfolio */
 
 // Your Summary And Greeting Section
