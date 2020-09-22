@@ -133,24 +133,28 @@ const  bigProjects = {
   subtitle: "SOME STARTUPS AND COMPANIES THAT I HELPED TO CREATE THEIR TECH",
   projects: [
     {
- //     image: require("./assets/images/saayaHealthLogo.webp"),
-      link: "https://freddiefujiwara.github.io/ahcd/"
+      image: require("./assets/images/saayaHealthLogo.webp"),
+      link: "https://freddiefujiwara.com/ahcd/"
+    },
+    {
+      image: require("./assets/images/saayaHealthLogo.webp"),
+      link: "https://github.com/freddiefujiwara/prisma"
     },
     {
       image: require("./assets/images/nextuLogo.webp"),
-      link: "https://freddiefujiwara.github.io/hellocycling-history/"
+      link: "https://freddiefujiwara.com/hellocycling-history/"
     },
     {
       image: require("./assets/images/nextuLogo.webp"),
-      link: "https://freddiefujiwara.github.io/node-qict"
+      link: "https://freddiefujiwara.com/node-qict"
     },
     {
       image: require("./assets/images/nextuLogo.webp"),
-      link: "https://freddiefujiwara.github.io/dtdt"
+      link: "https://freddiefujiwara.com/dtdt"
     },
     {
       image: require("./assets/images/nextuLogo.webp"),
-      link: "http://freddiefujiwara.github.io/smtc"
+      link: "http://freddiefujiwara.com/smtc"
     }
   ]
 };
@@ -162,7 +166,7 @@ const achievementSection = {
   title: emoji("Achievements And Certifications 🏆 "),
   subtitle: "Achievements, Certifications, Award Letters and Some Cool Stuff that I have done !",
 
-  achivementsCards: [
+  achivementsCards: [ /*
     {
       title: "Google Code-In Finalist",
       subtitle: "First Pakistani to be selected as Google Code-in Finalist from 4000 students from 77 different countries.",
@@ -187,7 +191,7 @@ const achievementSection = {
       footerLink: [
         { name: "Certification", url: "" },
         { name: "Final Project", url: "https://pakistan-olx-1.firebaseapp.com/" }
-      ]
+      */ ]
     }
   ]
 };
@@ -197,9 +201,9 @@ const achievementSection = {
 const blogSection = {
 
   title: "Blogs",
-  subtitle: "With Love for Developing cool stuff, I love to write and teach others what I have learnt.",
+  subtitle: "I want to have a tech blog",
 
-  blogs: [
+  blogs: [ /*
     {
       url: "https://blog.usejournal.com/create-a-google-assistant-action-and-win-a-google-t-shirt-and-cloud-credits-4a8d86d76eae",
       title: "Win a Google Assistant Tshirt and $200 in Google Cloud Credits",
@@ -210,7 +214,7 @@ const blogSection = {
       title: "Why REACT is The Best?",
       description: "React is a JavaScript library for building User Interface. It is maintained by Facebook and a community of individual developers and companies."
     }
-  ]
+  */ ]
 };
 
 // Talks Sections
@@ -221,10 +225,10 @@ const talkSection = {
 
   talks: [
     {
-      title: "Build Actions For Google Assistant",
-      subtitle: "Codelab at GDG DevFest Karachi 2019",
-      slides_url: "https://bit.ly/freddiefujiwara-slides",
-      event_url: "https://www.facebook.com/events/2339906106275053/"
+      title: "Struggles and challenges in STLC",
+      subtitle: "楽天レジャー・サービスにおける短いアップデートサイクル中での品質活動",
+      slides_url: "https://www.slideshare.net/rakutentech/ss-146847271",
+      event_url: "https://techplay.jp/event/726076"
     }
   ]
 };
@@ -233,10 +237,10 @@ const talkSection = {
 
 const podcastSection = {
   title: emoji("Podcast 🎙️"),
-  subtitle: "I LOVE TO TALK ABOUT MYSELF AND TECHNOLOGY",
+  subtitle: "I want to have a podcast channel",
 
   // Please Provide with Your Podcast embeded Link
-  podcast: ["https://anchor.fm/codevcast/embed/episodes/DevStory---Freddie-Pasta-from-Karachi--Pakistan-e9givv/a-a15itvo"]
+  podcast: [/*"https://anchor.fm/codevcast/embed/episodes/DevStory---Freddie-Pasta-from-Karachi--Pakistan-e9givv/a-a15itvo" */]
 };
 
 const contactInfo = {
