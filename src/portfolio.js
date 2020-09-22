@@ -34,7 +34,7 @@ const skillsSection = {
     emoji("⚡ Develop cool CLI w/ nodejs")
   ],
 
-/* Make Sure You include correct Font Awesome Classname to view your icon
+  /* Make Sure You include correct Font Awesome Classname to view your icon
 https://fontawesome.com/icons?d=gallery */
 
   softwareSkills: [
@@ -165,34 +165,32 @@ const achievementSection = {
   title: emoji("Achievements And Certifications 🏆 "),
   subtitle: "Achievements, Certifications, Award Letters and Some Cool Stuff that I have done !",
 
-  achivementsCards: [ /*
+  achivementsCards: [
     {
-      title: "Google Code-In Finalist",
-      subtitle: "First Pakistani to be selected as Google Code-in Finalist from 4000 students from 77 different countries.",
-      image: require("./assets/images/codeInLogo.webp"),
+      title: "ISTQB Advanced Level Test Manager",
+      subtitle: "JSTQB-AL-00000448",
+      image: require("./assets/images/istqb.png"),
       footerLink: [
-        { name: "Certification", url: "https://drive.google.com/file/d/0B7kazrtMwm5dYkVvNjdNWjNybWJrbndFSHpNY2NFV1p4YmU0/view?usp=sharing" },
-        { name: "Award Letter", url: "https://drive.google.com/file/d/0B7kazrtMwm5dekxBTW5hQkg2WXUyR3QzQmR0VERiLXlGRVdF/view?usp=sharing" },
-        { name: "Google Code-in Blog", url: "https://opensource.googleblog.com/2019/01/google-code-in-2018-winners.html" }
+        { name: "Certification", url: "https://photos.app.goo.gl/WYJCU5LuHUFpqCD38" }
       ]
     },
     {
-      title: "Google Assistant Action",
-      subtitle: "Developed a Google Assistant Action JavaScript Guru that is available on 2 Billion devices world wide.",
-      image: require("./assets/images/googleAssistantLogo.webp"),
-      footerLink: [{ name: "View Google Assistant Action", url: "https://assistant.google.com/services/a/uid/000000100ee688ee?hl=en" }]
-    },
-
-    {
-      title: "PWA Web App Developer",
-      subtitle: "Completed Certifcation from SMIT for PWA Web App Development",
-      image: require("./assets/images/pwaLogo.webp"),
+      title: "ISTQB Advanced Level Test Analyst",
+      subtitle: "JSTQB-ALTA-00000085",
+      image: require("./assets/images/istqb.png"),
       footerLink: [
-        { name: "Certification", url: "" },
-        { name: "Final Project", url: "https://pakistan-olx-1.firebaseapp.com/" }
+        { name: "Certification", url: "https://photos.app.goo.gl/cAPUaYZW4oYw86l53" }
+      ]
+    },
+    {
+      title: "ISTQB Foundation Level Tester",
+      subtitle: "JSTQB-FL-0013320",
+      image: require("./assets/images/istqb.png"),
+      footerLink: [
+        { name: "Certification", url: "https://photos.app.goo.gl/vcux6N2FObzI9Arv1" }
       ]
     }
- */  ]
+  ]
 };
 
 // Blogs Section
@@ -213,7 +211,7 @@ const blogSection = {
       title: "Why REACT is The Best?",
       description: "React is a JavaScript library for building User Interface. It is maintained by Facebook and a community of individual developers and companies."
     }
-  */ ]
+    */ ]
 };
 
 // Talks Sections
@@ -253,6 +251,6 @@ const contactInfo = {
 const twitterDetails = {
 
   userName : "freddiefujiwara"//Replace "twitter" with your twitter username without @
-  
+
 };
 export { greeting, socialMediaLinks, skillsSection, techStack, workExperiences, openSource, bigProjects, achievementSection, blogSection, talkSection, podcastSection, contactInfo , twitterDetails};
