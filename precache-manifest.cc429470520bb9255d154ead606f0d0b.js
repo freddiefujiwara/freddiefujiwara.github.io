@@ -1,39 +1,39 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "e1f401099d3a4dc54eb4a27b75b3521c",
+    "revision": "81cc3a3aa53a452bc35b66c577b2f45e",
     "url": "/index.html"
   },
   {
-    "revision": "1dc5575229d3bdc51455",
+    "revision": "cd8f89f4095681719eae",
     "url": "/static/css/3.c7b31c95.chunk.css"
   },
   {
-    "revision": "88de9607a8f184c33206",
+    "revision": "56b65779971fa42dd2fb",
     "url": "/static/css/4.54df59d4.chunk.css"
   },
   {
-    "revision": "3749460b6162f5019920",
+    "revision": "4a9bb422bfec3edd554c",
     "url": "/static/css/main.91308f57.chunk.css"
   },
   {
-    "revision": "14f095ba527d293af637",
-    "url": "/static/js/2.29ba9c24.chunk.js"
+    "revision": "98e592c53bb090406402",
+    "url": "/static/js/2.f4727e93.chunk.js"
   },
   {
-    "revision": "1dc5575229d3bdc51455",
-    "url": "/static/js/3.3d87127d.chunk.js"
+    "revision": "cd8f89f4095681719eae",
+    "url": "/static/js/3.b5b198da.chunk.js"
   },
   {
-    "revision": "88de9607a8f184c33206",
-    "url": "/static/js/4.0a5cc402.chunk.js"
+    "revision": "56b65779971fa42dd2fb",
+    "url": "/static/js/4.90636cb8.chunk.js"
   },
   {
-    "revision": "3749460b6162f5019920",
-    "url": "/static/js/main.6399df7f.chunk.js"
+    "revision": "4a9bb422bfec3edd554c",
+    "url": "/static/js/main.af7ddaf4.chunk.js"
   },
   {
-    "revision": "2c6fdffbbfd614886be1",
-    "url": "/static/js/runtime-main.c11e1e5c.js"
+    "revision": "c6a912014cf677f01098",
+    "url": "/static/js/runtime-main.b9552b22.js"
   },
   {
     "revision": "21f233e19402cc4a66866a7f31191f0d",
@@ -44,20 +44,12 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/media/Montserrat-Regular.ee653992.ttf"
   },
   {
-    "revision": "47a7a717679b640ceb1b05d38c480a61",
-    "url": "/static/media/codeInLogo.47a7a717.webp"
-  },
-  {
     "revision": "68e841388612be0c5143e2932fb77d4f",
     "url": "/static/media/contactMail.68e84138.webp"
   },
   {
     "revision": "59389695208d7454c6607bed51ed4316",
     "url": "/static/media/developerActivity.59389695.svg"
-  },
-  {
-    "revision": "e79c639294c805688be731921368c8f8",
-    "url": "/static/media/googleAssistantLogo.e79c6392.webp"
   },
   {
     "revision": "25bf045ca257e971124f3997d89f321c",
@@ -72,12 +64,12 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/media/nextuLogo.829ad0a1.webp"
   },
   {
-    "revision": "ee62cb58630f29a6e6201b49d4c03728",
-    "url": "/static/media/pwaLogo.ee62cb58.webp"
-  },
-  {
     "revision": "bec6ee062bfcbf03a4dc41c3611bdf16",
     "url": "/static/media/rakuten.bec6ee06.png"
+  },
+  {
+    "revision": "25018d29d5ab115bc51c3e9a2d92f90f",
+    "url": "/static/media/saayaHealthLogo.25018d29.webp"
   },
   {
     "revision": "3440939881da8339d1597e8d77cdf850",
