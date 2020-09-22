@@ -132,6 +132,10 @@ const  bigProjects = {
   subtitle: "SOME STARTUPS AND COMPANIES THAT I HELPED TO CREATE THEIR TECH",
   projects: [
     {
+      image: require("./assets/images/around80.png"),
+      link: "https://leanpub.com/AroundTheWorldWith80SoftwareTesters"
+    },
+    {
       image: require("./assets/images/ahcd.png"),
       link: "https://freddiefujiwara.com/ahcd/"
     },
