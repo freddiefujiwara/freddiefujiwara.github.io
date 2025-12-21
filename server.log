@@ -1,0 +1,4 @@
+127.0.0.1 - - [21/Dec/2025 08:36:15] "GET /public/index.html HTTP/1.1" 200 -
+127.0.0.1 - - [21/Dec/2025 08:36:15] "GET /public/script.js HTTP/1.1" 200 -
+127.0.0.1 - - [21/Dec/2025 08:36:15] "GET /public/style.css HTTP/1.1" 200 -
+127.0.0.1 - - [21/Dec/2025 08:36:15] "GET /README.md HTTP/1.1" 200 -
