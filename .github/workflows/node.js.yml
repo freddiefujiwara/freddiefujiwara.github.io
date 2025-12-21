@@ -14,9 +14,14 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    # Add permissions for gh-pages to push to the main branch
+    permissions:
+      contents: write
+
     strategy:
       matrix:
-        node-version: [18.x]
+        # Test on multiple node versions as requested
+        node-version: [18.x, 22.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -28,3 +33,11 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - run: npm test
+
+    - name: Deploy to GitHub Pages
+      # Run only on a push to the main branch, and only for the Node 22.x job
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && matrix.node-version == '22.x'
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        npm run deploy
