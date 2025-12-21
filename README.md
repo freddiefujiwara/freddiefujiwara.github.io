@@ -13,6 +13,7 @@ Currently, I work at Rakuten as a Senior Manager, where I lead a team focused on
 **Senior Manager, Quality Engineering** (September 2021 - Present)
 - I lead the software testing, quality assurance (QA), and test strategy for our products.
 - [Rakuten Travel](https://travel.rakuten.com/)
+
 **Manager, Service Quality Assurance Group**
 - I managed the QA team for several services, such as:
   - [Rakuten GORA](https://gora.golf.rakuten.co.jp/) (golf course booking)
