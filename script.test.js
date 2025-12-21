@@ -72,4 +72,11 @@ describe('README Fetch and Render', () => {
     // Check that our script logged the error
     expect(consoleErrorSpy).toHaveBeenCalled();
   });
+
+  it('should update the copyright year to the current year', () => {
+    document.dispatchEvent(new window.Event('DOMContentLoaded'));
+    const yearSpan = document.getElementById('copyright-year');
+    const currentYear = new Date().getFullYear().toString();
+    expect(yearSpan.textContent).toBe(currentYear);
+  });
 });
