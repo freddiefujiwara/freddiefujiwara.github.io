@@ -55,7 +55,7 @@ describe('README Fetch and Render', () => {
     await tick();
 
     const contentDiv = document.getElementById('content');
-    expect(window.fetch).toHaveBeenCalledWith('../README.md');
+    expect(window.fetch).toHaveBeenCalledWith('README.md');
     expect(window.marked.parse).toHaveBeenCalledWith('# Test Content');
     expect(contentDiv.innerHTML).toBe('parsed:# Test Content');
   });
@@ -67,7 +67,7 @@ describe('README Fetch and Render', () => {
     await tick();
 
     const contentDiv = document.getElementById('content');
-    expect(window.fetch).toHaveBeenCalledWith('../README.md');
+    expect(window.fetch).toHaveBeenCalledWith('README.md');
     expect(contentDiv.innerHTML).toContain('Error loading content');
     // Check that our script logged the error
     expect(consoleErrorSpy).toHaveBeenCalled();

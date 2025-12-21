@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
   // Fetch the README.md file from the root directory
-  fetch('../README.md')
+  fetch('README.md')
     .then(response => {
       if (!response.ok) {
         throw new Error('Network response was not ok');
