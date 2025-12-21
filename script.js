@@ -23,4 +23,9 @@ document.addEventListener('DOMContentLoaded', function() {
         contentDiv.innerHTML = '<p>Error loading content. Please try again later.</p>';
       }
     });
+
+  const copyrightYearSpan = document.getElementById('copyright-year');
+  if (copyrightYearSpan) {
+    copyrightYearSpan.textContent = new Date().getFullYear();
+  }
 });
