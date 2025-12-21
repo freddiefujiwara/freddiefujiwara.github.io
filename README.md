@@ -8,11 +8,33 @@ Currently, I work at Rakuten as a Senior Manager, where I lead a team focused on
 
 ## Experience
 
-### [Rakuten group inc](https://global.rakuten.com/corp/)
-*   **Title:** Senior Manager / Quality Assurance Engineer
-*   **When:** August 2010 – Present
+### Rakuten Group, Inc.
 
-I started my career as a web developer and later joined Rakuten. I have been responsible for the quality of several services, including Rakuten Affiliate and Rakuten Ichiba Reviews. Since 2017, I have been managing the Quality Assurance and Engineering organization. I am also involved with JaSST Tokyo, a conference for software testing engineers.
+**Senior Manager, Quality Engineering** (September 2021 - Present)
+- I lead the software testing, quality assurance (QA), and test strategy for our products.
+
+**Manager, Service Quality Assurance Group**
+- I managed the QA team for several leisure services, such as:
+  - Rakuten GORA (golf course booking)
+  - Rakuten Beauty (salon booking)
+  - Rakuten toto & Horse Racing
+
+**Senior Quality Assurance Engineer** (August 2010 - September 2021)
+- I joined Rakuten in 2010 and have worked on many projects to improve product quality.
+
+---
+
+### KAKAKU.COM, Inc.
+
+**Assistant Manager** (November 2007 - July 2010)
+- I helped with system development and operations.
+
+---
+
+### Yahoo! JAPAN
+
+**Web Engineer** (April 2004 - November 2007)
+- I worked as a web developer on many services, including e-commerce.
 
 ---
 
