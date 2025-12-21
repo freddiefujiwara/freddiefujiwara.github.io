@@ -20,7 +20,7 @@ I started my career as a web developer and later joined Rakuten. I have been res
 
 ### Programming
 *   JavaScript, Node.js, Vue.js
-*   Ruby, PHP, CoffeeScript
+*   Ruby, PHP, Python
 
 ### Testing & Quality
 *   Software Test Design
