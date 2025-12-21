@@ -42,8 +42,8 @@ Currently, I work at Rakuten as a Senior Manager, where I lead a team focused on
 ## Skills
 
 ### Programming
-*   JavaScript, Node.js, Vue.js
-*   Ruby, PHP, Python
+*   [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript), [Node.js](https://nodejs.org/en), [Vue.js](https://vuejs.org/)
+*   [Ruby](https://www.ruby-lang.org/), [PHP](https://www.php.net/), [Python](https://www.python.org/)
 
 ### Testing & Quality
 *   Software Test Design
