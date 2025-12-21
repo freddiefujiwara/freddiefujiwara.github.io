@@ -12,16 +12,15 @@ Currently, I work at Rakuten as a Senior Manager, where I lead a team focused on
 
 **Senior Manager, Quality Engineering** (September 2021 - Present)
 - I lead the software testing, quality assurance (QA), and test strategy for our products.
-
+- [Rakuten Travel](https://travel.rakuten.com/)
 **Manager, Service Quality Assurance Group**
 - I managed the QA team for several services, such as:
-  - [Rakuten Travel](https://travel.rakuten.com/)
   - [Rakuten GORA](https://gora.golf.rakuten.co.jp/) (golf course booking)
   - [Rakuten Beauty](https://beauty.rakuten.co.jp/) (salon booking)
   - [Rakuten toto](https://toto.rakuten.co.jp/) & [Horse Racing](https://keiba.rakuten.co.jp/)
 
-**Senior Quality Assurance Engineer** (August 2010 - September 2021)
-- I joined Rakuten in 2010 and have worked on many projects to improve product quality.
+**Application Engineer** (August 2010 - September 2021)
+- I joined Rakuten in 2010 and have worked on many projects.
 
 ---
 
@@ -61,7 +60,7 @@ Currently, I work at Rakuten as a Senior Manager, where I lead a team focused on
 
 Here are some of my personal projects on GitHub:
 
-*   [prisma](https://github.com/freddiefujiwara/prisma) - A tool for pairwise test case generation.
+*   [prisma](https://github.com/freddiefujiwara/prisma) - Japanese Tranlation of A method of Risk based testing.
 *   [google-home-cli](https://github.com/freddiefujiwara/google-home-cli) - A command-line interface for Google Home.
 *   [ahcd](https://github.com/freddiefujiwara/ahcd) - A converter for Apple Health Care Data.
 *   [dtdt](https://github.com/freddiefujiwara/dtdt) - A test generator from decision trees to decision tables.
@@ -78,7 +77,7 @@ Here are some of my personal projects on GitHub:
 
 ## Education
 
-*   Niigata University
+*   [Niigata University](https://www.niigata-u.ac.jp/en/)
 
 ---
 
