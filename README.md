@@ -1,9 +1,3 @@
-# Fumikazu “Freddie” Fujiwara
-
-A professional Software Test Manager and a hobbyist Software Developer.
-
----
-
 ## About Me
 
 Hi, I'm Freddie! I'm an expert in software testing and Quality Assurance (QA). I also enjoy software development.
@@ -14,7 +8,7 @@ Currently, I work at Rakuten as a Senior Manager, where I lead a team focused on
 
 ## Experience
 
-### Rakuten, Inc.
+### [Rakuten group inc](https://global.rakuten.com/corp/)
 *   **Title:** Senior Manager / Quality Assurance Engineer
 *   **When:** August 2010 – Present
 
@@ -26,7 +20,7 @@ I started my career as a web developer and later joined Rakuten. I have been res
 
 ### Programming
 *   JavaScript, Node.js, Vue.js
-*   Ruby, PHP, CoffeeScript
+*   Ruby, PHP, Python
 
 ### Testing & Quality
 *   Software Test Design
@@ -69,5 +63,7 @@ Here are some of my personal projects on GitHub:
 
 *   **Website:** [freddiefujiwara.com](https://freddiefujiwara.com/)
 *   **GitHub:** [@freddiefujiwara](https://github.com/freddiefujiwara)
+*   **X:** [@freddiefujiwara](https://x.com/freddiefujiwara)
+*   **LinkedIn:** [freddiefujiwara](https://linkedin.com/in/freddiefujiwara)
 *   **Dev.to:** [@freddiefujiwara](https://dev.to/freddiefujiwara)
-*   **Stack Overflow:** [Profile](https://stackoverflow.com/users/5240/freddie)
+*   **Stack Overflow:** [Profile](https://stackoverflow.com/users/76509/freddiefujiwara)
