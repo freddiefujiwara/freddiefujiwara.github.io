@@ -8,30 +8,31 @@ Currently, I work at Rakuten as a Senior Manager, where I lead a team focused on
 
 ## Experience
 
-### Rakuten Group, Inc.
+### [Rakuten Group, Inc.](https://global.rakuten.com/corp/)
 
 **Senior Manager, Quality Engineering** (September 2021 - Present)
 - I lead the software testing, quality assurance (QA), and test strategy for our products.
 
 **Manager, Service Quality Assurance Group**
-- I managed the QA team for several leisure services, such as:
-  - Rakuten GORA (golf course booking)
-  - Rakuten Beauty (salon booking)
-  - Rakuten toto & Horse Racing
+- I managed the QA team for several services, such as:
+  - [Rakuten Travel](https://travel.rakuten.com/)
+  - [Rakuten GORA](https://gora.golf.rakuten.co.jp/) (golf course booking)
+  - [Rakuten Beauty](https://beauty.rakuten.co.jp/) (salon booking)
+  - [Rakuten toto](https://toto.rakuten.co.jp/) & [Horse Racing](https://keiba.rakuten.co.jp/)
 
 **Senior Quality Assurance Engineer** (August 2010 - September 2021)
 - I joined Rakuten in 2010 and have worked on many projects to improve product quality.
 
 ---
 
-### KAKAKU.COM, Inc.
+### [KAKAKU.COM, Inc.](https://corporate.kakaku.com/en)
 
 **Assistant Manager** (November 2007 - July 2010)
 - I helped with system development and operations.
 
 ---
 
-### Yahoo! JAPAN
+### [Yahoo! JAPAN](https://www.yahoo.co.jp/)
 
 **Web Engineer** (April 2004 - November 2007)
 - I worked as a web developer on many services, including e-commerce.
