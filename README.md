@@ -8,19 +8,42 @@ Currently, I work at Rakuten as a Senior Manager, where I lead a team focused on
 
 ## Experience
 
-### [Rakuten group inc](https://global.rakuten.com/corp/)
-*   **Title:** Senior Manager / Quality Assurance Engineer
-*   **When:** August 2010 – Present
+### [Rakuten Group, Inc.](https://global.rakuten.com/corp/)
 
-I started my career as a web developer and later joined Rakuten. I have been responsible for the quality of several services, including Rakuten Affiliate and Rakuten Ichiba Reviews. Since 2017, I have been managing the Quality Assurance and Engineering organization. I am also involved with JaSST Tokyo, a conference for software testing engineers.
+**Senior Manager, Quality Engineering** (September 2021 - Present)
+- I lead the software testing, quality assurance (QA), and test strategy for our products.
+  - [Rakuten Travel](https://travel.rakuten.com/)
+
+**Manager, Service Quality Assurance Group**
+- I managed the QA team for several services, such as:
+  - [Rakuten GORA](https://gora.golf.rakuten.co.jp/) (golf course booking)
+  - [Rakuten Beauty](https://beauty.rakuten.co.jp/) (salon booking)
+  - [Rakuten toto](https://toto.rakuten.co.jp/) & [Horse Racing](https://keiba.rakuten.co.jp/)
+
+**Application Engineer** (August 2010 - September 2021)
+- I joined Rakuten in 2010 and have worked on many projects.
+
+---
+
+### [KAKAKU.COM, Inc.](https://corporate.kakaku.com/en)
+
+**Assistant Manager** (November 2007 - July 2010)
+- I helped with system development and operations.
+
+---
+
+### [Yahoo! JAPAN](https://www.yahoo.co.jp/)
+
+**Web Engineer** (April 2004 - November 2007)
+- I worked as a web developer on many services, including e-commerce.
 
 ---
 
 ## Skills
 
 ### Programming
-*   JavaScript, Node.js, Vue.js
-*   Ruby, PHP, Python
+*   [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript), [Node.js](https://nodejs.org/en), [Vue.js](https://vuejs.org/)
+*   [Ruby](https://www.ruby-lang.org/), [PHP](https://www.php.net/), [Python](https://www.python.org/)
 
 ### Testing & Quality
 *   Software Test Design
@@ -38,7 +61,7 @@ I started my career as a web developer and later joined Rakuten. I have been res
 
 Here are some of my personal projects on GitHub:
 
-*   [prisma](https://github.com/freddiefujiwara/prisma) - A tool for pairwise test case generation.
+*   [prisma](https://github.com/freddiefujiwara/prisma) - Japanese Tranlation of A method of Risk based testing.
 *   [google-home-cli](https://github.com/freddiefujiwara/google-home-cli) - A command-line interface for Google Home.
 *   [ahcd](https://github.com/freddiefujiwara/ahcd) - A converter for Apple Health Care Data.
 *   [dtdt](https://github.com/freddiefujiwara/dtdt) - A test generator from decision trees to decision tables.
@@ -55,7 +78,7 @@ Here are some of my personal projects on GitHub:
 
 ## Education
 
-*   Niigata University
+*   [Niigata University](https://www.niigata-u.ac.jp/en/)
 
 ---
 
