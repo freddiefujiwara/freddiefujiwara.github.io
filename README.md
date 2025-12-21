@@ -8,7 +8,7 @@ Currently, I work at Rakuten as a Senior Manager, where I lead a team focused on
 
 ## Experience
 
-### [Rakuten, Inc.](https://global.rakuten.com/corp/)
+### [Rakuten group inc](https://global.rakuten.com/corp/)
 *   **Title:** Senior Manager / Quality Assurance Engineer
 *   **When:** August 2010 – Present
 
