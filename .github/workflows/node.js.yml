@@ -37,6 +37,7 @@ jobs:
       # Run only on a push to the master branch, and only for the Node 22.x job
       if: github.event_name == 'push' && github.ref == 'refs/heads/master' && matrix.node-version == '22.x'
       run: |
+        git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
         npm run deploy
