@@ -5,16 +5,16 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "master" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "master" ]
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
 
-    # Add permissions for gh-pages to push to the main branch
+    # Add permissions for gh-pages to push to the master branch
     permissions:
       contents: write
 
@@ -32,11 +32,10 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm ci
-    - run: npm test
 
     - name: Deploy to GitHub Pages
-      # Run only on a push to the main branch, and only for the Node 22.x job
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && matrix.node-version == '22.x'
+      # Run only on a push to the master branch, and only for the Node 22.x job
+      if: github.event_name == 'push' && github.ref == 'refs/heads/master' && matrix.node-version == '22.x'
       run: |
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'

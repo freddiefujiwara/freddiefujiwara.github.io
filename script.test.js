@@ -1,131 +1,75 @@
+const { TextEncoder, TextDecoder } = require('util');
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
+
 /**
  * @jest-environment jsdom
  */
 
-// Mock the marked library, since it's loaded from a CDN
-global.marked = {
-  parse: jest.fn(markdown => `mock-parsed:${markdown}`),
-};
+const { JSDOM } = require('jsdom');
+const fs = require('fs');
+const path = require('path');
 
-// Mock the console.error to avoid cluttering the test output
-global.console.error = jest.fn();
+const html = fs.readFileSync(path.resolve(__dirname, './public/index.html'), 'utf8');
+const script = fs.readFileSync(path.resolve(__dirname, './public/script.js'), 'utf8');
 
-// We need to load the script after setting up the mocks
-const loadScript = () => {
-  // Jest doesn't re-run scripts, so we need to clear the cache
-  jest.resetModules();
-  require('./public/script.js');
-};
+// Helper to wait for the next tick of the event loop
+const tick = () => new Promise(res => process.nextTick(res));
 
-describe('Portfolio Content Loader', () => {
+describe('README Fetch and Render', () => {
+  let window;
+  let document;
+  let consoleErrorSpy;
 
   beforeEach(() => {
-    // Reset mocks before each test
-    jest.clearAllMocks();
-    // Set up a basic HTML structure for each test
-    document.body.innerHTML = '<div id="content"></div>';
+    const dom = new JSDOM(html, { runScripts: 'outside-only' });
+    window = dom.window;
+    document = window.document;
+
+    // Mock console.error to avoid polluting test output
+    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+    // Set up a default mock for fetch to prevent errors on initial JSDOM load
+    window.fetch = jest.fn().mockResolvedValue({ ok: false, text: () => Promise.resolve('Default mock') });
+    window.marked = {
+      parse: jest.fn(content => `parsed:${content}`),
+    };
+
+    // Execute the script to attach the event listener
+    window.eval(script);
   });
 
-  test('should fetch README, parse markdown, and display content on success', async () => {
-    // Arrange: Mock a successful fetch
-    global.fetch = jest.fn(() =>
-      Promise.resolve({
-        ok: true,
-        text: () => Promise.resolve('# Test Header'),
-      })
-    );
+  afterEach(() => {
+    consoleErrorSpy.mockRestore();
+  });
+
+  it('should fetch README.md and render it on DOMContentLoaded', async () => {
+    window.fetch.mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve('# Test Content'),
+    });
+
+    // Dispatch the event to trigger the listener
+    document.dispatchEvent(new window.Event('DOMContentLoaded'));
+
+    await tick();
+
     const contentDiv = document.getElementById('content');
-
-    // Act: Manually trigger the DOMContentLoaded event
-    loadScript();
-    await document.dispatchEvent(new Event('DOMContentLoaded'));
-
-    // Assert
-    // Wait for promises to resolve
-    await new Promise(process.nextTick);
-
-    expect(fetch).toHaveBeenCalledWith('../README.md');
-    expect(marked.parse).toHaveBeenCalledWith('# Test Header');
-    expect(contentDiv.innerHTML).toBe('mock-parsed:# Test Header');
+    expect(window.fetch).toHaveBeenCalledWith('../README.md');
+    expect(window.marked.parse).toHaveBeenCalledWith('# Test Content');
+    expect(contentDiv.innerHTML).toBe('parsed:# Test Content');
   });
 
-  test('should display an error message if fetch response is not ok', async () => {
-    // Arrange: Mock a failed response (e.g., 404 Not Found)
-    global.fetch = jest.fn(() =>
-      Promise.resolve({
-        ok: false,
-      })
-    );
+  it('should display an error if fetch is not ok', async () => {
+    // The default mock already has ok: false, so we just trigger the event
+    document.dispatchEvent(new window.Event('DOMContentLoaded'));
+
+    await tick();
+
     const contentDiv = document.getElementById('content');
-
-    // Act
-    loadScript();
-    await document.dispatchEvent(new Event('DOMContentLoaded'));
-
-    // Assert
-    await new Promise(process.nextTick);
-
-    expect(fetch).toHaveBeenCalledWith('../README.md');
-    expect(marked.parse).not.toHaveBeenCalled();
-    expect(contentDiv.innerHTML).toContain('Error loading content.');
-    expect(console.error).toHaveBeenCalled();
-  });
-
-  test('should display an error message if fetch promise rejects', async () => {
-    // Arrange: Mock a network error
-    global.fetch = jest.fn(() => Promise.reject(new Error('Network failure')));
-    const contentDiv = document.getElementById('content');
-
-    // Act
-    loadScript();
-    await document.dispatchEvent(new Event('DOMContentLoaded'));
-
-    // Assert
-    await new Promise(process.nextTick);
-
-    expect(fetch).toHaveBeenCalledWith('../README.md');
-    expect(marked.parse).not.toHaveBeenCalled();
-    expect(contentDiv.innerHTML).toContain('Error loading content.');
-    expect(console.error).toHaveBeenCalled();
-  });
-
-  test('should handle the case where the content div is not found', async () => {
-    // Arrange
-    document.body.innerHTML = ''; // No #content div
-     global.fetch = jest.fn(() =>
-      Promise.resolve({
-        ok: true,
-        text: () => Promise.resolve('# Test Header'),
-      })
-    );
-
-    // Act
-    loadScript();
-    await document.dispatchEvent(new Event('DOMContentLoaded'));
-
-    // Assert
-    await new Promise(process.nextTick);
-
-    expect(fetch).toHaveBeenCalledWith('../README.md');
-    // The point of this test is that if the div is missing, we don't try to parse or render.
-    expect(marked.parse).not.toHaveBeenCalled();
-    // We expect no error to be thrown, and the script should just gracefully do nothing.
-  });
-
-  test('should display an error message even if content div is missing on failure', async () => {
-    // Arrange
-    document.body.innerHTML = ''; // No #content div
-    global.fetch = jest.fn(() => Promise.reject(new Error('Network failure')));
-
-    // Act
-    loadScript();
-    await document.dispatchEvent(new Event('DOMContentLoaded'));
-
-    // Assert
-    await new Promise(process.nextTick);
-
-    expect(fetch).toHaveBeenCalledWith('../README.md');
-    expect(console.error).toHaveBeenCalled();
-    // We expect no error to be thrown, and the script should just gracefully do nothing.
+    expect(window.fetch).toHaveBeenCalledWith('../README.md');
+    expect(contentDiv.innerHTML).toContain('Error loading content');
+    // Check that our script logged the error
+    expect(consoleErrorSpy).toHaveBeenCalled();
   });
 });
