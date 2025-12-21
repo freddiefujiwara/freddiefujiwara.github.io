@@ -34,6 +34,12 @@ jobs:
     - run: npm ci
     - run: npm test
 
+    - name: Copy README.md to public
+      run: cp README.md public
+
+    - name: Update script.js for deployment
+      run: sed -i "s|'../README.md'|'README.md'|g" public/script.js
+
     - name: "Deploy to gh-pages 🚀"
       uses: JamesIves/github-pages-deploy-action@releases/v3
       if: github.event_name == 'push' && github.ref == 'refs/heads/master' && matrix.node-version == '22.x'
