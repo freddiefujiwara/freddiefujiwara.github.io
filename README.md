@@ -66,7 +66,7 @@ Here are some of my personal projects on GitHub:
 *   [ahcd](https://github.com/freddiefujiwara/ahcd) - A converter for Apple Health Care Data.
 *   [dtdt](https://github.com/freddiefujiwara/dtdt) - A test generator from decision trees to decision tables.
 *   [list-of-stuff](https://github.com/freddiefujiwara/list-of-stuff) - A simple project using Vue.js.
-*   [bucket-list](https://github.com/freddiefujiwara/bucket-list/) - A bucket list app to collect life goals as tiles you can browse.
+*   [bucket-list](https://github.com/freddiefujiwara/bucket-list/) - My bucket list with life goals displayed as tiles.
 
 ---
 
