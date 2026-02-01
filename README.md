@@ -86,6 +86,7 @@ Here are some of my personal projects on GitHub:
 ## Links
 
 *   **Website:** [freddiefujiwara.com](https://freddiefujiwara.com/)
+*   **Blog:** [freddiefujiwara.com/blog](https://freddiefujiwara.com/blog/)
 *   **GitHub:** [@freddiefujiwara](https://github.com/freddiefujiwara)
 *   **X:** [@freddiefujiwara](https://x.com/freddiefujiwara)
 *   **LinkedIn:** [freddiefujiwara](https://linkedin.com/in/freddiefujiwara)
