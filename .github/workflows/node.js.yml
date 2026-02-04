@@ -40,6 +40,18 @@ jobs:
     - name: Update script.js for deployment
       run: sed -i "s|'../README.md'|'README.md'|g" public/script.js
 
+    - name: Generate OGP Image from GAS JSON
+      run: |
+        # 1. GASからJSONを取得
+        # ※ URLの末尾にタイトルを渡す
+        JSON_RESPONSE=$(curl -L -s "https://script.google.com/macros/s/AKfycbzbMAKxkzHlwN8SY7ygJA34xYESMNNdkGNt8vv1XMcZSksgHsUwOxCCdP-wgg6fv7M/exec?t=Fumikazu%20%E2%80%9CFreddie%E2%80%9D%20Fujiwara%27s%20Portfolio")
+
+        # 2. jqコマンドでJSONから"png"キーの値だけを抜き出し、base64でデコードして保存
+        echo $JSON_RESPONSE | jq -r '.png' | base64 -d > ./public/ogp.png
+
+        # 3. 確認（ファイルが生成されたか、サイズは正常かを表示）
+        ls -lh ./public/ogp.png
+
     - name: "Deploy to gh-pages 🚀"
       uses: JamesIves/github-pages-deploy-action@releases/v3
       if: github.event_name == 'push' && github.ref == 'refs/heads/master' && matrix.node-version == '22.x'
