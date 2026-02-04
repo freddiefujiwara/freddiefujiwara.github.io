@@ -84,7 +84,12 @@ describe('README Fetch and Render', () => {
     const ogTitle = document.querySelector('meta[property="og:title"]');
     const ogDescription = document.querySelector('meta[property="og:description"]');
     const ogUrl = document.querySelector('meta[property="og:url"]');
+    const ogImage = document.querySelector('meta[property="og:image"]');
+    const ogImageWidth = document.querySelector('meta[property="og:image:width"]');
+    const ogImageHeight = document.querySelector('meta[property="og:image:height"]');
+    const ogImageAlt = document.querySelector('meta[property="og:image:alt"]');
     const twitterCard = document.querySelector('meta[name="twitter:card"]');
+    const twitterImage = document.querySelector('meta[name="twitter:image"]');
 
     expect(ogTitle).not.toBeNull();
     expect(ogTitle.getAttribute('content')).toBe("Fumikazu “Freddie” Fujiwara's Portfolio");
@@ -92,7 +97,17 @@ describe('README Fetch and Render', () => {
     expect(ogDescription.getAttribute('content')).toBe("A professional Software Test Manager and a hobbyist Software Developer.");
     expect(ogUrl).not.toBeNull();
     expect(ogUrl.getAttribute('content')).toBe("https://freddiefujiwara.com");
+    expect(ogImage).not.toBeNull();
+    expect(ogImage.getAttribute('content')).toBe("https://github.com/freddiefujiwara.png");
+    expect(ogImageWidth).not.toBeNull();
+    expect(ogImageWidth.getAttribute('content')).toBe("400");
+    expect(ogImageHeight).not.toBeNull();
+    expect(ogImageHeight.getAttribute('content')).toBe("400");
+    expect(ogImageAlt).not.toBeNull();
+    expect(ogImageAlt.getAttribute('content')).toBe("Fumikazu “Freddie” Fujiwara");
     expect(twitterCard).not.toBeNull();
     expect(twitterCard.getAttribute('content')).toBe('summary');
+    expect(twitterImage).not.toBeNull();
+    expect(twitterImage.getAttribute('content')).toBe("https://github.com/freddiefujiwara.png");
   });
 });
