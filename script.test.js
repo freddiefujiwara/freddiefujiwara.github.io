@@ -83,12 +83,15 @@ describe('README Fetch and Render', () => {
   it('should have OGP and Twitter meta tags in index.html', () => {
     const ogTitle = document.querySelector('meta[property="og:title"]');
     const ogDescription = document.querySelector('meta[property="og:description"]');
+    const ogUrl = document.querySelector('meta[property="og:url"]');
     const twitterCard = document.querySelector('meta[name="twitter:card"]');
 
     expect(ogTitle).not.toBeNull();
     expect(ogTitle.getAttribute('content')).toBe("Fumikazu “Freddie” Fujiwara's Portfolio");
     expect(ogDescription).not.toBeNull();
     expect(ogDescription.getAttribute('content')).toBe("A professional Software Test Manager and a hobbyist Software Developer.");
+    expect(ogUrl).not.toBeNull();
+    expect(ogUrl.getAttribute('content')).toBe("https://freddiefujiwara.com");
     expect(twitterCard).not.toBeNull();
     expect(twitterCard.getAttribute('content')).toBe('summary');
   });
