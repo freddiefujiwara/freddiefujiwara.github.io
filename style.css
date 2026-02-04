@@ -4,8 +4,8 @@ body {
     margin: 0 auto;
     max-width: 800px;
     padding: 2rem;
-    background: #fff;
-    color: #333;
+    background: #121212;
+    color: #e0e0e0;
 }
 
 header {
@@ -22,7 +22,7 @@ header h1 {
 header p {
     margin: 0.5rem 0 0;
     font-size: 1.1rem;
-    color: #777;
+    color: #a0a0a0;
 }
 
 main {
@@ -34,7 +34,7 @@ main {
 }
 
 #content h1, #content h2, #content h3 {
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #333;
     padding-bottom: 0.5rem;
     margin-top: 2.5rem;
     font-weight: 400;
@@ -62,7 +62,7 @@ main {
 }
 
 #content a {
-    color: #0077cc;
+    color: #66b3ff;
     text-decoration: none;
 }
 
@@ -76,7 +76,7 @@ main {
 
 #content hr {
     border: 0;
-    border-top: 1px solid #eee;
+    border-top: 1px solid #333;
     margin: 3rem 0;
 }
 
@@ -85,5 +85,5 @@ footer {
     padding: 2rem 0;
     margin-top: 4rem;
     font-size: 0.9rem;
-    color: #999;
+    color: #777;
 }
