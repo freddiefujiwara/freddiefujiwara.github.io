@@ -67,6 +67,9 @@ Here are some of my personal projects on GitHub:
 *   [dtdt](https://github.com/freddiefujiwara/dtdt) - A test generator from decision trees to decision tables.
 *   [list-of-stuff](https://github.com/freddiefujiwara/list-of-stuff) - A simple project using Vue.js.
 *   [bucket-list](https://github.com/freddiefujiwara/bucket-list/) - My bucket list with life goals displayed as tiles.
+*   [ogp-png](https://github.com/freddiefujiwara/ogp-png) - Generate OGP images in PNG format.
+*   [md2img](https://github.com/freddiefujiwara/md2img) - Convert Markdown files into images.
+*   [html2ppt](https://github.com/freddiefujiwara/html2ppt) - Convert HTML slides into PowerPoint files.
 
 ---
 
