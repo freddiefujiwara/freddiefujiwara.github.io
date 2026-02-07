@@ -36,7 +36,11 @@ describe('README Fetch and Render', () => {
       }
     });
 
-    // Use require to load the script so we can reset modules
+    // Use require to load the script so we can reset modules and get coverage
+    // Since this is script.test.js, and Vitest supports ESM imports here,
+    // we can still use require if we are in a CJS context or if Vitest provides it.
+    // In Vitest, even in ESM files, you can use `vi.importActual` or similar,
+    // but for CJS reload, vi.resetModules + require is standard.
     require('./public/script.js');
   });
 
@@ -132,7 +136,7 @@ describe('README Fetch and Render', () => {
 
     // Remove content div before event
     const contentDiv = document.getElementById('content');
-    contentDiv.remove();
+    if (contentDiv) contentDiv.remove();
 
     domContentLoadedListener();
 
@@ -144,7 +148,7 @@ describe('README Fetch and Render', () => {
     global.fetch.mockRejectedValue(new Error('Network failure'));
 
     const contentDiv = document.getElementById('content');
-    contentDiv.remove();
+    if (contentDiv) contentDiv.remove();
 
     domContentLoadedListener();
 
@@ -165,10 +169,9 @@ describe('README Fetch and Render', () => {
 
   it('should not throw if copyright-year span is missing', () => {
     const yearSpan = document.getElementById('copyright-year');
-    yearSpan.remove();
+    if (yearSpan) yearSpan.remove();
 
     domContentLoadedListener();
-    // No error means success
   });
 
   it('should have OGP and Twitter meta tags in index.html', () => {
