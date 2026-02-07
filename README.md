@@ -59,17 +59,37 @@ Currently, I work at Rakuten as a Senior Manager, where I lead a team focused on
 
 ## Projects
 
-Here are some of my personal projects on GitHub:
+### Testing Tools
+*   [node-qict](https://github.com/freddiefujiwara/node-qict) ![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white)
+    - A smart tool to create pairwise test cases for better testing.
+*   [smtc](https://github.com/freddiefujiwara/smtc) ![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white)
+    - Generate test cases from state machine diagrams with ease.
+*   [dtdt](https://github.com/freddiefujiwara/dtdt) ![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white)
+    - Easily create decision tables from your decision trees.
+*   [prisma](https://github.com/freddiefujiwara/prisma) ![Markdown](https://img.shields.io/badge/Markdown-000000?style=flat-square&logo=markdown&logoColor=white)
+    - A Japanese guide to Risk-Based Testing for better quality.
+*   [openapi-fetch](https://github.com/freddiefujiwara/openapi-fetch) ![Vue.js](https://img.shields.io/badge/Vue.js-4FC08D?style=flat-square&logo=vuedotjs&logoColor=white) ![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white)
+    - A simple tool to test your OpenAPI YAML files instantly.
 
-*   [prisma](https://github.com/freddiefujiwara/prisma) - Japanese Tranlation of A method of Risk based testing.
-*   [google-home-cli](https://github.com/freddiefujiwara/google-home-cli) - A command-line interface for Google Home.
-*   [ahcd](https://github.com/freddiefujiwara/ahcd) - A converter for Apple Health Care Data.
-*   [dtdt](https://github.com/freddiefujiwara/dtdt) - A test generator from decision trees to decision tables.
-*   [list-of-stuff](https://github.com/freddiefujiwara/list-of-stuff) - A simple project using Vue.js.
-*   [bucket-list](https://github.com/freddiefujiwara/bucket-list/) - My bucket list with life goals displayed as tiles.
-*   [ogp-png](https://github.com/freddiefujiwara/ogp-png) - Generate OGP images in PNG format.
-*   [md2img](https://github.com/freddiefujiwara/md2img) - Convert Markdown files into images.
-*   [html2ppt](https://github.com/freddiefujiwara/html2ppt) - Convert HTML slides into PowerPoint files.
+### Web Tools
+*   [md2img](https://github.com/freddiefujiwara/md2img) ![Vue.js](https://img.shields.io/badge/Vue.js-4FC08D?style=flat-square&logo=vuedotjs&logoColor=white) ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)
+    - Turn your Markdown text into beautiful images for social media.
+*   [ogp-png](https://github.com/freddiefujiwara/ogp-png) ![Vue.js](https://img.shields.io/badge/Vue.js-4FC08D?style=flat-square&logo=vuedotjs&logoColor=white)
+    - Make custom OGP images for your website in seconds.
+*   [html2ppt](https://github.com/freddiefujiwara/html2ppt) ![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white) ![Playwright](https://img.shields.io/badge/Playwright-2EAD33?style=flat-square&logo=playwright&logoColor=white)
+    - Quickly change your web pages into PowerPoint slides.
+*   [swty](https://github.com/freddiefujiwara/swty) ![Vue.js](https://img.shields.io/badge/Vue.js-4FC08D?style=flat-square&logo=vuedotjs&logoColor=white) ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
+    - A clean and easy way to practice your English typing.
+
+### Utilities
+*   [bucket-list](https://github.com/freddiefujiwara/bucket-list) ![Vue.js](https://img.shields.io/badge/Vue.js-4FC08D?style=flat-square&logo=vuedotjs&logoColor=white)
+    - A fun way to track and visualize your life goals.
+*   [list-of-stuff](https://github.com/freddiefujiwara/list-of-stuff) ![Vue.js](https://img.shields.io/badge/Vue.js-4FC08D?style=flat-square&logo=vuedotjs&logoColor=white)
+    - A simple list to keep track of my minimalist belongings.
+*   [zenn.dev](https://github.com/freddiefujiwara/zenn.dev) ![Markdown](https://img.shields.io/badge/Markdown-000000?style=flat-square&logo=markdown&logoColor=white)
+    - A collection of my technical articles and blog posts.
+*   [altd](https://github.com/freddiefujiwara/altd) ![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white)
+    - Run commands automatically by watching your web server logs.
 
 ---
 
