@@ -256,22 +256,6 @@
       }
       .sub-head .more { margin-left: auto; font-size: 13.5px; font-weight: 700; white-space: nowrap; }
       .sub-lead { margin: 0 0 22px; color: var(--ink-2); font-size: 14.5px; max-width: 640px; }
-      .reels { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(16px, 2.6vw, 26px); }
-      @media (max-width: 860px) {
-        .reels { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
-      }
-      .reel-card { margin: 0; }
-      .embed-frame {
-        position: relative; width: 100%; aspect-ratio: 6 / 11;
-        background: var(--accent-soft); border: 1px solid var(--line); border-radius: 8px;
-        overflow: hidden;
-      }
-      .embed-frame iframe {
-        position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: var(--surface);
-      }
-      .reel-card figcaption { margin-top: 12px; font-size: 14px; color: var(--ink-2); line-height: 1.75; }
-      .reel-card figcaption strong { color: var(--ink); font-size: 15px; }
-      .reel-card figcaption a { display: inline-block; margin-top: 4px; font-weight: 700; font-size: 13.5px; }
       .map-frame {
         position: relative; width: 100%; aspect-ratio: 16 / 9; min-height: 320px;
         border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--accent-soft);
@@ -472,41 +456,6 @@
         </div>
 
         <div class="sub-head rv">
-          <h3>最新のリール</h3>
-          <a class="more" href="https://www.instagram.com/freddiefujiwara" target="_blank" rel="noopener">Instagramで全て見る ↗</a>
-        </div>
-        <p class="sub-lead rv">Instagram（@freddiefujiwara）で公開中の直近3本です。そのまま再生できます。</p>
-        <div class="reels rv">
-          <figure class="reel-card">
-            <div class="embed-frame">
-              <iframe data-src="https://www.instagram.com/reel/DfDoIDsz0Cn/embed/" title="Instagramリール：異味香（西川口の山東料理店）" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" referrerpolicy="no-referrer" loading="lazy" scrolling="no"></iframe>
-            </div>
-            <figcaption>
-              <strong>異味香</strong>（西川口）— 山東料理のお店。山盛りの焼き餃子と、割ると中がぎっしりの名物・焼きシューマイ。<br />
-              <a href="https://www.instagram.com/reel/DfDoIDsz0Cn/" target="_blank" rel="noopener">Instagramで見る ↗</a>
-            </figcaption>
-          </figure>
-          <figure class="reel-card">
-            <div class="embed-frame">
-              <iframe data-src="https://www.instagram.com/reel/De6BrUyRCbK/embed/" title="Instagramリール：日本万華鏡博物館（川口市幸町）" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" referrerpolicy="no-referrer" loading="lazy" scrolling="no"></iframe>
-            </div>
-            <figcaption>
-              <strong>日本万華鏡博物館</strong>（川口市幸町）— コレクション約3,100本の小さな博物館。歴史と仕組みの解説付き「見るコース」を体験。<br />
-              <a href="https://www.instagram.com/reel/De6BrUyRCbK/" target="_blank" rel="noopener">Instagramで見る ↗</a>
-            </figcaption>
-          </figure>
-          <figure class="reel-card">
-            <div class="embed-frame">
-              <iframe data-src="https://www.instagram.com/reel/De53VwST3_P/embed/" title="Instagramリール：HAO台湾食堂（川口駅東口）" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" referrerpolicy="no-referrer" loading="lazy" scrolling="no"></iframe>
-            </div>
-            <figcaption>
-              <strong>HAO台湾食堂</strong>（川口駅東口）— 台湾ランチ。魯肉飯に煮卵トッピング、大きなワンタンが入ったスープのセット。<br />
-              <a href="https://www.instagram.com/reel/De53VwST3_P/" target="_blank" rel="noopener">Instagramで見る ↗</a>
-            </figcaption>
-          </figure>
-        </div>
-
-        <div class="sub-head rv">
           <h3>川口を歩くQAエンジニアマップ</h3>
           <a class="more" href="https://www.google.com/maps/d/viewer?mid=13lbAcrd5hOq5xSvPsbX607gmzqNdw0E" target="_blank" rel="noopener">Googleマップで開く ↗</a>
         </div>
@@ -566,7 +515,7 @@
         var yearEl = document.getElementById("year");
         if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
-        // 埋め込みiframe（Instagramリール／Googleマイマップ）は画面に近づいてから読み込む
+        // 埋め込みiframe（Googleマイマップ）は画面に近づいてから読み込む
         var frames = document.querySelectorAll("iframe[data-src]");
         function mountFrame(f) {
           if (!f.getAttribute("src")) f.setAttribute("src", f.getAttribute("data-src"));
