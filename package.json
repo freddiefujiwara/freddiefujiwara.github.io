@@ -4,14 +4,9 @@
   "private": true,
   "homepage": "https://freddiefujiwara.github.io",
   "scripts": {
-    "deploy": "gh-pages -d public",
-    "test": "vitest run",
-    "test:cov": "vitest run --coverage"
+    "deploy": "gh-pages -d public"
   },
   "devDependencies": {
-    "@vitest/coverage-v8": "^3.2.4",
-    "gh-pages": "^2.2.0",
-    "jsdom": "^26.1.0",
-    "vitest": "^3.2.4"
+    "gh-pages": "^2.2.0"
   }
 }
