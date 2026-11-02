@@ -63,6 +63,7 @@
         -webkit-font-smoothing: antialiased;
       }
       img { max-width: 100%; display: block; }
+      picture { display: block; }
       a { color: var(--accent); text-decoration: none; }
       a:hover { text-decoration: underline; }
       .serif { font-family: "Shippori Mincho B1", "Hiragino Mincho ProN", "Yu Mincho", serif; }
@@ -322,7 +323,7 @@
     </nav>
 
     <header class="hero" id="top">
-      <img class="bg" src="assets/hero-koinobori.jpg" alt="夜の芝川。川の上に色とりどりの鯉のぼりが架かり、両岸にマンションの灯りがともる" />
+      <picture><source srcset="assets/hero-koinobori.webp" type="image/webp" /><img class="bg" src="assets/hero-koinobori.jpg" alt="夜の芝川。川の上に色とりどりの鯉のぼりが架かり、両岸にマンションの灯りがともる" /></picture>
       <div class="hero-inner">
         <p class="place">Kawaguchi, Saitama <span style="white-space:nowrap">— 埼玉県川口市</span></p>
         <h1>藤原史和<span class="roman">FUMIKAZU FUJIWARA</span></h1>
@@ -389,7 +390,7 @@
           </div>
           <div class="rv">
             <figure class="about-photo" style="margin:0">
-              <img src="assets/alley.jpg" alt="川口の住宅街の細い路地。草花が生い茂り、ブロック塀と古い家並みに挟まれた石段の小道" />
+              <picture><source srcset="assets/alley.webp" type="image/webp" /><img src="assets/alley.jpg" alt="川口の住宅街の細い路地。草花が生い茂り、ブロック塀と古い家並みに挟まれた石段の小道" loading="lazy" /></picture>
               <figcaption>川口の路地。歩いていると、こんな緑の小道に出会います。</figcaption>
             </figure>
             <div class="profile-facts">
@@ -477,11 +478,11 @@
 
         <div class="photo-break photo-duo rv">
           <figure>
-            <img src="assets/skyline.jpg" alt="青空の下、屋上から望む川口の街並み。マンションや住宅が広がる" loading="lazy" />
+            <picture><source srcset="assets/skyline.webp" type="image/webp" /><img src="assets/skyline.jpg" alt="青空の下、屋上から望む川口の街並み。マンションや住宅が広がる" loading="lazy" /></picture>
             <figcaption>屋上から望む川口の街並み</figcaption>
           </figure>
           <figure>
-            <img src="assets/river-sunset.jpg" alt="夕景の川口。入道雲が夕日に染まり、川面に映る。土手沿いにサイクリングロードが続く" loading="lazy" />
+            <picture><source srcset="assets/river-sunset.webp" type="image/webp" /><img src="assets/river-sunset.jpg" alt="夕景の川口。入道雲が夕日に染まり、川面に映る。土手沿いにサイクリングロードが続く" loading="lazy" /></picture>
             <figcaption>夕景の川と入道雲。サイクリングでよく通る川辺</figcaption>
           </figure>
         </div>
