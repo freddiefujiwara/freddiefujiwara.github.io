@@ -33,17 +33,23 @@
   }
 
   var links = document.querySelectorAll(".site-nav a[data-spy]");
-  var sections = ["about", "activity", "contact"].map(function (id) {
+  var BASE_TITLE = document.title;
+  var SECTION_TITLES = { about: "プロフィール", activity: "活動・発信", contact: "情報交換" };
+  function setCurrent(id) {
+    links.forEach(function (l) {
+      l.classList.toggle("active", l.getAttribute("data-spy") === id);
+    });
+    document.title = SECTION_TITLES[id] ? SECTION_TITLES[id] + " | " + BASE_TITLE : BASE_TITLE;
+  }
+  var sections = ["top", "about", "activity", "contact"].map(function (id) {
     return document.getElementById(id);
   }).filter(Boolean);
+  var initialId = (location.hash || "").replace(/^#/, "");
+  setCurrent(SECTION_TITLES[initialId] ? initialId : "top");
   if ("IntersectionObserver" in window && sections.length) {
     var spy = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
-        if (e.isIntersecting) {
-          links.forEach(function (l) {
-            l.classList.toggle("active", l.getAttribute("data-spy") === e.target.id);
-          });
-        }
+        if (e.isIntersecting) setCurrent(e.target.id);
       });
     }, { rootMargin: "-40% 0px -55% 0px" });
     sections.forEach(function (s) { spy.observe(s); });

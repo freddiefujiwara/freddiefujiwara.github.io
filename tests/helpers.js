@@ -49,11 +49,12 @@ export class MockIntersectionObserver {
 
 // 実物の index.html からページを構築する（スクリプトは自動実行しない）。
 // fetchImpl を渡すと window.fetch を差し替える。withObserver=false で
-// IntersectionObserver の無い環境を再現する。
-export function loadPage({ fetchImpl, withObserver = true } = {}) {
+// IntersectionObserver の無い環境を再現する。url を渡すと初期表示時の
+// ハッシュ（#about 等）を再現できる。
+export function loadPage({ fetchImpl, withObserver = true, url = 'https://freddiefujiwara.com/' } = {}) {
   MockIntersectionObserver.reset();
   const dom = new JSDOM(indexHtml, {
-    url: 'https://freddiefujiwara.com/',
+    url,
     runScripts: 'outside-only',
   });
   const { window } = dom;

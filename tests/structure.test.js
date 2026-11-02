@@ -13,8 +13,6 @@ describe('ページ構造の不変条件', () => {
     expect(document.title).toBe('藤原史和｜川口を歩くQAエンジニア');
   });
 
-  // NOTE: ナビへの「トップ」追加（別PR）が入ったら、先頭に
-  // ['トップ', '#top', null] を加えて6件にする。
   it('ナビのリンクが正しい並びと href で並んでいる', () => {
     const links = [...document.querySelectorAll('.site-nav ul a')].map((a) => [
       a.textContent.trim(),
@@ -22,6 +20,7 @@ describe('ページ構造の不変条件', () => {
       a.getAttribute('data-spy'),
     ]);
     expect(links).toEqual([
+      ['トップ', '#top', 'top'],
       ['プロフィール', '#about', 'about'],
       ['活動・発信', '#activity', 'activity'],
       ['情報交換', '#contact', 'contact'],
@@ -55,7 +54,7 @@ describe('ページ構造の不変条件', () => {
     const spies = [...document.querySelectorAll('.site-nav a[data-spy]')].map(
       (a) => a.getAttribute('data-spy'),
     );
-    expect(spies).toEqual(['about', 'activity', 'contact']);
+    expect(spies).toEqual(['top', 'about', 'activity', 'contact']);
     for (const id of spies) {
       expect(document.getElementById(id)).not.toBeNull();
     }
