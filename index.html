@@ -467,6 +467,16 @@
             </span>
             <span class="go" aria-hidden="true">→</span>
           </a>
+          <a class="act" href="https://freddiefujiwara.com/list-of-stuff/" target="_blank" rel="noopener">
+            <span class="ic" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3 8l9 5 9-5"/><path d="M12 13v8"/></svg>
+            </span>
+            <span>
+              <h3>持ち物リスト<span class="handle">freddiefujiwara.com/list-of-stuff</span></h3>
+              <p>実際に使っている愛用品と日用品のリストです。<span id="stuff-count"></span></p>
+            </span>
+            <span class="go" aria-hidden="true">→</span>
+          </a>
         </div>
 
         <div class="sub-head rv">
@@ -510,6 +520,9 @@
     <footer>
       <div class="wrap" style="padding-top:0;padding-bottom:0">
         <div class="foot-links">
+          <a href="https://freddiefujiwara.com/" target="_blank" rel="noopener">トップ <span class="arr">↗</span></a>
+          <a href="https://freddiefujiwara.com/blog/" target="_blank" rel="noopener">ブログ <span class="arr">↗</span></a>
+          <a href="https://freddiefujiwara.com/list-of-stuff/" target="_blank" rel="noopener">持ち物 <span class="arr">↗</span></a>
           <a href="https://www.instagram.com/freddiefujiwara" target="_blank" rel="noopener">Instagram <span class="arr">↗</span></a>
           <a href="https://www.facebook.com/freddiefujiwara" target="_blank" rel="noopener">Facebook <span class="arr">↗</span></a>
           <a href="https://www.google.com/maps/contrib/105456242747265663411/reviews" target="_blank" rel="noopener">Googleマップの口コミ <span class="arr">↗</span></a>
@@ -518,7 +531,6 @@
           <a href="https://x.com/freddiefujiwara" target="_blank" rel="noopener">X <span class="arr">↗</span></a>
           <a href="https://github.com/freddiefujiwara" target="_blank" rel="noopener">GitHub <span class="arr">↗</span></a>
           <a href="https://linkedin.com/in/freddiefujiwara" target="_blank" rel="noopener">LinkedIn <span class="arr">↗</span></a>
-          <a href="https://freddiefujiwara.com/blog/" target="_blank" rel="noopener">ブログ <span class="arr">↗</span></a>
         </div>
         <p class="copy">© <span id="year">2026</span> 藤原史和（Fumikazu Fujiwara）— freddiefujiwara.com</p>
         <p class="fine">
@@ -531,6 +543,19 @@
       (function () {
         var yearEl = document.getElementById("year");
         if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+
+        // 持ち物リストの件数をAPIから取得して表示（取得できない場合は件数なしのまま）
+        var stuffCount = document.getElementById("stuff-count");
+        if (stuffCount && "fetch" in window) {
+          fetch("https://script.google.com/macros/s/AKfycbwUMhAHJDzp_mtR12fbHJlzNTptpSH78LNJAr9i9SXBdn_BUAwWJTtb1g/exec")
+            .then(function (r) { return r.json(); })
+            .then(function (items) {
+              if (Array.isArray(items) && items.length) {
+                stuffCount.textContent = "全" + items.length + "点を公開しています。";
+              }
+            })
+            .catch(function () {});
+        }
 
         // 埋め込みiframe（Googleマイマップ）は画面に近づいてから読み込む
         var frames = document.querySelectorAll("iframe[data-src]");
