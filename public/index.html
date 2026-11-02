@@ -101,8 +101,8 @@
       @media (max-width: 560px) {
         .site-nav { justify-content: center; }
         .site-nav .brand { display: none; }
-        .site-nav ul { width: 100%; justify-content: space-between; gap: 8px; }
-        .site-nav ul a { font-size: 13px; }
+        .site-nav ul { width: 100%; justify-content: space-between; gap: 6px; }
+        .site-nav ul a { font-size: 12px; letter-spacing: 0.02em; }
       }
 
       /* ---------- hero ---------- */
@@ -322,6 +322,7 @@
     <nav class="site-nav">
       <a class="brand" href="https://freddiefujiwara.com/">藤原史和｜川口を歩くQAエンジニア</a>
       <ul>
+        <li><a href="#top" data-spy="top">トップ</a></li>
         <li><a href="#about" data-spy="about">プロフィール</a></li>
         <li><a href="#activity" data-spy="activity">活動・発信</a></li>
         <li><a href="#contact" data-spy="contact">情報交換</a></li>
@@ -466,7 +467,7 @@
             </span>
             <span>
               <h3>ブログ<span class="handle">freddiefujiwara.com/blog</span></h3>
-              <p>日々の記録と、川口歩きのメモ。</p>
+              <p>川口歩きの記録に、AIや自動化で暮らしを軽くする工夫、中国語学習のメモなどを書いています。</p>
             </span>
             <span class="go" aria-hidden="true">→</span>
           </a>
@@ -577,17 +578,23 @@
         }
 
         var links = document.querySelectorAll(".site-nav a[data-spy]");
-        var sections = ["about", "activity", "contact"].map(function (id) {
+        var BASE_TITLE = document.title;
+        var SECTION_TITLES = { about: "プロフィール", activity: "活動・発信", contact: "情報交換" };
+        function setCurrent(id) {
+          links.forEach(function (l) {
+            l.classList.toggle("active", l.getAttribute("data-spy") === id);
+          });
+          document.title = SECTION_TITLES[id] ? SECTION_TITLES[id] + " | " + BASE_TITLE : BASE_TITLE;
+        }
+        var sections = ["top", "about", "activity", "contact"].map(function (id) {
           return document.getElementById(id);
         }).filter(Boolean);
+        var initialId = (location.hash || "").replace(/^#/, "");
+        setCurrent(SECTION_TITLES[initialId] ? initialId : "top");
         if ("IntersectionObserver" in window && sections.length) {
           var spy = new IntersectionObserver(function (entries) {
             entries.forEach(function (e) {
-              if (e.isIntersecting) {
-                links.forEach(function (l) {
-                  l.classList.toggle("active", l.getAttribute("data-spy") === e.target.id);
-                });
-              }
+              if (e.isIntersecting) setCurrent(e.target.id);
             });
           }, { rootMargin: "-40% 0px -55% 0px" });
           sections.forEach(function (s) { spy.observe(s); });
