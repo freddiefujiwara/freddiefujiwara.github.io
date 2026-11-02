@@ -9,6 +9,8 @@ freddiefujiwara.com の3サイト（トップ / ブログ / 持ち物）は別�
 - 持ち物: freddiefujiwara/list-of-stuff（`src/App.vue` のスコープ付き CSS）
 
 値はいずれも 2026-11-02 に各サイトのソースと本番 CSS から実測したものです。
+「既知の未統一」は同日にブログ PR #31・トップ PR #25・持ち物 PR #35 のマージ後、
+本番でチェックスクリプトを再実行した結果に基づき最新化しています。
 ずれの検出は `scripts/check-site-chrome.py` で機械的に行えます。
 
 ```bash
@@ -43,7 +45,7 @@ python3 -m unittest discover -s scripts/tests -v   # チェックスクリプト
 | --surface | #ffffff | --surface |
 | --ink | #221d16 | --text |
 | --ink-2 | #5d5546 | --muted |
-| --ink-3 | #8a8071 | （なし ※未統一） |
+| --ink-3 | #8a8071 | --muted-2（2026-11-02 にブログ PR #31 で追加） |
 | --line | #e3ddd0 | --border |
 | --accent | #b23a1f | --link（--primary も同値） |
 | --accent-strong | #8f2a12 | --link-active |
@@ -71,11 +73,11 @@ python3 -m unittest discover -s scripts/tests -v   # チェックスクリプト
 
 | 対象 | 正本 | トップ | ブログ | 持ち物 |
 |---|---|---|---|---|
-| html の scrollbar-gutter | `stable` | **なし（未統一）** | stable | **なし（未統一・脱落）** |
+| html の scrollbar-gutter | `stable` | **なし（未統一・判断待ち）** | stable | stable（PR #35 で復旧） |
 | body の margin | 0 | ○ | ○ | ○ |
 | body のフォント | "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", sans-serif | ○（body に font-size: 16px も明示） | ○（:root に宣言） | ○（body に宣言） |
 | body の line-height | 1.85 | ○ | ○（:root に宣言） | ○ |
-| body の -webkit-text-size-adjust | `100%` | **なし（未統一）** | **なし（未統一）** | 100% |
+| body の -webkit-text-size-adjust | `100%` | 100% | 100% | 100% |
 | body の -webkit-font-smoothing | antialiased | ○ | ○ | ○ |
 
 - フォントの読み込み（Google Fonts）: Shippori Mincho B1 ＋ Zen Kaku Gothic New。
@@ -212,7 +214,7 @@ a.hero-inner { /* ヒーローをリンクにする場合の共通指定 */
 
 ## 5. フッター
 
-正本値（ブログ／持ち物の現行値。トップは寸法が異なるため未統一を参照）:
+正本値（2026-11-02 にトップ PR #25 でトップもこの値に統一済み）:
 
 ```css
 .site-footer {
@@ -272,7 +274,8 @@ a.hero-inner { /* ヒーローをリンクにする場合の共通指定 */
 <meta name="twitter:image" content="https://freddiefujiwara.com/ogp-koinobori-overlay.jpg" />
 ```
 
-- 全部入りは持ち物の現行形です。ブログとトップには欠けがあります（未統一を参照）。
+- 全部入りの形は持ち物の現行形が起点です。ブログとトップの欠けは 2026-11-02 に
+  ブログ PR #31・トップ PR #25 で補完し、3サイトとも上記の構成にそろいました。
 
 ---
 
@@ -296,31 +299,40 @@ a.hero-inner { /* ヒーローをリンクにする場合の共通指定 */
 
 ## 既知の未統一（揃えるべきなのに現状ずれているもの）
 
-2026-11-02 の実測で確認した、正本と異なる状態の一覧です。直したらこの節から消してください。
+2026-11-02 にブログ PR #31・トップ PR #25・持ち物 PR #35 のマージ後、本番で
+`scripts/check-site-chrome.py` を再実行して確認した結果です。
+本番チェックで差異と表示されるのは、下記1のトップの scrollbar-gutter と、
+固有差分であるナビ position（トップ fixed / 他 sticky）の2件のみになりました
+（下記2のナビのリンク集合はチェック対象外のため表示には出ません）。
+（同日に検出された .copy の font-size「0.85rem と .85rem」の差異表示は表記ゆれの誤検出で、
+チェックスクリプト側の正規化で解消済みです。）
 
-1. **持ち物の scrollbar-gutter が脱落している（回帰）**
-   ブログ: `stable` ／ 持ち物: **なし** ／ トップ: **なし（未導入）**
-   持ち物には PR #32（コミット c57fc0a）で `html { scrollbar-gutter: stable; }` が入っていたが、
-   PR #33 のマージ（2b7d5bf）で App.vue から脱落し、本番 CSS からも消えている。
-   ブログ／持ち物間のヒーロー横ずれが解消しない主因とみられる。
-   → 持ち物への再適用と、トップへの新規導入が必要。
-2. **-webkit-text-size-adjust が持ち物にしかない**
-   持ち物: body に `100%` ／ ブログ: なし ／ トップ: なし。
-   iOS Safari の文字サイズ自動調整の効き方がサイトで変わるため、正本（§2）どおり3サイト共通で入れる。
-3. **フッターの寸法がトップだけ異なる**
-   トップ: footer の margin-top が clamp(56px, 8vw, 84px)、padding が 34px 0 46px、.foot-links の gap が 10px 26px、
-   リンクが 14px・太さ 500、.copy が 13px・太さ 500。
-   ブログ／持ち物: margin-top 56px、padding-top 24px、gap 10px 22px、リンク 0.92rem、.copy 0.85rem（正本 §5）。
-4. **OGP の欠け**
-   ブログ: og:image:width / og:image:height と twitter:image がない。
-   トップ: og:site_name がない。
-   正本（§6）の全部入りは持ち物の現行形。
-5. **ブログに --ink-3 相当の変数がない**
-   トップ／持ち物には --ink-3（#8a8071 / ダーク #948a77）があるが、ブログには対応変数がなく、
-   同じ階調が必要な箇所では値の直書きになりうる。正本の変数セット（§1）への追加が望ましい。
-6. **ナビに「持ち物」リンクがあるのが持ち物だけ**
+### 残っている項目
+
+1. **トップの scrollbar-gutter が未導入**
+   ブログ: `stable` ／ 持ち物: `stable` ／ トップ: **なし**
+   正本（§2）では `stable` が基準だが、トップへの導入は本人の判断待ちとして残します。
+2. **ナビに「持ち物」リンクがあるのが持ち物だけ**（旧 #6）
    トップとブログのナビは4件で、持ち物への導線がない（持ち物は5件）。
    サイト統合の検討事項として記録する（2026-11-02 時点では未決定）。
+
+### 解消済み（2026-11-02、本番チェック再実行で確認）
+
+- **持ち物の scrollbar-gutter 脱落（回帰）**（旧 #1 の持ち物分）
+  PR #32（コミット c57fc0a）で入れた `html { scrollbar-gutter: stable; }` が PR #33 のマージ（2b7d5bf）で
+  脱落していたものを、持ち物 PR #35 で再適用し、本番 CSS で復旧を確認しました。
+  トップへの新規導入は上記の残項目として継続します。
+- **-webkit-text-size-adjust**（旧 #2）
+  ブログ PR #31・トップ PR #25 で body に追加し、3サイトとも `100%` で一致。
+- **フッター寸法のトップ差異**（旧 #3）
+  トップ PR #25 で正本（§5）の値（margin-top 56px、padding-top 24px、gap 10px 22px、リンク 0.92rem、.copy 0.85rem）に合わせ解消。
+  ただし、トップの footer の padding-bottom（46px）、.foot-links の margin-bottom（22px）、.copy の margin（`0 0 6px`）は
+  正本に対応値がないため現状維持としています。揃える場合は正本への値の追加とセットで対応してください。
+- **OGP の欠け**（旧 #4）
+  ブログ PR #31 で og:image:width / og:image:height と twitter:image を、トップ PR #25 で og:site_name を補完し、
+  3サイトとも正本（§6）の全部入りにそろいました。
+- **ブログに --ink-3 相当の変数がない**（旧 #5）
+  ブログ PR #31 で `--muted-2`（#8a8071 / ダーク #948a77）を追加しました（§1 の対応表を参照）。
 
 ## チェック結果の読み方
 

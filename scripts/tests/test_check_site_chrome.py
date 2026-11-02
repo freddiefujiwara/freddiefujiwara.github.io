@@ -195,6 +195,25 @@ class TestNormalization(unittest.TestCase):
         self.assertEqual(chrome.norm("#E3DDD0"), "#e3ddd0")
         self.assertIsNone(chrome.norm(None))
 
+    def test_leading_zero_is_normalized(self):
+        # 小数の先行ゼロの有無は表記ゆれとして同一とみなす
+        self.assertEqual(chrome.norm("0.85rem"), chrome.norm(".85rem"))
+        self.assertEqual(chrome.norm("0.5"), ".5")
+        self.assertEqual(chrome.norm("10.5px"), "10.5px")  # 整数部が0で終わる小数は壊さない
+        self.assertEqual(chrome.norm("0px 0.85rem"), "0px .85rem")
+
+    def test_copy_size_notation_difference_is_not_a_diff(self):
+        # 回帰（2026-11-02 本番チェック）: .copy の font-size が
+        # トップ=0.85rem / ブログ・持ち物=.85rem で「差異あり」と誤判定された
+        data = aligned_data()
+        data["トップ"] = make_site(nav_class="nav", copy_size="0.85rem")
+        data["ブログ"] = make_site(blog_names=True, copy_size=".85rem")
+        data["持ち物"] = make_site(scoped=True, copy_size=".85rem")
+        rows = chrome.build_rows(data)
+        row = rows_by_label(rows)["フッター .copy font-size"]
+        self.assertEqual(chrome.judge_row(row), "一致")
+        self.assertEqual(chrome.count_diffs(rows), 0)  # 他の項目にも差異は出ない
+
     def test_scoped_selector_matches(self):
         css = ".hero[data-v-02a45afa]{min-height:300px}"
         block = chrome.rule_block(css, [".hero"])
