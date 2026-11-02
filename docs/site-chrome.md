@@ -13,6 +13,7 @@ freddiefujiwara.com の3サイト（トップ / ブログ / 持ち物）は別�
 
 ```bash
 python3 scripts/check-site-chrome.py   # 本番3サイトを取得して差異を一覧表示（差異があれば終了コード 1）
+python3 -m unittest discover -s scripts/tests -v   # チェックスクリプトの単体テスト（ネットワーク不要）
 ```
 
 ## 運用ルール
