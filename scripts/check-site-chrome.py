@@ -69,13 +69,18 @@ def site_assets(base_url):
 
 
 def norm(value):
-    """値の表記ゆれを吸収する（空白・引用符・カンマ後スペース・16進カラーの大小）。"""
+    """値の表記ゆれを吸収する。
+
+    空白・引用符・カンマ後スペース・16進カラーの大小に加え、
+    小数の先行ゼロの有無（0.85rem と .85rem）も同一とみなす。
+    """
     if value is None:
         return None
     v = re.sub(r"\s+", " ", value.strip())
     v = v.replace("'", '"')
     v = v.replace(", ", ",")
     v = re.sub(r"#[0-9a-fA-F]{3,8}\b", lambda m: m.group(0).lower(), v)
+    v = re.sub(r"(?<![\d.])0+(\.\d+)", r"\1", v)  # 0.85 → .85（10.5 は壊さない）
     return v
 
 
@@ -240,11 +245,9 @@ def build_rows(data):
         per_site(lambda d, s: f"{len(footer_links(d['html'] + d['js']))}/8 件"),
         note="Instagram / Facebook / Googleマップ / 楽天トラベル / 食べログ / X / GitHub / LinkedIn")
     add("フッター .foot-links gap",
-        per_site(lambda d, s: decl(rule_block(d["css"], [".foot-links"]), "gap")),
-        note="トップは 10px 26px、ブログ／持ち物は 10px 22px（既知の未統一）")
+        per_site(lambda d, s: decl(rule_block(d["css"], [".foot-links"]), "gap")))
     add("フッター .copy font-size",
-        per_site(lambda d, s: decl(rule_block(d["css"], [".copy"]), "font-size")),
-        note="トップは 13px、ブログ／持ち物は 0.85rem（既知の未統一）")
+        per_site(lambda d, s: decl(rule_block(d["css"], [".copy"]), "font-size")))
 
     # --- デザイントークン ---
     for token in CORE_TOKENS:
