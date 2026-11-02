@@ -175,10 +175,123 @@ FOOTER_COMMON_LINKS = [
     "https://linkedin.com/in/freddiefujiwara",
 ]
 
+# フッターの自己リンク（サイト間の相互リンク）。外部リンクと合わせて11件が正本。
+FOOTER_SELF_LINKS = [
+    "https://freddiefujiwara.com/",
+    "https://freddiefujiwara.com/blog/",
+    "https://freddiefujiwara.com/list-of-stuff/",
+]
+
+FOOTER_LINKS = FOOTER_SELF_LINKS + FOOTER_COMMON_LINKS
+
+
+def _unescape(text):
+    """JSバンドル内のエスケープ（\\" \\' \\/）を戻す。"""
+    return text.replace('\\"', '"').replace("\\'", "'").replace("\\/", "/")
+
+
+def _href_present(text, url):
+    """href="url" の形（JSバンドル内の \\" エスケープ形も含む）で現れるか。"""
+    pat = r'href=\\?["\']' + re.escape(url) + r'\\?["\']'
+    return re.search(pat, text) is not None
+
 
 def footer_links(text):
-    """フッター共通リンク（8件）のうちテキストに含まれるものの集合。"""
-    return {u for u in FOOTER_COMMON_LINKS if u in text}
+    """フッターのリンク集合（11件）のうちテキストに含まれるものの集合。
+
+    外部リンク8件は URL の部分一致で数える。自己リンク3件は、トップの URL が
+    ブログ／持ち物の URL の接頭辞になるため、href の完全一致で数える。
+    """
+    found = {u for u in FOOTER_COMMON_LINKS if u in text}
+    found |= {u for u in FOOTER_SELF_LINKS if _href_present(text, u)}
+    return found
+
+
+def footer_block(text):
+    """フッターのブロックを取り出す。なければ空文字列。
+
+    フッターのリンク集合はナビやブランドの href と混ざらないよう、
+    フッター内に限って数える。SPA では <footer> 自体は描画関数で作られ、
+    静的文字列として残るのは内側の .foot-links だけのため、そちらにも対応する。
+    """
+    plain = _unescape(text)
+    m = re.search(r"<footer\b.*?</footer>", plain, re.S)
+    if m:
+        return m.group(0)
+    m = re.search(r'<div class="foot-links"[^>]*>.*?</div>', plain, re.S)
+    return m.group(0) if m else ""
+
+
+FOOTER_LINK_LABELS = {
+    "https://freddiefujiwara.com/": "トップ",
+    "https://freddiefujiwara.com/blog/": "ブログ",
+    "https://freddiefujiwara.com/list-of-stuff/": "持ち物",
+    "https://www.instagram.com/freddiefujiwara": "Instagram",
+    "https://www.facebook.com/freddiefujiwara": "Facebook",
+    "https://www.google.com/maps/contrib/105456242747265663411/reviews": "Googleマップ",
+    "https://review.travel.rakuten.co.jp/reviewer/fumikazufujiwara": "楽天トラベル",
+    "https://tabelog.com/rvwr/zegenvs/": "食べログ",
+    "https://x.com/freddiefujiwara": "X",
+    "https://github.com/freddiefujiwara": "GitHub",
+    "https://linkedin.com/in/freddiefujiwara": "LinkedIn",
+}
+
+
+def _footer_value(block):
+    """フッターの充足表示。不足分がサイトごとに違えば文字列も変わる。"""
+    found = footer_links(block)
+    missing = [FOOTER_LINK_LABELS[u] for u in FOOTER_LINKS if u not in found]
+    if not missing:
+        return "11/11 件"
+    return f"{len(found)}/11 件（不足: {'、'.join(missing)}）"
+
+
+SITE_ORIGIN = "https://freddiefujiwara.com"
+
+# ブログ／持ち物のナビにそろえるリンク先（オリジンを除いたパス＋フラグメント）
+NAV_CANON_KEYS = ["/#about", "/#activity", "/#contact", "/blog/", "/list-of-stuff/"]
+
+
+def nav_link_keys(text, base_url):
+    """ナビ（<nav> 内の <ul>）のリンク先を正規化したキーの集合で返す。
+
+    SPA の JS バンドルに静的文字列として埋め込まれたナビにも対応するため、
+    エスケープされた引用符・スラッシュを戻してから <nav>...</nav> を切り出す。
+    リンクキーはオリジンを除いたパス＋フラグメント（例: /#about、/blog/）。
+    ページ内アンカー（#about）はトップページのアンカーとして扱い、
+    ブランドリンクは <ul> の外にあるため数に入らない。
+    """
+    plain = _unescape(text)
+    nav = re.search(r"<nav\b.*?</nav>", plain, re.S)
+    if not nav:
+        return set()
+    ul = re.search(r"<ul\b.*?</ul>", nav.group(0), re.S)
+    if not ul:
+        return set()
+    keys = set()
+    for href in re.findall(r'href="([^"]+)"', ul.group(0)):
+        if href.startswith("#"):
+            keys.add("/" + href)
+        else:
+            absolute = urljoin(base_url, href)
+            keys.add(absolute[len(SITE_ORIGIN):]
+                     if absolute.startswith(SITE_ORIGIN) else absolute)
+    return keys
+
+
+NAV_KEY_LABELS = {
+    "/#about": "プロフィール", "/#activity": "活動・発信", "/#contact": "情報交換",
+    "/blog/": "ブログ", "/list-of-stuff/": "持ち物",
+}
+
+
+def _nav_value(text, base_url):
+    """ナビの充足表示。不足分がサイトごとに違えば文字列も変わる。"""
+    keys = nav_link_keys(text, base_url) & set(NAV_CANON_KEYS)
+    missing = [NAV_KEY_LABELS[k] for k in NAV_CANON_KEYS if k not in keys]
+    if not missing:
+        return "5/5 件"
+    return f"{len(keys)}/5 件（不足: {'、'.join(missing)}）"
 
 
 def og_image(html):
@@ -233,6 +346,10 @@ def build_rows(data):
         per_site(lambda d, s: decl(rule_block(d["css"], nav_sels), "background")))
     add("ナビ brand font-size",
         per_site(lambda d, s: decl(rule_block(d["css"], [".site-nav .brand", ".nav .brand"]), "font-size")))
+    add("ナビのリンク集合（5件）",
+        per_site(lambda d, s: _nav_value(d['html'] + d['js'], SITES[s])),
+        compare=("ブログ", "持ち物"),
+        note="ブログ／持ち物は5件（プロフィール / 活動・発信 / 情報交換 / ブログ / 持ち物）で統一。トップは固有デザインのため対象外")
 
     # --- 全体規則 ---
     add("全要素 box-sizing",
@@ -259,9 +376,9 @@ def build_rows(data):
         compare=("ブログ", "持ち物"), note="トップは固有デザイン")
 
     # --- フッター ---
-    add("フッター共通リンク（8件）",
-        per_site(lambda d, s: f"{len(footer_links(d['html'] + d['js']))}/8 件"),
-        note="Instagram / Facebook / Googleマップ / 楽天トラベル / 食べログ / X / GitHub / LinkedIn")
+    add("フッター共通リンク（11件）",
+        per_site(lambda d, s: _footer_value(footer_block(d['html'] + d['js']))),
+        note="自己リンク3件（トップ / ブログ / 持ち物）＋ 外部8件（Instagram / Facebook / Googleマップ / 楽天トラベル / 食べログ / X / GitHub / LinkedIn）")
     add("フッター .foot-links gap",
         per_site(lambda d, s: decl(rule_block(d["css"], [".foot-links"]), "gap")))
     add("フッター .copy font-size",
