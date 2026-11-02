@@ -22,7 +22,38 @@ spec.loader.exec_module(chrome)
 # フィクスチャ（本番の構造を模した文字列。本番取得は行わない）
 # ---------------------------------------------------------------------------
 
-FOOTER_URLS = " ".join(chrome.FOOTER_COMMON_LINKS)
+FOOTER_URLS = " ".join(
+    [f'href="{u}"' for u in chrome.FOOTER_SELF_LINKS] + chrome.FOOTER_COMMON_LINKS
+)
+
+# ナビのリンク先（本番の静的文字列を模す）。ブログは現在地が相対 URL、
+# 持ち物は絶対 URL という本番の書き分けも再現する。
+NAV_HREFS_BLOG = [
+    "https://freddiefujiwara.com/#about", "https://freddiefujiwara.com/#activity",
+    "https://freddiefujiwara.com/#contact", "/blog/",
+    "https://freddiefujiwara.com/list-of-stuff/",
+]
+NAV_HREFS_LIST = [
+    "https://freddiefujiwara.com/#about", "https://freddiefujiwara.com/#activity",
+    "https://freddiefujiwara.com/#contact",
+    "https://freddiefujiwara.com/blog/", "https://freddiefujiwara.com/list-of-stuff/",
+]
+NAV_HREFS_TOP = ["#about", "#activity", "#contact", "/blog/"]
+
+
+def nav_markup(hrefs, nav_class="site-nav"):
+    items = "".join(f'<li><a href="{h}">リンク</a></li>' for h in hrefs)
+    return (f'<nav class="{nav_class}">'
+            '<a class="brand" href="https://freddiefujiwara.com/">ブランド</a>'
+            f"<ul>{items}</ul></nav>")
+
+
+# フッターのブロック（本番の <footer> 内 .foot-links を模す）
+FOOTER_BLOCK = (
+    '<footer class="site-footer"><div class="foot-links">'
+    + "".join(f'<a href="{u}">リンク</a>' for u in chrome.FOOTER_LINKS)
+    + "</div></footer>"
+)
 
 HTML_TMPL = """<!doctype html><html><head>
 <meta property="og:image" content="https://freddiefujiwara.com/ogp-koinobori-overlay.jpg" />
@@ -83,16 +114,19 @@ def make_css(nav_class="site-nav", nav_height="56px", position="sticky",
     return "".join(parts)
 
 
-def make_site(**kwargs):
-    return {"html": HTML_TMPL, "css": make_css(**kwargs), "js": FOOTER_URLS}
+def make_site(nav_hrefs=None, **kwargs):
+    site = {"html": HTML_TMPL, "css": make_css(**kwargs), "js": FOOTER_BLOCK}
+    hrefs = NAV_HREFS_BLOG if nav_hrefs is None else nav_hrefs
+    site["js"] += nav_markup(hrefs, nav_class=kwargs.get("nav_class", "site-nav"))
+    return site
 
 
 def aligned_data():
     """3サイトが（比較可能な範囲で）完全にそろったフィクスチャ。"""
     return {
-        "トップ": make_site(nav_class="nav"),
-        "ブログ": make_site(blog_names=True),
-        "持ち物": make_site(scoped=True),
+        "トップ": make_site(nav_class="nav", nav_hrefs=NAV_HREFS_TOP),
+        "ブログ": make_site(blog_names=True, nav_hrefs=NAV_HREFS_BLOG),
+        "持ち物": make_site(scoped=True, nav_hrefs=NAV_HREFS_LIST),
     }
 
 
@@ -280,12 +314,124 @@ class TestBoxSizing(unittest.TestCase):
         self.assertIsNone(chrome.star_decl("", "box-sizing"))
 
 
+class TestFooterSelfLinks(unittest.TestCase):
+    """フッターの自己リンク（3件）は href の完全一致で数える。"""
+
+    def test_self_link_counted_from_href(self):
+        text = '<a href="https://freddiefujiwara.com/">トップ</a>'
+        self.assertEqual(chrome.footer_links(text), {"https://freddiefujiwara.com/"})
+
+    def test_longer_url_does_not_count_as_top_link(self):
+        # トップの URL はブログ／持ち物の URL の接頭辞になるため、
+        # ブログへの href だけではトップ分を数えない
+        text = '<a href="https://freddiefujiwara.com/blog/">ブログ</a>'
+        found = chrome.footer_links(text)
+        self.assertEqual(found, {"https://freddiefujiwara.com/blog/"})
+        self.assertNotIn("https://freddiefujiwara.com/", found)
+
+    def test_self_link_in_escaped_js_string(self):
+        text = r'<a href=\"https://freddiefujiwara.com/list-of-stuff/\">持ち物</a>'
+        self.assertEqual(chrome.footer_links(text),
+                         {"https://freddiefujiwara.com/list-of-stuff/"})
+
+    def test_non_href_occurrence_is_not_counted(self):
+        # og:url などの href 以外の出現では数えない
+        text = '<meta property="og:url" content="https://freddiefujiwara.com/blog/" />'
+        self.assertEqual(chrome.footer_links(text), set())
+
+    def test_footer_row_agrees_when_all_eleven(self):
+        rows = chrome.build_rows(aligned_data())
+        row = rows_by_label(rows)["フッター共通リンク（11件）"]
+        self.assertEqual(chrome.judge_row(row), "一致")
+        for site in ("トップ", "ブログ", "持ち物"):
+            self.assertEqual(row[1][site], "11/11 件")
+
+    def test_footer_row_detects_missing_self_link(self):
+        data = aligned_data()
+        # ブログのテキスト全体から持ち物への href を除き、自己リンク欠落を模す
+        # （footer_links は html+js 全体から探すため、ナビ分も含めて除く）
+        data["ブログ"]["js"] = data["ブログ"]["js"].replace(
+            'href="https://freddiefujiwara.com/list-of-stuff/"', "")
+        rows = chrome.build_rows(data)
+        row = rows_by_label(rows)["フッター共通リンク（11件）"]
+        self.assertEqual(chrome.judge_row(row), "差異あり")
+        self.assertEqual(row[1]["ブログ"], "10/11 件（不足: 持ち物）")
+
+    def test_footer_row_scoped_to_footer_block(self):
+        # ナビのブランド等、フッター外の href はフッター分として数えない
+        data = aligned_data()
+        block = FOOTER_BLOCK.replace(
+            '<a href="https://freddiefujiwara.com/">リンク</a>', "")
+        data["ブログ"]["js"] = block + nav_markup(NAV_HREFS_BLOG)
+        rows = chrome.build_rows(data)
+        row = rows_by_label(rows)["フッター共通リンク（11件）"]
+        self.assertEqual(chrome.judge_row(row), "差異あり")
+        self.assertEqual(row[1]["ブログ"], "10/11 件（不足: トップ）")
+
+    def test_footer_block_from_spa_static_string(self):
+        # SPA では <footer> は描画関数側にあり、静的文字列には
+        # 内側の .foot-links だけが残る。その形からも取り出せること
+        text = ('ae("footer",Da,[Br(\'<div class="foot-links">'
+                '<a href="https://freddiefujiwara.com/">トップ</a></div>\')])')
+        block = chrome.footer_block(text)
+        self.assertEqual(chrome.footer_links(block), {"https://freddiefujiwara.com/"})
+        self.assertEqual(chrome.footer_block("<p>フッターなし</p>"), "")
+
+
+class TestNavLinkSet(unittest.TestCase):
+    """ナビのリンク集合（ブログ／持ち物 5件）の抽出と比較。"""
+
+    def test_nav_row_agrees_when_both_five(self):
+        rows = chrome.build_rows(aligned_data())
+        row = rows_by_label(rows)["ナビのリンク集合（5件）"]
+        self.assertEqual(chrome.judge_row(row), "一致")
+        self.assertEqual(row[1]["ブログ"], "5/5 件")
+        self.assertEqual(row[1]["持ち物"], "5/5 件")
+        # トップは固有デザイン（ページ内アンカー＋ブログの4件）で表示のみ
+        self.assertEqual(row[1]["トップ"], "4/5 件（不足: 持ち物）")
+
+    def test_missing_mochimono_link_is_detected(self):
+        # 統合前のブログの状態: ナビに持ち物リンクがない
+        data = aligned_data()
+        data["ブログ"] = make_site(blog_names=True, nav_hrefs=NAV_HREFS_BLOG[:4])
+        rows = chrome.build_rows(data)
+        row = rows_by_label(rows)["ナビのリンク集合（5件）"]
+        self.assertEqual(chrome.judge_row(row), "差異あり")
+        self.assertEqual(row[1]["ブログ"], "4/5 件（不足: 持ち物）")
+        self.assertEqual(row[1]["持ち物"], "5/5 件")
+
+    def test_extraction_from_escaped_js_string(self):
+        # SPA の JS バンドルでは静的文字列の引用符がエスケープされる
+        markup = nav_markup(NAV_HREFS_LIST).replace('"', '\\"')
+        keys = chrome.nav_link_keys(markup, "https://freddiefujiwara.com/list-of-stuff/")
+        self.assertEqual(keys, set(chrome.NAV_CANON_KEYS))
+
+    def test_relative_and_anchor_hrefs_are_normalized(self):
+        keys = chrome.nav_link_keys(
+            nav_markup(NAV_HREFS_BLOG), "https://freddiefujiwara.com/blog/")
+        self.assertEqual(keys, set(chrome.NAV_CANON_KEYS))
+        top_keys = chrome.nav_link_keys(
+            nav_markup(NAV_HREFS_TOP, nav_class="nav"), "https://freddiefujiwara.com/")
+        self.assertEqual(top_keys, {"/#about", "/#activity", "/#contact", "/blog/"})
+
+    def test_brand_link_is_not_counted(self):
+        keys = chrome.nav_link_keys(
+            nav_markup(NAV_HREFS_LIST), "https://freddiefujiwara.com/list-of-stuff/")
+        self.assertNotIn("/", keys)  # ブランド（<ul> の外）は数えない
+
+    def test_no_nav_returns_empty(self):
+        self.assertEqual(chrome.nav_link_keys("", "https://freddiefujiwara.com/blog/"), set())
+        self.assertEqual(
+            chrome.nav_link_keys("<p>ナビなし</p>", "https://freddiefujiwara.com/blog/"), set())
+
+
 class TestFixtureHelpers(unittest.TestCase):
     """要件5: 文字列フィクスチャだけで動き、ネットワークを使わないことの確認。"""
 
     def test_footer_links_from_text(self):
         found = chrome.footer_links(FOOTER_URLS)
-        self.assertEqual(len(found), 8)
+        self.assertEqual(len(found), 11)
+        self.assertEqual(found, set(chrome.FOOTER_LINKS))
         self.assertEqual(chrome.footer_links("no links here"), set())
 
     def test_favicon_and_og_from_html(self):
