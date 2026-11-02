@@ -27,18 +27,21 @@ FOOTER_URLS = " ".join(
 )
 
 # ナビのリンク先（本番の静的文字列を模す）。ブログは現在地が相対 URL、
-# 持ち物は絶対 URL という本番の書き分けも再現する。
+# 持ち物は絶対 URL という本番の書き分けも再現する。「トップ」はトップページでは
+# #top アンカー、他サイトではルート URL になる。
 NAV_HREFS_BLOG = [
+    "https://freddiefujiwara.com/",
     "https://freddiefujiwara.com/#about", "https://freddiefujiwara.com/#activity",
     "https://freddiefujiwara.com/#contact", "/blog/",
     "https://freddiefujiwara.com/list-of-stuff/",
 ]
 NAV_HREFS_LIST = [
+    "https://freddiefujiwara.com/",
     "https://freddiefujiwara.com/#about", "https://freddiefujiwara.com/#activity",
     "https://freddiefujiwara.com/#contact",
     "https://freddiefujiwara.com/blog/", "https://freddiefujiwara.com/list-of-stuff/",
 ]
-NAV_HREFS_TOP = ["#about", "#activity", "#contact", "/blog/"]
+NAV_HREFS_TOP = ["#top", "#about", "#activity", "#contact", "/blog/", "/list-of-stuff/"]
 
 
 def nav_markup(hrefs, nav_class="site-nav"):
@@ -86,7 +89,9 @@ def _token_block(tokens, rename=None):
 def make_css(nav_class="site-nav", nav_height="56px", position="sticky",
              gap="10px 22px", copy_size="0.85rem", scrollbar=True,
              text_size_adjust=True, hero=True, blog_names=False,
-             scoped=False, box_sizing=True):
+             scoped=False, box_sizing=True, mobile=True,
+             mobile_gap="6px", mobile_font_size="12px",
+             mobile_letter_spacing="0.02em"):
     rename = BLOG_ALIASES if blog_names else {}
     attr = "[data-v-1234abcd]" if scoped else ""
     parts = []
@@ -104,6 +109,10 @@ def make_css(nav_class="site-nav", nav_height="56px", position="sticky",
     parts.append(f".{nav_class}{attr}{{height:{nav_height};position:{position};"
                  "background:color-mix(in srgb,var(--bg) 86%,transparent)}")
     parts.append(f".{nav_class} .brand{{font-size:15px}}")
+    if mobile:
+        parts.append(f"@media (max-width:560px){{.{nav_class} ul{attr}{{gap:{mobile_gap}}}"
+                     f".{nav_class} ul a{attr}{{font-size:{mobile_font_size};"
+                     f"letter-spacing:{mobile_letter_spacing}}}}}")
     if hero:
         parts.append(".hero" + attr + "{min-height:300px;"
                      "background:#241a12 url(https://freddiefujiwara.com/assets/hero-koinobori.jpg)"
@@ -122,9 +131,12 @@ def make_site(nav_hrefs=None, **kwargs):
 
 
 def aligned_data():
-    """3サイトが（比較可能な範囲で）完全にそろったフィクスチャ。"""
+    """3サイトが（比較可能な範囲で）完全にそろったフィクスチャ。
+
+    トップも PR #34 で .site-nav に作り替えられたため、クラス名も共通。
+    """
     return {
-        "トップ": make_site(nav_class="nav", nav_hrefs=NAV_HREFS_TOP),
+        "トップ": make_site(nav_hrefs=NAV_HREFS_TOP),
         "ブログ": make_site(blog_names=True, nav_hrefs=NAV_HREFS_BLOG),
         "持ち物": make_site(scoped=True, nav_hrefs=NAV_HREFS_LIST),
     }
@@ -379,26 +391,34 @@ class TestFooterSelfLinks(unittest.TestCase):
 
 
 class TestNavLinkSet(unittest.TestCase):
-    """ナビのリンク集合（ブログ／持ち物 5件）の抽出と比較。"""
+    """ナビのリンク集合（全サイト 6件）の抽出と比較。"""
 
-    def test_nav_row_agrees_when_both_five(self):
+    def test_nav_row_agrees_when_all_six(self):
         rows = chrome.build_rows(aligned_data())
-        row = rows_by_label(rows)["ナビのリンク集合（5件）"]
+        row = rows_by_label(rows)["ナビのリンク集合（6件）"]
         self.assertEqual(chrome.judge_row(row), "一致")
-        self.assertEqual(row[1]["ブログ"], "5/5 件")
-        self.assertEqual(row[1]["持ち物"], "5/5 件")
-        # トップは固有デザイン（ページ内アンカー＋ブログの4件）で表示のみ
-        self.assertEqual(row[1]["トップ"], "4/5 件（不足: 持ち物）")
+        for site in ("トップ", "ブログ", "持ち物"):
+            self.assertEqual(row[1][site], "6/6 件")
 
     def test_missing_mochimono_link_is_detected(self):
-        # 統合前のブログの状態: ナビに持ち物リンクがない
+        # 拡張前のブログの状態: ナビに持ち物リンクがない
         data = aligned_data()
-        data["ブログ"] = make_site(blog_names=True, nav_hrefs=NAV_HREFS_BLOG[:4])
+        hrefs = [h for h in NAV_HREFS_BLOG if "list-of-stuff" not in h]
+        data["ブログ"] = make_site(blog_names=True, nav_hrefs=hrefs)
         rows = chrome.build_rows(data)
-        row = rows_by_label(rows)["ナビのリンク集合（5件）"]
+        row = rows_by_label(rows)["ナビのリンク集合（6件）"]
         self.assertEqual(chrome.judge_row(row), "差異あり")
-        self.assertEqual(row[1]["ブログ"], "4/5 件（不足: 持ち物）")
-        self.assertEqual(row[1]["持ち物"], "5/5 件")
+        self.assertEqual(row[1]["ブログ"], "5/6 件（不足: 持ち物）")
+        self.assertEqual(row[1]["持ち物"], "6/6 件")
+
+    def test_missing_top_link_is_detected(self):
+        # 拡張前の持ち物の状態: ナビに「トップ」リンクがない
+        data = aligned_data()
+        data["持ち物"] = make_site(scoped=True, nav_hrefs=NAV_HREFS_LIST[1:])
+        rows = chrome.build_rows(data)
+        row = rows_by_label(rows)["ナビのリンク集合（6件）"]
+        self.assertEqual(chrome.judge_row(row), "差異あり")
+        self.assertEqual(row[1]["持ち物"], "5/6 件（不足: トップ）")
 
     def test_extraction_from_escaped_js_string(self):
         # SPA の JS バンドルでは静的文字列の引用符がエスケープされる
@@ -412,17 +432,74 @@ class TestNavLinkSet(unittest.TestCase):
         self.assertEqual(keys, set(chrome.NAV_CANON_KEYS))
         top_keys = chrome.nav_link_keys(
             nav_markup(NAV_HREFS_TOP, nav_class="nav"), "https://freddiefujiwara.com/")
-        self.assertEqual(top_keys, {"/#about", "/#activity", "/#contact", "/blog/"})
+        self.assertEqual(top_keys, set(chrome.NAV_CANON_KEYS))
+
+    def test_top_anchor_and_root_url_are_the_same_key(self):
+        # 「トップ」はトップページでは #top、他サイトではルート URL で、同じキー "/"
+        top_keys = chrome.nav_link_keys(
+            nav_markup(NAV_HREFS_TOP), "https://freddiefujiwara.com/")
+        blog_keys = chrome.nav_link_keys(
+            nav_markup(NAV_HREFS_BLOG), "https://freddiefujiwara.com/blog/")
+        self.assertIn("/", top_keys)
+        self.assertIn("/", blog_keys)
+        self.assertNotIn("/#top", top_keys)
 
     def test_brand_link_is_not_counted(self):
+        # ブランドは <ul> の外にあるため、「トップ」リンクとして数えない
         keys = chrome.nav_link_keys(
-            nav_markup(NAV_HREFS_LIST), "https://freddiefujiwara.com/list-of-stuff/")
-        self.assertNotIn("/", keys)  # ブランド（<ul> の外）は数えない
+            nav_markup(NAV_HREFS_LIST[1:]), "https://freddiefujiwara.com/list-of-stuff/")
+        self.assertNotIn("/", keys)
 
     def test_no_nav_returns_empty(self):
         self.assertEqual(chrome.nav_link_keys("", "https://freddiefujiwara.com/blog/"), set())
         self.assertEqual(
             chrome.nav_link_keys("<p>ナビなし</p>", "https://freddiefujiwara.com/blog/"), set())
+
+
+class TestNavMobileValues(unittest.TestCase):
+    """モバイル（max-width: 560px）時の .site-nav リンク値の抽出と比較。"""
+
+    def test_rows_agree_on_canon_values(self):
+        rows = chrome.build_rows(aligned_data())
+        by_label = rows_by_label(rows)
+        font_size = by_label["ナビ モバイル リンク font-size"]
+        spacing = by_label["ナビ モバイル リンク letter-spacing"]
+        gap = by_label["ナビ モバイル ul gap"]
+        for row in (font_size, spacing, gap):
+            self.assertEqual(chrome.judge_row(row), "一致", row[0])
+        for site in ("トップ", "ブログ", "持ち物"):
+            self.assertEqual(font_size[1][site], "12px")
+            self.assertEqual(spacing[1][site], ".02em")  # 先行ゼロは正規化される
+            self.assertEqual(gap[1][site], "6px")
+
+    def test_old_mobile_values_are_detected(self):
+        # 6件拡張前の値（13px / 0.05em / 8px）のままのサイトを検出する
+        data = aligned_data()
+        data["ブログ"] = make_site(blog_names=True, mobile_font_size="13px",
+                                   mobile_letter_spacing="0.05em", mobile_gap="8px")
+        rows = chrome.build_rows(data)
+        by_label = rows_by_label(rows)
+        for label in ("ナビ モバイル リンク font-size",
+                      "ナビ モバイル リンク letter-spacing", "ナビ モバイル ul gap"):
+            self.assertEqual(chrome.judge_row(by_label[label]), "差異あり", label)
+        self.assertEqual(chrome.count_diffs(rows), 3)  # 違うのはこの3項目だけ
+
+    def test_missing_media_block_is_unconfirmed(self):
+        data = aligned_data()
+        data["持ち物"] = make_site(scoped=True, mobile=False)
+        rows = chrome.build_rows(data)
+        row = rows_by_label(rows)["ナビ モバイル リンク font-size"]
+        self.assertEqual(chrome.judge_row(row), "要確認")
+        self.assertIsNone(row[1]["持ち物"])
+
+    def test_media_block_extraction(self):
+        spaced = "a{b:c}@media (max-width: 560px) { .x { gap: 6px; } }d{e:f}"
+        self.assertIn("gap: 6px", chrome.media_block(spaced))
+        minified = "@media(max-width:560px){.x{gap:6px}}"
+        self.assertEqual(chrome.media_block(minified), ".x{gap:6px}")
+        self.assertIsNone(chrome.media_block("body{margin:0}"))
+        # 別のブレークポイントは拾わない
+        self.assertIsNone(chrome.media_block("@media(max-width:900px){.x{gap:9px}}"))
 
 
 class TestFixtureHelpers(unittest.TestCase):
