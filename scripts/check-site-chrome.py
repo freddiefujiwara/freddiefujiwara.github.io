@@ -248,8 +248,8 @@ def _footer_value(block):
 
 SITE_ORIGIN = "https://freddiefujiwara.com"
 
-# ブログ／持ち物のナビにそろえるリンク先（オリジンを除いたパス＋フラグメント）
-NAV_CANON_KEYS = ["/#about", "/#activity", "/#contact", "/blog/", "/list-of-stuff/"]
+# 全サイトのナビにそろえるリンク先（オリジンを除いたパス＋フラグメント）
+NAV_CANON_KEYS = ["/", "/#about", "/#activity", "/#contact", "/blog/", "/list-of-stuff/"]
 
 
 def nav_link_keys(text, base_url):
@@ -260,6 +260,8 @@ def nav_link_keys(text, base_url):
     リンクキーはオリジンを除いたパス＋フラグメント（例: /#about、/blog/）。
     ページ内アンカー（#about）はトップページのアンカーとして扱い、
     ブランドリンクは <ul> の外にあるため数に入らない。
+    「トップ」リンクは、トップページでは #top アンカー、他サイトでは
+    ルート URL（https://freddiefujiwara.com/）になるため、どちらも "/" にそろえる。
     """
     plain = _unescape(text)
     nav = re.search(r"<nav\b.*?</nav>", plain, re.S)
@@ -271,17 +273,20 @@ def nav_link_keys(text, base_url):
     keys = set()
     for href in re.findall(r'href="([^"]+)"', ul.group(0)):
         if href.startswith("#"):
-            keys.add("/" + href)
+            key = "/" + href
         else:
             absolute = urljoin(base_url, href)
-            keys.add(absolute[len(SITE_ORIGIN):]
-                     if absolute.startswith(SITE_ORIGIN) else absolute)
+            key = (absolute[len(SITE_ORIGIN):]
+                   if absolute.startswith(SITE_ORIGIN) else absolute)
+        if key in ("", "/#top"):
+            key = "/"
+        keys.add(key)
     return keys
 
 
 NAV_KEY_LABELS = {
-    "/#about": "プロフィール", "/#activity": "活動・発信", "/#contact": "情報交換",
-    "/blog/": "ブログ", "/list-of-stuff/": "持ち物",
+    "/": "トップ", "/#about": "プロフィール", "/#activity": "活動・発信",
+    "/#contact": "情報交換", "/blog/": "ブログ", "/list-of-stuff/": "持ち物",
 }
 
 
@@ -290,8 +295,44 @@ def _nav_value(text, base_url):
     keys = nav_link_keys(text, base_url) & set(NAV_CANON_KEYS)
     missing = [NAV_KEY_LABELS[k] for k in NAV_CANON_KEYS if k not in keys]
     if not missing:
-        return "5/5 件"
-    return f"{len(keys)}/5 件（不足: {'、'.join(missing)}）"
+        return "6/6 件"
+    return f"{len(keys)}/6 件（不足: {'、'.join(missing)}）"
+
+
+def media_block(css, max_width="560px"):
+    """@media (max-width: <max_width>) ブロックの内側を返す。なければ None。
+
+    圧縮CSS（@media(max-width:560px){...}）でも空白ありでもよい。
+    ネストした波括弧は数えて対応する閉じ括弧までを切り出す。
+    """
+    m = re.search(r"@media[^{]*max-width\s*:\s*" + re.escape(max_width) + r"[^{]*\{", css)
+    if not m:
+        return None
+    depth = 0
+    for i in range(m.end() - 1, len(css)):
+        if css[i] == "{":
+            depth += 1
+        elif css[i] == "}":
+            depth -= 1
+            if depth == 0:
+                return css[m.end():i]
+    return None
+
+
+def _mobile_decl(d, prop, link=True):
+    """モバイル（max-width: 560px）時の .site-nav の値を取り出す。
+
+    link=True でリンク（ul a）、False で ul 自体の宣言を対象にする。
+    メディアクエリ自体がなければ None。
+    """
+    block = media_block(d["css"])
+    if block is None:
+        return None
+    if link:
+        rule = rule_block(block, [".site-nav ul a", ".nav ul a"])
+    else:
+        rule = rule_block(block, [".site-nav ul", ".nav ul"])
+    return decl(rule, prop)
 
 
 def og_image(html):
@@ -346,10 +387,15 @@ def build_rows(data):
         per_site(lambda d, s: decl(rule_block(d["css"], nav_sels), "background")))
     add("ナビ brand font-size",
         per_site(lambda d, s: decl(rule_block(d["css"], [".site-nav .brand", ".nav .brand"]), "font-size")))
-    add("ナビのリンク集合（5件）",
+    add("ナビのリンク集合（6件）",
         per_site(lambda d, s: _nav_value(d['html'] + d['js'], SITES[s])),
-        compare=("ブログ", "持ち物"),
-        note="ブログ／持ち物は5件（プロフィール / 活動・発信 / 情報交換 / ブログ / 持ち物）で統一。トップは固有デザインのため対象外")
+        note="全サイト6件（トップ / プロフィール / 活動・発信 / 情報交換 / ブログ / 持ち物）で統一。「トップ」はトップページでは #top アンカー、他サイトではルート URL")
+    add("ナビ モバイル リンク font-size",
+        per_site(lambda d, s: _mobile_decl(d, "font-size")))
+    add("ナビ モバイル リンク letter-spacing",
+        per_site(lambda d, s: _mobile_decl(d, "letter-spacing")))
+    add("ナビ モバイル ul gap",
+        per_site(lambda d, s: _mobile_decl(d, "gap", link=False)))
 
     # --- 全体規則 ---
     add("全要素 box-sizing",
