@@ -9,7 +9,7 @@ freddiefujiwara.com の3サイト（トップ / ブログ / 持ち物）は別�
 - 持ち物: freddiefujiwara/list-of-stuff（`src/App.vue` のスコープ付き CSS）
 
 値はいずれも 2026-11-02 に各サイトのソースと本番 CSS から実測したものです。
-「既知の未統一」は同日にブログ PR #31・トップ PR #25・持ち物 PR #35 のマージ後、
+「既知の未統一」は同日にブログ PR #31・トップ PR #25・持ち物 PR #35・トップ PR #27 のマージ後、
 本番でチェックスクリプトを再実行した結果に基づき最新化しています。
 ずれの検出は `scripts/check-site-chrome.py` で機械的に行えます。
 
@@ -73,7 +73,7 @@ python3 -m unittest discover -s scripts/tests -v   # チェックスクリプト
 
 | 対象 | 正本 | トップ | ブログ | 持ち物 |
 |---|---|---|---|---|
-| html の scrollbar-gutter | `stable` | **なし（未統一・判断待ち）** | stable | stable（PR #35 で復旧） |
+| html の scrollbar-gutter | `stable` | stable（PR #27 で追加） | stable | stable（PR #35 で復旧） |
 | body の margin | 0 | ○ | ○ | ○ |
 | body のフォント | "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", sans-serif | ○（body に font-size: 16px も明示） | ○（:root に宣言） | ○（body に宣言） |
 | body の line-height | 1.85 | ○ | ○（:root に宣言） | ○ |
@@ -299,29 +299,28 @@ a.hero-inner { /* ヒーローをリンクにする場合の共通指定 */
 
 ## 既知の未統一（揃えるべきなのに現状ずれているもの）
 
-2026-11-02 にブログ PR #31・トップ PR #25・持ち物 PR #35 のマージ後、本番で
+2026-11-02 にブログ PR #31・トップ PR #25・持ち物 PR #35・トップ PR #27 のマージ後、本番で
 `scripts/check-site-chrome.py` を再実行して確認した結果です。
-本番チェックで差異と表示されるのは、下記1のトップの scrollbar-gutter と、
-固有差分であるナビ position（トップ fixed / 他 sticky）の2件のみになりました
-（下記2のナビのリンク集合はチェック対象外のため表示には出ません）。
+本番チェックで差異と表示されるのは、固有差分であるナビ position
+（トップ fixed / 他 sticky）の1件のみになりました
+（下記のナビのリンク集合はチェック対象外のため表示には出ません）。
 （同日に検出された .copy の font-size「0.85rem と .85rem」の差異表示は表記ゆれの誤検出で、
 チェックスクリプト側の正規化で解消済みです。）
 
 ### 残っている項目
 
-1. **トップの scrollbar-gutter が未導入**
-   ブログ: `stable` ／ 持ち物: `stable` ／ トップ: **なし**
-   正本（§2）では `stable` が基準だが、トップへの導入は本人の判断待ちとして残します。
-2. **ナビに「持ち物」リンクがあるのが持ち物だけ**（旧 #6）
+1. **ナビに「持ち物」リンクがあるのが持ち物だけ**（旧 #6）
    トップとブログのナビは4件で、持ち物への導線がない（持ち物は5件）。
    サイト統合の検討事項として記録する（2026-11-02 時点では未決定）。
 
 ### 解消済み（2026-11-02、本番チェック再実行で確認）
 
+- **トップの scrollbar-gutter が未導入**（旧残項目1）
+  トップ PR #27 で `html { scrollbar-gutter: stable; }` を追加し、マージ後の本番再チェックで
+  3サイトとも `stable` で一致することを確認しました（2026-11-02 解消）。
 - **持ち物の scrollbar-gutter 脱落（回帰）**（旧 #1 の持ち物分）
   PR #32（コミット c57fc0a）で入れた `html { scrollbar-gutter: stable; }` が PR #33 のマージ（2b7d5bf）で
   脱落していたものを、持ち物 PR #35 で再適用し、本番 CSS で復旧を確認しました。
-  トップへの新規導入は上記の残項目として継続します。
 - **-webkit-text-size-adjust**（旧 #2）
   ブログ PR #31・トップ PR #25 で body に追加し、3サイトとも `100%` で一致。
 - **フッター寸法のトップ差異**（旧 #3）
