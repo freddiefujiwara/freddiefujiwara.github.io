@@ -55,10 +55,12 @@ def _token_block(tokens, rename=None):
 def make_css(nav_class="site-nav", nav_height="56px", position="sticky",
              gap="10px 22px", copy_size="0.85rem", scrollbar=True,
              text_size_adjust=True, hero=True, blog_names=False,
-             scoped=False):
+             scoped=False, box_sizing=True):
     rename = BLOG_ALIASES if blog_names else {}
     attr = "[data-v-1234abcd]" if scoped else ""
     parts = []
+    if box_sizing:
+        parts.append(f"*{attr}{{box-sizing:border-box}}")
     if scrollbar:
         parts.append("html{scrollbar-gutter:stable}")
     parts.append(":root{" + _token_block(LIGHT_TOKENS, rename) + "color-scheme:light dark}")
@@ -224,6 +226,58 @@ class TestNormalization(unittest.TestCase):
         css = ".body[data-v-1111]{padding:0}body{line-height:1.85}"
         block = chrome.rule_block(css, ["body"])
         self.assertEqual(chrome.decl(block, "line-height"), "1.85")
+
+
+class TestBoxSizing(unittest.TestCase):
+    """全要素（*）の box-sizing の抽出・比較。"""
+
+    def test_row_agrees_when_all_present(self):
+        rows = chrome.build_rows(aligned_data())
+        row = rows_by_label(rows)["全要素 box-sizing"]
+        self.assertEqual(chrome.judge_row(row), "一致")
+        for site in ("トップ", "ブログ", "持ち物"):
+            self.assertEqual(row[1][site], "border-box")
+
+    def test_missing_box_sizing_is_detected(self):
+        # 回帰（2026-11-02 発見）: 持ち物だけ * ルールがなく content-box だった
+        data = aligned_data()
+        data["持ち物"] = make_site(scoped=True, box_sizing=False)
+        rows = chrome.build_rows(data)
+        row = rows_by_label(rows)["全要素 box-sizing"]
+        self.assertEqual(chrome.judge_row(row), "差異あり")
+        self.assertEqual(row[1]["持ち物"], "なし")
+        self.assertEqual(row[1]["ブログ"], "border-box")
+        self.assertEqual(chrome.count_diffs(rows), 1)  # 違うのはこの1項目だけ
+
+    def test_different_value_is_detected(self):
+        css = "*{box-sizing:content-box}"
+        self.assertEqual(chrome.star_decl(css, "box-sizing"), "content-box")
+        data = aligned_data()
+        data["ブログ"] = make_site(blog_names=True)
+        data["ブログ"]["css"] = data["ブログ"]["css"].replace(
+            "*{box-sizing:border-box}", "*{box-sizing:content-box}")
+        rows = chrome.build_rows(data)
+        row = rows_by_label(rows)["全要素 box-sizing"]
+        self.assertEqual(chrome.judge_row(row), "差異あり")
+        self.assertEqual(row[1]["ブログ"], "content-box")
+
+    def test_scoped_star_selector_is_extracted(self):
+        # Vue のスコープ付きスタイルでは *[data-v-xxxx] になる
+        css = "*[data-v-1234abcd]{box-sizing:border-box}"
+        self.assertEqual(chrome.star_decl(css, "box-sizing"), "border-box")
+
+    def test_star_in_selector_list_is_extracted(self):
+        css = "*,::before,::after{box-sizing:border-box}"
+        self.assertEqual(chrome.star_decl(css, "box-sizing"), "border-box")
+
+    def test_descendant_universal_is_not_the_star_rule(self):
+        # .hero * のような子孫セレクタは全要素セレクタとして拾わない
+        css = ".hero *{box-sizing:content-box}"
+        self.assertIsNone(chrome.star_decl(css, "box-sizing"))
+
+    def test_no_star_rule_returns_none(self):
+        self.assertIsNone(chrome.star_decl("body{margin:0}", "box-sizing"))
+        self.assertIsNone(chrome.star_decl("", "box-sizing"))
 
 
 class TestFixtureHelpers(unittest.TestCase):

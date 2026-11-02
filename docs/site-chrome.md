@@ -73,6 +73,7 @@ python3 -m unittest discover -s scripts/tests -v   # チェックスクリプト
 
 | 対象 | 正本 | トップ | ブログ | 持ち物 |
 |---|---|---|---|---|
+| 全要素（*）の box-sizing | `border-box` | border-box | border-box | **なし（未統一・修正PR対応中）** |
 | html の scrollbar-gutter | `stable` | stable（PR #27 で追加） | stable | stable（PR #35 で復旧） |
 | body の margin | 0 | ○ | ○ | ○ |
 | body のフォント | "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", sans-serif | ○（body に font-size: 16px も明示） | ○（:root に宣言） | ○（body に宣言） |
@@ -315,6 +316,13 @@ a.hero-inner { /* ヒーローをリンクにする場合の共通指定 */
 
 ### 解消済み（2026-11-02、本番チェック再実行で確認）
 
+- **全要素の box-sizing が持ち物のみ未指定**（2026-11-02 発見）
+  ブログとトップには `* { box-sizing: border-box; }` があるのに、持ち物には box-sizing の
+  指定が一切なく、3サイトで持ち物だけ content-box のままでした。これが持ち物のヒーロー見出しの
+  横位置ずれの原因とみられます。持ち物側で `* { box-sizing: border-box; }` を追加する修正PRが
+  進行中で、その反映が終わるまで本番チェックではこの項目が「差異あり」と表示されます。
+  正本（§2）とチェックスクリプトの比較項目にも box-sizing を追加したので、
+  今後はこの手の脱落を機械的に検出できます。
 - **トップの scrollbar-gutter が未導入**（旧残項目1）
   トップ PR #27 で `html { scrollbar-gutter: stable; }` を追加し、マージ後の本番再チェックで
   3サイトとも `stable` で一致することを確認しました（2026-11-02 解消）。
@@ -336,7 +344,7 @@ a.hero-inner { /* ヒーローをリンクにする場合の共通指定 */
 ## チェック結果の読み方
 
 `scripts/check-site-chrome.py` は本番3サイトの HTML / CSS / JS を取得し、
-ナビの高さ・背景、scrollbar-gutter、text-size-adjust、ヒーロー帯（ブログ／持ち物）、
+ナビの高さ・背景、box-sizing、scrollbar-gutter、text-size-adjust、ヒーロー帯（ブログ／持ち物）、
 フッターのリンク集合と寸法、デザイントークン（変数名の対応づけ込み）、og:image、favicon の集合を比べて表示します。
 
 - 「一致」: 正本どおり。
