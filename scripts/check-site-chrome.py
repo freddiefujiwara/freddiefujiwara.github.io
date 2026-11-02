@@ -1,0 +1,321 @@
+#!/usr/bin/env python3
+"""freddiefujiwara.com 3サイトの共通部（サイトクローム）のずれチェック。
+
+本番の3サイト（トップ / ブログ / 持ち物）の HTML・CSS・JS を取得し、
+docs/site-chrome.md（正本）で定めた主要セレクタの値を抜き出して、
+サイト間の差異を一覧表示します。
+
+使い方:
+    python3 scripts/check-site-chrome.py
+
+終了コード: 比較可能な項目に差異があれば 1、なければ 0。
+標準ライブラリのみで動作します（Python 3.8+）。
+
+テスト（ネットワーク不要）:
+    python3 -m unittest discover -s scripts/tests -v
+
+構造: 取得（fetch / site_assets）だけがネットワークに触り、
+解析・比較（build_rows 以下）はすべて純粋な処理として分離しています。
+"""
+
+import re
+import sys
+import urllib.request
+from urllib.parse import urljoin
+
+SITES = {
+    "トップ": "https://freddiefujiwara.com/",
+    "ブログ": "https://freddiefujiwara.com/blog/",
+    "持ち物": "https://freddiefujiwara.com/list-of-stuff/",
+}
+
+UA = {"User-Agent": "check-site-chrome/1.0 (+https://freddiefujiwara.com/)"}
+
+# ---------------------------------------------------------------------------
+# 取得レイヤー（ネットワーク）
+# ---------------------------------------------------------------------------
+
+
+def fetch(url):
+    req = urllib.request.Request(url, headers=UA)
+    with urllib.request.urlopen(req, timeout=30) as res:
+        return res.read().decode("utf-8", errors="replace")
+
+
+def site_assets(base_url):
+    """ページの HTML と、同一オリジンの CSS / JS をまとめて返す。"""
+    html = fetch(base_url)
+    css_parts = re.findall(r"<style[^>]*>(.*?)</style>", html, re.S)
+    js_parts = []
+    asset_urls = re.findall(r'(?:href|src)="([^"]+\.(?:css|js))"', html)
+    for rel in asset_urls:
+        if "fonts.g" in rel:  # Google Fonts は対象外
+            continue
+        url = urljoin(base_url, rel)
+        try:
+            body = fetch(url)
+        except Exception:
+            continue
+        if rel.endswith(".css"):
+            css_parts.append(body)
+        else:
+            js_parts.append(body)
+    return {"html": html, "css": "\n".join(css_parts), "js": "\n".join(js_parts)}
+
+
+# ---------------------------------------------------------------------------
+# 解析レイヤー（純粋な処理）
+# ---------------------------------------------------------------------------
+
+
+def norm(value):
+    """値の表記ゆれを吸収する（空白・引用符・カンマ後スペース・16進カラーの大小）。"""
+    if value is None:
+        return None
+    v = re.sub(r"\s+", " ", value.strip())
+    v = v.replace("'", '"')
+    v = v.replace(", ", ",")
+    v = re.sub(r"#[0-9a-fA-F]{3,8}\b", lambda m: m.group(0).lower(), v)
+    return v
+
+
+def rule_block(css, selectors):
+    """候補セレクタのうち最初に見つかったルールの宣言ブロックを返す。
+
+    Vue のスコープ付きセレクタ（.foo[data-v-xxxx]）にも対応する。
+    見つからなければ None。
+    """
+    for sel in selectors:
+        pat = r"(?<![\w.-])" + re.escape(sel) + r"(?:\[[^\]]*\])?\s*\{([^}]*)\}"
+        m = re.search(pat, css)
+        if m:
+            return m.group(1)
+    return None
+
+
+def decl(block, prop):
+    """宣言ブロックからプロパティの値を取り出す。なければ None。"""
+    if block is None:
+        return None
+    m = re.search(re.escape(prop) + r"\s*:\s*([^;}]+)", block)
+    return norm(m.group(1)) if m else None
+
+
+def root_tokens(css, dark=False):
+    """:root のカスタムプロパティを dict で返す。dark=True でダークモード側。"""
+    if dark:
+        idx = css.find("prefers-color-scheme: dark")
+        if idx < 0:
+            return {}
+        css = css[idx:]
+    m = re.search(r":root(?:\[[^\]]*\])?\s*\{([^}]*)\}", css)
+    if not m:
+        return {}
+    tokens = {}
+    for name, value in re.findall(r"(--[a-z0-9-]+)\s*:\s*([^;}]+)", m.group(1)):
+        tokens[name] = norm(value)
+    return tokens
+
+
+# ブログの変数名 → 正本（トップ／持ち物）の変数名
+TOKEN_ALIASES = {
+    "--text": "--ink",
+    "--muted": "--ink-2",
+    "--border": "--line",
+    "--link": "--accent",
+    "--link-active": "--accent-strong",
+    "--surface-elevated": "--accent-soft",
+    "--primary": "--accent",
+}
+CORE_TOKENS = [
+    "--bg", "--surface", "--ink", "--ink-2", "--line",
+    "--accent", "--accent-strong", "--accent-soft",
+]
+
+
+def canon_tokens(css, site, dark=False):
+    """サイトのトークンを正本の変数名にそろえた dict で返す。"""
+    raw = root_tokens(css, dark=dark)
+    out = {}
+    for name, value in raw.items():
+        canon = TOKEN_ALIASES.get(name, name) if site == "ブログ" else name
+        out.setdefault(canon, value)
+    return out
+
+
+FOOTER_COMMON_LINKS = [
+    "https://www.instagram.com/freddiefujiwara",
+    "https://www.facebook.com/freddiefujiwara",
+    "https://www.google.com/maps/contrib/105456242747265663411/reviews",
+    "https://review.travel.rakuten.co.jp/reviewer/fumikazufujiwara",
+    "https://tabelog.com/rvwr/zegenvs/",
+    "https://x.com/freddiefujiwara",
+    "https://github.com/freddiefujiwara",
+    "https://linkedin.com/in/freddiefujiwara",
+]
+
+
+def footer_links(text):
+    """フッター共通リンク（8件）のうちテキストに含まれるものの集合。"""
+    return {u for u in FOOTER_COMMON_LINKS if u in text}
+
+
+def og_image(html):
+    m = re.search(r'property="og:image"\s+content="([^"]+)"', html)
+    return m.group(1) if m else None
+
+
+def favicon_files(html):
+    files = set()
+    for href in re.findall(r'rel="(?:icon|apple-touch-icon)"[^>]*href="([^"]+)"', html):
+        files.add(href.rsplit("/", 1)[-1])
+    for href in re.findall(r'href="([^"]+)"[^>]*rel="(?:icon|apple-touch-icon)"', html):
+        files.add(href.rsplit("/", 1)[-1])
+    return files
+
+
+def _search_decl(css, pattern):
+    m = re.search(pattern, css)
+    return norm(m.group(1)) if m else "なし"
+
+
+def _line_height(d):
+    v = decl(rule_block(d["css"], ["body"]), "line-height")
+    if v:
+        return v
+    return decl(rule_block(d["css"], [":root"]), "line-height")
+
+
+def build_rows(data):
+    """data = {サイト名: {"html","css","js"} or None} から比較行を作る。
+
+    各行は (項目名, {サイト名: 値}, 比較対象サイトのタプル, 注記)。
+    取得に失敗したサイト（None）や、対象が欠けた CSS でも例外を出さない。
+    """
+    rows = []
+
+    def add(label, values, compare=("トップ", "ブログ", "持ち物"), note=""):
+        rows.append((label, values, compare, note))
+
+    def per_site(fn):
+        return {name: (fn(d, name) if d else "取得失敗") for name, d in data.items()}
+
+    nav_sels = [".site-nav", ".nav"]
+
+    # --- ナビ ---
+    add("ナビ height",
+        per_site(lambda d, s: decl(rule_block(d["css"], nav_sels), "height")))
+    add("ナビ position",
+        per_site(lambda d, s: decl(rule_block(d["css"], nav_sels), "position")),
+        note="トップは fixed（ヒーローに重ねる固有デザイン）、ブログ／持ち物は sticky")
+    add("ナビ background",
+        per_site(lambda d, s: decl(rule_block(d["css"], nav_sels), "background")))
+    add("ナビ brand font-size",
+        per_site(lambda d, s: decl(rule_block(d["css"], [".site-nav .brand", ".nav .brand"]), "font-size")))
+
+    # --- 全体規則 ---
+    add("html scrollbar-gutter",
+        per_site(lambda d, s: _search_decl(d["css"], r"scrollbar-gutter\s*:\s*([^;}]+)")))
+    add("body -webkit-text-size-adjust",
+        per_site(lambda d, s: _search_decl(d["css"], r"-webkit-text-size-adjust\s*:\s*([^;}]+)")))
+    add("body line-height",
+        per_site(lambda d, s: _line_height(d)))
+
+    # --- ヒーロー帯（ブログ／持ち物で比較。トップは固有デザイン） ---
+    add("ヒーロー min-height",
+        per_site(lambda d, s: decl(rule_block(d["css"], [".hero"]), "min-height")),
+        compare=("ブログ", "持ち物"), note="トップは固有デザイン（min(92svh, 780px)）")
+    add("ヒーロー background",
+        per_site(lambda d, s: decl(rule_block(d["css"], [".hero"]), "background")),
+        compare=("ブログ", "持ち物"), note="トップは <img> 方式の固有デザイン")
+    add("ヒーロー内側 max-width",
+        per_site(lambda d, s: decl(rule_block(d["css"], [".hero-inner"]), "max-width")),
+        compare=("ブログ", "持ち物"), note="トップは 1080px（固有デザイン）")
+    add("ヒーロー内側 padding",
+        per_site(lambda d, s: decl(rule_block(d["css"], [".hero-inner"]), "padding")),
+        compare=("ブログ", "持ち物"), note="トップは固有デザイン")
+
+    # --- フッター ---
+    add("フッター共通リンク（8件）",
+        per_site(lambda d, s: f"{len(footer_links(d['html'] + d['js']))}/8 件"),
+        note="Instagram / Facebook / Googleマップ / 楽天トラベル / 食べログ / X / GitHub / LinkedIn")
+    add("フッター .foot-links gap",
+        per_site(lambda d, s: decl(rule_block(d["css"], [".foot-links"]), "gap")),
+        note="トップは 10px 26px、ブログ／持ち物は 10px 22px（既知の未統一）")
+    add("フッター .copy font-size",
+        per_site(lambda d, s: decl(rule_block(d["css"], [".copy"]), "font-size")),
+        note="トップは 13px、ブログ／持ち物は 0.85rem（既知の未統一）")
+
+    # --- デザイントークン ---
+    for token in CORE_TOKENS:
+        add(f"トークン {token}（ライト）",
+            per_site(lambda d, s, t=token: canon_tokens(d["css"], s).get(t, "なし")))
+    for token in ["--bg", "--ink", "--accent"]:
+        add(f"トークン {token}（ダーク）",
+            per_site(lambda d, s, t=token: canon_tokens(d["css"], s, dark=True).get(t, "なし")))
+
+    # --- head ---
+    add("og:image",
+        per_site(lambda d, s: og_image(d["html"])))
+    add("favicon ファイル集合",
+        per_site(lambda d, s: ", ".join(sorted(favicon_files(d["html"]))) or "なし"),
+        note="持ち物はトップのファイルを絶対URLで参照（方式の違いは固有差分）")
+
+    return rows
+
+
+def judge_row(row):
+    """行の判定を返す: 一致 / 差異あり / 要確認（値が取れなかった場合）。"""
+    _label, values, compare, _note = row
+    targets = [values.get(s) for s in compare]
+    if any(v is None or v == "取得失敗" for v in targets):
+        return "要確認"
+    if len(set(targets)) == 1:
+        return "一致"
+    return "差異あり"
+
+
+def count_diffs(rows):
+    return sum(1 for r in rows if judge_row(r) == "差異あり")
+
+
+# ---------------------------------------------------------------------------
+# 表示とメイン
+# ---------------------------------------------------------------------------
+
+
+def render(rows):
+    lines = []
+    lines.append("=" * 78)
+    lines.append("サイトクローム ずれチェック（正本: docs/site-chrome.md）")
+    lines.append("=" * 78)
+    for label, values, _compare, note in rows:
+        lines.append(f"\n■ {label} … {judge_row((label, values, _compare, note))}")
+        for site in SITES:
+            lines.append(f"   {site}: {values.get(site)}")
+        if note:
+            lines.append(f"   ※ {note}")
+    lines.append("\n" + "=" * 78)
+    diffs = count_diffs(rows)
+    if diffs:
+        lines.append(f"差異のある項目: {diffs} 件（詳細は docs/site-chrome.md の「既知の未統一」を参照）")
+    else:
+        lines.append("比較可能な項目に差異はありませんでした。")
+    return "\n".join(lines)
+
+
+def main():
+    data = {}
+    for name, url in SITES.items():
+        try:
+            data[name] = site_assets(url)
+        except Exception as e:  # 取得失敗はその旨を記録して続行
+            print(f"!! {name} の取得に失敗しました: {e}")
+            data[name] = None
+    rows = build_rows(data)
+    print(render(rows))
+    return 1 if count_diffs(rows) else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
