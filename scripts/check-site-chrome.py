@@ -106,6 +106,22 @@ def decl(block, prop):
     return norm(m.group(1)) if m else None
 
 
+def star_decl(css, prop):
+    """全要素セレクタ（*）のルールからプロパティの値を取り出す。なければ None。
+
+    セレクタリストの要素として含まれる場合（*, ::before, ::after {...}）や、
+    Vue のスコープ付き（*[data-v-xxxx]）にも対応する。
+    .hero * のような子孫セレクタは全要素セレクタとはみなさない。
+    """
+    for m in re.finditer(r"([^{}]+)\{([^}]*)\}", css):
+        selectors = [s.strip() for s in m.group(1).split(",")]
+        if any(s == "*" or re.fullmatch(r"\*\[[^\]]*\]", s) for s in selectors):
+            value = decl(m.group(2), prop)
+            if value is not None:
+                return value
+    return None
+
+
 def root_tokens(css, dark=False):
     """:root のカスタムプロパティを dict で返す。dark=True でダークモード側。"""
     if dark:
@@ -219,6 +235,8 @@ def build_rows(data):
         per_site(lambda d, s: decl(rule_block(d["css"], [".site-nav .brand", ".nav .brand"]), "font-size")))
 
     # --- 全体規則 ---
+    add("全要素 box-sizing",
+        per_site(lambda d, s: star_decl(d["css"], "box-sizing") or "なし"))
     add("html scrollbar-gutter",
         per_site(lambda d, s: _search_decl(d["css"], r"scrollbar-gutter\s*:\s*([^;}]+)")))
     add("body -webkit-text-size-adjust",
