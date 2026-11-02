@@ -4,9 +4,12 @@
   "private": true,
   "homepage": "https://freddiefujiwara.github.io",
   "scripts": {
-    "deploy": "gh-pages -d public"
+    "deploy": "gh-pages -d public",
+    "test": "vitest run"
   },
   "devDependencies": {
-    "gh-pages": "^2.2.0"
+    "gh-pages": "^2.2.0",
+    "jsdom": "^27.4.0",
+    "vitest": "^4.1.12"
   }
 }

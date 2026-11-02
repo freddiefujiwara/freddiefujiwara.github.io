@@ -74,7 +74,7 @@
       .serif { font-family: "Shippori Mincho B1", "Hiragino Mincho ProN", "Yu Mincho", serif; }
 
       /* ---------- nav ---------- */
-      .nav {
+      .site-nav {
         position: fixed; inset: 0 0 auto 0; z-index: 50;
         display: flex; align-items: center; justify-content: space-between;
         padding: 0 clamp(16px, 4vw, 40px);
@@ -84,23 +84,25 @@
         -webkit-backdrop-filter: blur(10px);
         border-bottom: 1px solid var(--line);
       }
-      .nav .brand {
-        font-family: "Shippori Mincho B1", serif; font-weight: 700; font-size: 15px;
+      .site-nav .brand {
+        font-family: "Shippori Mincho B1", "Hiragino Mincho ProN", "Yu Mincho", serif;
+        font-weight: 700; font-size: 15px;
         color: var(--ink); letter-spacing: 0.04em; white-space: nowrap;
+        text-decoration: none;
       }
-      .nav .brand:hover { text-decoration: none; }
-      .nav ul { display: flex; gap: clamp(14px, 3vw, 30px); list-style: none; margin: 0; padding: 0; }
-      .nav ul a {
+      .site-nav ul { display: flex; gap: clamp(14px, 3vw, 30px); list-style: none; margin: 0; padding: 0; }
+      .site-nav ul a {
         color: var(--ink-2); font-size: 13.5px; font-weight: 500; letter-spacing: 0.05em;
         padding: 4px 0; border-bottom: 2px solid transparent; white-space: nowrap;
+        text-decoration: none;
       }
-      .nav ul a:hover { color: var(--ink); text-decoration: none; }
-      .nav ul a.active { color: var(--accent); border-bottom-color: var(--accent); }
+      .site-nav ul a:hover { color: var(--ink); }
+      .site-nav ul a.active { color: var(--accent); border-bottom-color: var(--accent); }
       @media (max-width: 560px) {
-        .nav { justify-content: center; }
-        .nav .brand { display: none; }
-        .nav ul { width: 100%; justify-content: space-between; gap: 8px; }
-        .nav ul a { font-size: 13px; }
+        .site-nav { justify-content: center; }
+        .site-nav .brand { display: none; }
+        .site-nav ul { width: 100%; justify-content: space-between; gap: 6px; }
+        .site-nav ul a { font-size: 12px; letter-spacing: 0.02em; }
       }
 
       /* ---------- hero ---------- */
@@ -309,21 +311,18 @@
     </style>
       <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-W2C6FNCW86"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-W2C6FNCW86');
-    </script>
+    <script src="/js/gtag.js"></script>
   </head>
   <body>
-    <nav class="nav" aria-label="ページ内メニュー">
-      <a class="brand" href="#top">藤原史和｜川口を歩くQAエンジニア</a>
+    <nav class="site-nav">
+      <a class="brand" href="https://freddiefujiwara.com/">藤原史和｜川口を歩くQAエンジニア</a>
       <ul>
+        <li><a href="#top" data-spy="top">トップ</a></li>
         <li><a href="#about" data-spy="about">プロフィール</a></li>
         <li><a href="#activity" data-spy="activity">活動・発信</a></li>
         <li><a href="#contact" data-spy="contact">情報交換</a></li>
         <li><a href="/blog/">ブログ</a></li>
+        <li><a href="/list-of-stuff/">持ち物</a></li>
       </ul>
     </nav>
 
@@ -453,7 +452,7 @@
             </span>
             <span>
               <h3>楽天ROOM<span class="handle">「藤原史和｜川口を歩くQAエンジニア」</span></h3>
-              <p>ミニマリストなので、持ち物のほとんどをここに掲載しています。実際に買ってよかったもの、使ってよかったものだけを置いています。Instagramと同じ人が運営しています。</p>
+              <p>楽天市場で購入したものを中心に、実際に買ってよかったもの、使ってよかったものだけを置いています。</p>
             </span>
             <span class="go" aria-hidden="true">→</span>
           </a>
@@ -463,7 +462,7 @@
             </span>
             <span>
               <h3>ブログ<span class="handle">freddiefujiwara.com/blog</span></h3>
-              <p>日々の記録と、川口歩きのメモ。</p>
+              <p>川口歩きの記録に、AIや自動化で暮らしを軽くする工夫、中国語学習のメモなどを書いています。</p>
             </span>
             <span class="go" aria-hidden="true">→</span>
           </a>
@@ -473,7 +472,7 @@
             </span>
             <span>
               <h3>持ち物リスト<span class="handle">freddiefujiwara.com/list-of-stuff</span></h3>
-              <p>実際に使っている愛用品と日用品のリストです。<span id="stuff-count"></span></p>
+              <p>ミニマリストの持ち物リストです。<span id="stuff-count"></span></p>
             </span>
             <span class="go" aria-hidden="true">→</span>
           </a>
@@ -539,57 +538,6 @@
       </div>
     </footer>
 
-    <script>
-      (function () {
-        var yearEl = document.getElementById("year");
-        if (yearEl) yearEl.textContent = String(new Date().getFullYear());
-
-        // 持ち物リストの件数をAPIから取得して表示（取得できない場合は件数なしのまま）
-        var stuffCount = document.getElementById("stuff-count");
-        if (stuffCount && "fetch" in window) {
-          fetch("https://script.google.com/macros/s/AKfycbwUMhAHJDzp_mtR12fbHJlzNTptpSH78LNJAr9i9SXBdn_BUAwWJTtb1g/exec")
-            .then(function (r) { return r.json(); })
-            .then(function (items) {
-              if (Array.isArray(items) && items.length) {
-                stuffCount.textContent = "全" + items.length + "点を公開しています。";
-              }
-            })
-            .catch(function () {});
-        }
-
-        // 埋め込みiframe（Googleマイマップ）は画面に近づいてから読み込む
-        var frames = document.querySelectorAll("iframe[data-src]");
-        function mountFrame(f) {
-          if (!f.getAttribute("src")) f.setAttribute("src", f.getAttribute("data-src"));
-        }
-        if ("IntersectionObserver" in window && frames.length) {
-          var loader = new IntersectionObserver(function (entries) {
-            entries.forEach(function (e) {
-              if (e.isIntersecting) { mountFrame(e.target); loader.unobserve(e.target); }
-            });
-          }, { rootMargin: "400px 0px" });
-          frames.forEach(function (f) { loader.observe(f); });
-        } else {
-          frames.forEach(mountFrame);
-        }
-
-        var links = document.querySelectorAll(".nav a[data-spy]");
-        var sections = ["about", "activity", "contact"].map(function (id) {
-          return document.getElementById(id);
-        }).filter(Boolean);
-        if ("IntersectionObserver" in window && sections.length) {
-          var spy = new IntersectionObserver(function (entries) {
-            entries.forEach(function (e) {
-              if (e.isIntersecting) {
-                links.forEach(function (l) {
-                  l.classList.toggle("active", l.getAttribute("data-spy") === e.target.id);
-                });
-              }
-            });
-          }, { rootMargin: "-40% 0px -55% 0px" });
-          sections.forEach(function (s) { spy.observe(s); });
-        }
-      })();
-    </script>
+    <script src="/js/main.js"></script>
   </body>
 </html>
