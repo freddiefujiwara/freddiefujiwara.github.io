@@ -5,6 +5,7 @@
   "homepage": "https://freddiefujiwara.github.io",
   "scripts": {
     "deploy": "gh-pages -d public",
+    "build:staging": "node scripts/build-staging.mjs public staging-dist",
     "test": "vitest run"
   },
   "devDependencies": {
