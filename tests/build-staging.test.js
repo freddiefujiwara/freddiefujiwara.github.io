@@ -56,4 +56,8 @@ describe('stagingBannerHtml', () => {
     }
     expect(STAGING_LINKS).toHaveLength(7);
   });
+
+  it('リンクに下線を指定する（トップ側の a の下線なし指定に打ち消されないため）', () => {
+    expect(stagingBannerHtml()).toContain('text-decoration:underline');
+  });
 });
