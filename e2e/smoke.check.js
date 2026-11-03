@@ -59,6 +59,11 @@ for (const app of ["tweet", "alarm", "health", "asset"]) {
   });
 }
 
+// The GAS endpoint checks below use Playwright's anonymous request context
+// (no Google session). If a project's authorization lapses or its web app
+// access regresses, /exec answers with an HTML sign-in / Access Denied page
+// instead of JSON and these tests fail — that is how the 2026-11-04 blog and
+// tweet authorization outages would have been caught within a day.
 smokeDescribe("GAS endpoints", () => {
   smokeTest("list production returns the full item list", async ({ request }) => {
     const r = await request.get(execUrl(GAS.list.prod));
@@ -77,6 +82,24 @@ smokeDescribe("GAS endpoints", () => {
     const r = await request.get(execUrl(GAS.tweet.prod));
     const data = await r.json();
     expect(data.ok).toBe(true);
+  });
+
+  smokeTest("tweet staging is alive", async ({ request }) => {
+    const r = await request.get(execUrl(GAS.tweet.staging));
+    const data = await r.json();
+    expect(data.ok).toBe(true);
+  });
+
+  smokeTest("alarm production answers with JSON", async ({ request }) => {
+    const r = await request.get(execUrl(GAS.alarm.prod));
+    const data = await r.json();
+    expect(data).toHaveProperty("ok");
+  });
+
+  smokeTest("alarm staging answers with JSON", async ({ request }) => {
+    const r = await request.get(execUrl(GAS.alarm.staging));
+    const data = await r.json();
+    expect(data).toHaveProperty("ok");
   });
 
   smokeTest("health production is auth-gated", async ({ request }) => {
