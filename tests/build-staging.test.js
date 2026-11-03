@@ -40,6 +40,11 @@ describe('transformHtml', () => {
     expect(out).toContain('STAGING ― これはステージング環境です');
     expect(out).toContain('<!-- staging: ci build -->');
   });
+
+  it('固定ナビ（56px）の裏にバナーが隠れないよう余白を入れる', () => {
+    expect(out).toContain('data-staging-nav-offset');
+    expect(out).toContain('body{padding-top:56px}');
+  });
 });
 
 describe('stagingBannerHtml', () => {
