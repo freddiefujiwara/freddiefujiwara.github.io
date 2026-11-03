@@ -55,6 +55,14 @@ export function transformHtml(html) {
     '<meta name="viewport"',
     '<meta name="robots" content="noindex,nofollow">\n    <meta name="viewport"'
   );
+  // The top page's .site-nav is position:fixed (height 56px) and overlays
+  // the top of the document, which would hide the staging banner behind
+  // it. Shift the staging page down by the nav height so the banner
+  // stays fully visible. Staging only; production HTML is untouched.
+  out = out.replace(
+    "</head>",
+    "  <style data-staging-nav-offset>body{padding-top:56px}</style>\n  </head>"
+  );
   // Inject the staging banner and a build marker.
   out = out.replace("<body>", `<body>\n    ${stagingBannerHtml()}`);
   out = out.replace("</body>", "<!-- staging: ci build -->\n</body>");
