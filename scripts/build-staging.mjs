@@ -30,8 +30,12 @@ export const STAGING_LINKS = [
 ];
 
 export function stagingBannerHtml() {
+  // text-decoration is set explicitly: the top page's own stylesheet
+  // removes underlines from links (a { text-decoration: none; }), while
+  // the other apps keep the browser default. Without it, this banner's
+  // links would be the only ones without an underline.
   const links = STAGING_LINKS.map(
-    ([text, href]) => `<a href="${href}" style="color:#8f2a12;">${text}</a>`
+    ([text, href]) => `<a href="${href}" style="color:#8f2a12;text-decoration:underline;">${text}</a>`
   ).join(" ・ ");
   return `<div style="background:#f7e9e2;color:#8f2a12;text-align:center;font-size:12px;line-height:2.2;letter-spacing:.06em;">STAGING ― これはステージング環境です（本番ではありません）｜ ${links}</div>`;
 }
