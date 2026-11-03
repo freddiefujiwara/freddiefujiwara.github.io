@@ -41,9 +41,10 @@ describe('transformHtml', () => {
     expect(out).toContain('<!-- staging: ci build -->');
   });
 
-  it('固定ナビ（56px）の裏にバナーが隠れないよう余白を入れる', () => {
+  it('ステージングでは固定ナビを sticky にしてバナーをナビの上に出す', () => {
     expect(out).toContain('data-staging-nav-offset');
-    expect(out).toContain('body{padding-top:56px}');
+    expect(out).toContain('.site-nav{position:sticky}');
+    expect(out).not.toContain('body{padding-top:56px}');
   });
 });
 

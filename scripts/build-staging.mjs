@@ -55,13 +55,15 @@ export function transformHtml(html) {
     '<meta name="viewport"',
     '<meta name="robots" content="noindex,nofollow">\n    <meta name="viewport"'
   );
-  // The top page's .site-nav is position:fixed (height 56px) and overlays
-  // the top of the document, which would hide the staging banner behind
-  // it. Shift the staging page down by the nav height so the banner
-  // stays fully visible. Staging only; production HTML is untouched.
+  // The top page's .site-nav is position:fixed and always overlays the
+  // top of the viewport, so an in-flow banner can never appear above it
+  // (body padding only pushes the banner further down, under the nav).
+  // In staging, make the nav sticky instead: it keeps its place in the
+  // flow right below the banner and sticks to the top on scroll, like
+  // the other apps. Staging only; production HTML is untouched.
   out = out.replace(
     "</head>",
-    "  <style data-staging-nav-offset>body{padding-top:56px}</style>\n  </head>"
+    "  <style data-staging-nav-offset>.site-nav{position:sticky}</style>\n  </head>"
   );
   // Inject the staging banner and a build marker.
   out = out.replace("<body>", `<body>\n    ${stagingBannerHtml()}`);
