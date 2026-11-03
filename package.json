@@ -6,9 +6,11 @@
   "scripts": {
     "deploy": "gh-pages -d public",
     "build:staging": "node scripts/build-staging.mjs public staging-dist",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:staging": "playwright test"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.1",
     "gh-pages": "^2.2.0",
     "jsdom": "^27.4.0",
     "vitest": "^4.1.12"
