@@ -6,7 +6,7 @@ on:
   schedule:
     # Daily 06:20 JST: regenerate the sitemap even on days without code changes.
     - cron: "20 21 * * *"
-    workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -39,7 +39,7 @@ jobs:
 
     - name: Generate sitemap.xml
       run: node scripts/generate-sitemap.mjs publish
-      
+
     - name: "Deploy to gh-pages 🚀"
       uses: JamesIves/github-pages-deploy-action@releases/v3
       with:
