@@ -98,7 +98,7 @@ python3 -m unittest discover -s scripts/tests -v   # チェックスクリプト
   justify-content: space-between;
   padding: 0 clamp(16px, 4vw, 40px);
   height: 56px;
-  background: color-mix(in srgb, var(--bg) 86%, transparent);
+  background: color-mix(in srgb, var(--bg) 86%, transparent); /* トップのみ var(--bg)（不透明。固有差分） */
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--line);
@@ -313,6 +313,7 @@ a.hero-inner { /* ヒーローをリンクにする場合の共通指定 */
 |---|---|---|---|
 | ヒーローのデザイン | 固有（全画面・`<picture>` 方式、.place ラベル「Kawaguchi, Saitama — 埼玉県川口市」、ローマ字つき h1、キャッチコピー、.hero-inner は max-width 1080px） | 共通帯（§4） | 共通帯（§4） |
 | ナビの position | fixed（ヒーローに重ねるため） | sticky | sticky |
+| ナビの background | var(--bg)（不透明。ヒーロー写真に重ねると半透明では写真が透けてグレーに見えるため） | 半透明（color-mix 86%） | 半透明（color-mix 86%） |
 | ナビの現在地表示 | スクロールスパイ（ページ内セクション連動、タイトルも切替） | 「ブログ」を active | 「持ち物」を active |
 | ナビのリンク | 6件共通（「トップ」は #top、セクションはページ内アンカー） | 6件共通（「トップ」はルート URL、セクションは絶対 URL） | ブログと同じ |
 | ヒーローのラベル | （.place、別書式） | KAWAGUCHI — BLOG | KAWAGUCHI — LIST OF STUFF |
@@ -327,7 +328,7 @@ a.hero-inner { /* ヒーローをリンクにする場合の共通指定 */
 なお、トップのナビは当初「ここは特別でいい」とされた**意図した固有差分**でしたが、
 2026-11-02 にトップ PR #34（試行として本人がマージ）で共通部品 .site-nav に作り替えられ、
 ブランドのリンク先も #top からルート URL（https://freddiefujiwara.com/）に変更されました。
-残る固有差分は position: fixed とスクロールスパイ（ページ内アンカー＋タイトル切替）だけです。
+残る固有差分は position: fixed とスクロールスパイ（ページ内アンカー＋タイトル切替）だけでしたが、その後ナビの background（トップのみ不透明）も固有差分に加わりました。
 
 ## 既知の未統一（揃えるべきなのに現状ずれているもの）
 
@@ -339,7 +340,7 @@ a.hero-inner { /* ヒーローをリンクにする場合の共通指定 */
 その後、ナビのリンク集合の6件への拡張（§3）とタイトルの約束事（§7）も正本とチェック対象に
 追加しました。こちらも各サイトの実装 PR は同日中にすべてマージされ、本番チェックで一致を
 確認済みです。
-（固有差分であるナビ position（トップ fixed / 他 sticky）は常時「差異あり」と表示されます。）
+（固有差分であるナビ position（トップ fixed / 他 sticky）とナビ background（トップ 不透明 / 他 半透明）は常時「差異あり」と表示されます。）
 （同日に検出された .copy の font-size「0.85rem と .85rem」の差異表示は表記ゆれの誤検出で、
 チェックスクリプト側の正規化で解消済みです。）
 
@@ -405,4 +406,4 @@ a.hero-inner { /* ヒーローをリンクにする場合の共通指定 */
 - 「一致」: 正本どおり。
 - 「差異あり」: 「既知の未統一」か「サイト固有差分」のどちらかで説明できるか確認してください。
   どちらにも載っていない差異は、新しいずれが発生しています。
-- なお、ナビの position は固有差分（トップ fixed / 他 sticky）のため、常に「差異あり」と表示されます。
+- なお、ナビの position と background は固有差分（position: トップ fixed / 他 sticky、background: トップ 不透明 / 他 半透明）のため、常に「差異あり」と表示されます。
