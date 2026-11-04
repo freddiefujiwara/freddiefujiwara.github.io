@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /staging/
+Disallow: /blog/staging/
+Disallow: /list-of-stuff/staging/
+Disallow: /tweet/staging/
+Disallow: /alarm/staging/
+Disallow: /health/staging/
+Disallow: /asset/staging/
+
+Sitemap: https://freddiefujiwara.com/sitemap.xml
