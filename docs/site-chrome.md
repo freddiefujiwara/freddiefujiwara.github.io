@@ -93,9 +93,9 @@ python3 -m unittest discover -s scripts/tests -v   # チェックスクリプト
   position: sticky; /* トップのみ fixed（固有差分） */
   top: 0;
   z-index: 50;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
   padding: 0 clamp(16px, 4vw, 40px);
   height: 56px;
   background: color-mix(in srgb, var(--bg) 86%, transparent);
@@ -104,6 +104,7 @@ python3 -m unittest discover -s scripts/tests -v   # チェックスクリプト
   border-bottom: 1px solid var(--line);
 }
 .site-nav .brand {
+  justify-self: start;
   font-family: "Shippori Mincho B1", "Hiragino Mincho ProN", "Yu Mincho", serif;
   font-weight: 700;
   font-size: 15px;
@@ -113,6 +114,7 @@ python3 -m unittest discover -s scripts/tests -v   # チェックスクリプト
   text-decoration: none;
 }
 .site-nav ul {
+  justify-self: center;
   display: flex;
   gap: clamp(14px, 3vw, 30px);
   list-style: none;
@@ -134,13 +136,15 @@ python3 -m unittest discover -s scripts/tests -v   # チェックスクリプト
   border-bottom-color: var(--accent);
 }
 @media (max-width: 560px) {
-  .site-nav { justify-content: center; }
+  .site-nav { grid-template-columns: 1fr; }
   .site-nav .brand { display: none; }
-  .site-nav ul { width: 100%; justify-content: space-between; gap: 6px; }
+  .site-nav ul { justify-self: stretch; width: 100%; justify-content: space-between; gap: 6px; }
   .site-nav ul a { font-size: 12px; letter-spacing: 0.02em; }
 }
 ```
 
+- 配置は grid（`grid-template-columns: 1fr auto 1fr`）で、ブランドを左スロット、リンク集合を中央スロットに置きます。
+  ブログの検索窓（.nav-search）は右スロットに `justify-self: end` で置きます（ブログ固有の要素で、トップ／持ち物にはありません）。
 - ブランド文言は3サイト共通で「藤原史和｜川口を歩くQAエンジニア」。
   リンク先は https://freddiefujiwara.com/ です（トップも PR #34 で #top からルート URL に変更）。
 - リンク集合は全サイト6件（トップ / プロフィール / 活動・発信 / 情報交換 / ブログ / 持ち物）で統一です。
@@ -150,6 +154,8 @@ python3 -m unittest discover -s scripts/tests -v   # チェックスクリプト
   - ブログ / 持ち物は /blog/、/list-of-stuff/ です。
 - モバイル（max-width: 560px）ではブランドを隠し、6件を1行に収めるため、
   リンクの font-size: 12px、letter-spacing: 0.02em、ul の gap: 6px が正規値です。
+  このとき .site-nav は `grid-template-columns: 1fr` の1列に切り替え、ul を幅いっぱいに広げるため、
+  見た目は従来どおりの均等配置のままです。
 
 ## 4. ヒーロー帯（ブログ／持ち物）
 
