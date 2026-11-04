@@ -386,8 +386,7 @@ def build_rows(data):
         per_site(lambda d, s: decl(rule_block(d["css"], nav_sels), "position")),
         note="トップは fixed（ヒーローに重ねる固有デザイン）、ブログ／持ち物は sticky")
     add("ナビ background",
-        per_site(lambda d, s: decl(rule_block(d["css"], nav_sels), "background")),
-        note="トップは var(--bg)（不透明。ヒーローに重ねるため）、ブログ／持ち物は半透明（color-mix 86%）")
+        per_site(lambda d, s: decl(rule_block(d["css"], nav_sels), "background")))
     add("ナビ brand font-size",
         per_site(lambda d, s: decl(rule_block(d["css"], [".site-nav .brand", ".nav .brand"]), "font-size")))
     add("ナビのリンク集合（6件）",
