@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { SITE, GAS, APPS, execUrl } from "./apps.js";
+import { SITE, GAS, APPS, execUrl, blockAnalytics } from "./apps.js";
 
 // Full smoke suite over production AND staging, run on a schedule and on
 // demand from this repository (smoke.yml). The per-app staging gate lives
@@ -10,6 +10,11 @@ import { SITE, GAS, APPS, execUrl } from "./apps.js";
 // unless APP is unset.
 const smokeTest = process.env.APP ? test.skip : test;
 const smokeDescribe = process.env.APP ? test.describe.skip : test.describe;
+
+// Keep this suite's own page views out of GA4, production included.
+test.beforeEach(async ({ page }) => {
+  await blockAnalytics(page);
+});
 for (const app of APPS) {
   for (const env of ["prod", "staging"]) {
     smokeTest(`${app.name} (${env}) loads and uses the ${env} backend`, async ({

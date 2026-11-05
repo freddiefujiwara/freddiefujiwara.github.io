@@ -43,6 +43,16 @@ export const GAS = {
 
 export const execUrl = (id) => `https://script.google.com/macros/s/${id}/exec`;
 
+// Verification traffic must not land in GA4: the pages these checks open
+// (production included) would otherwise record page views in the live
+// property. Every check file registers this on its pages so requests to
+// the GA4 endpoints are aborted before they are sent.
+export const ANALYTICS_URL = /googletagmanager\.com|google-analytics\.com/;
+
+export async function blockAnalytics(page) {
+  await page.route(ANALYTICS_URL, (route) => route.abort());
+}
+
 // dataOnLoad: the app calls its GAS endpoint as soon as the page opens, so
 // tests can require the call. Otherwise tests only require that the page
 // never calls the OTHER environment's backend.
