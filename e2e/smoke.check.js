@@ -26,9 +26,9 @@ for (const app of APPS) {
       const resp = await page.goto(path);
       expect(resp.status()).toBe(200);
       if (env === "staging") {
-        await expect(page.getByText("ステージング環境です")).toBeVisible();
+        await expect(page.getByText("STAGING")).toBeVisible();
       } else {
-        await expect(page.getByText("ステージング環境です")).toHaveCount(0);
+        await expect(page.getByText("STAGING")).toHaveCount(0);
       }
       if (app.gas) {
         const ids = GAS[app.gas];

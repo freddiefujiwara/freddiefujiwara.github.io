@@ -34,6 +34,11 @@ export const GAS = {
     staging:
       "AKfycbwaNgQjqAJCOKt8ReWAE6uhEZzEBuRRsnRbRFsa16RpVQSs6KSRVCPNZnalOXZWy0CE",
   },
+  ga: {
+    prod: "AKfycbypis7IqAtM2u0_h7ysiZ5UgztUEwNYJ1zPMnr8IbTBXiyfiapfRMtD_9CxVpc5G8YVzQ",
+    staging:
+      "AKfycbyRCLUuKbRElDdlUc0Rqh6Qxdfxd5R8hICpRe-keEyGCe1z-mC9gfN798MlXfQgY8kw",
+  },
 };
 
 export const execUrl = (id) => `https://script.google.com/macros/s/${id}/exec`;
@@ -49,6 +54,7 @@ export const APPS = [
   { name: "alarm", path: "/alarm/", gas: "alarm", dataOnLoad: false },
   { name: "health", path: "/health/", gas: "health", dataOnLoad: true },
   { name: "asset", path: "/asset/", gas: "asset", dataOnLoad: true },
+  { name: "ga", path: "/ga/", gas: "ga", dataOnLoad: true },
 ];
 
 export const stagingPath = (app) => `${app.path}staging/`;

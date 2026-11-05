@@ -37,7 +37,7 @@ describe('transformHtml', () => {
 
   it('noindex を付け、バナーとビルドマーカーを入れる', () => {
     expect(out).toContain('<meta name="robots" content="noindex,nofollow">');
-    expect(out).toContain('STAGING ― これはステージング環境です');
+    expect(out).toContain('STAGING｜');
     expect(out).toContain('<!-- staging: ci build -->');
   });
 
@@ -54,7 +54,7 @@ describe('stagingBannerHtml', () => {
     for (const [, href] of STAGING_LINKS) {
       expect(html).toContain(`href="${href}"`);
     }
-    expect(STAGING_LINKS).toHaveLength(7);
+    expect(STAGING_LINKS).toHaveLength(8);
   });
 
   it('リンクに下線を指定する（トップ側の a の下線なし指定に打ち消されないため）', () => {

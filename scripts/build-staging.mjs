@@ -27,6 +27,7 @@ export const STAGING_LINKS = [
   ["アラーム", "/alarm/staging/"],
   ["健康", "/health/staging/"],
   ["資産", "/asset/staging/"],
+  ["GA", "/ga/staging/"],
 ];
 
 // The link back to production, appended after the staging links.
@@ -44,7 +45,7 @@ export function stagingBannerHtml() {
   ).join(" ・ ");
   const [prodText, prodHref] = PROD_LINK;
   const prod = `<a href="${prodHref}" style="color:#c62828;font-weight:700;text-decoration:underline;">${prodText}</a>`;
-  return `<div style="background:#f7e9e2;color:#8f2a12;text-align:center;font-size:12px;line-height:2.2;letter-spacing:.06em;">STAGING ― これはステージング環境です（本番ではありません）｜ ${links} ｜ ${prod}</div>`;
+  return `<div style="background:#f7e9e2;color:#8f2a12;text-align:center;font-size:12px;line-height:2.2;letter-spacing:.06em;">STAGING｜${links} ｜ ${prod}</div>`;
 }
 
 export function transformHtml(html) {
