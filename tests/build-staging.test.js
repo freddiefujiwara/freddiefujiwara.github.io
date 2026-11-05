@@ -61,13 +61,13 @@ describe('stagingBannerHtml', () => {
     expect(stagingBannerHtml()).toContain('text-decoration:underline');
   });
 
-  it('末尾に本番トップへの赤い太字リンクを含む', () => {
+  it('末尾に本番への赤い太字リンクを含む', () => {
     const html = stagingBannerHtml();
     const [text, href] = PROD_LINK;
-    expect(text).toBe('本番トップ');
+    expect(text).toBe('本番');
     expect(href).toBe('/');
-    expect(html).toContain(`<a href="/" style="color:#c62828;font-weight:700;text-decoration:underline;">本番トップ</a>`);
+    expect(html).toContain(`<a href="/" style="color:#c62828;font-weight:700;text-decoration:underline;">本番</a>`);
     // 本番リンクはステージングリンクの後（末尾）に来る
-    expect(html.indexOf('本番トップ')).toBeGreaterThan(html.indexOf('href="/asset/staging/"'));
+    expect(html.indexOf('>本番</a>')).toBeGreaterThan(html.indexOf('href="/asset/staging/"'));
   });
 });
