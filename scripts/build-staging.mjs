@@ -32,7 +32,7 @@ export const STAGING_LINKS = [
 // The link back to production, appended after the staging links.
 // Red and bold on purpose: production is the dangerous side, and the
 // link must never be mistaken for one of the staging links.
-export const PROD_LINK = ["本番トップ", "/"];
+export const PROD_LINK = ["本番", "/"];
 
 export function stagingBannerHtml() {
   // text-decoration is set explicitly: the top page's own stylesheet
