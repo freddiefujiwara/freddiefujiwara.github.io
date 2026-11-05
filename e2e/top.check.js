@@ -8,7 +8,7 @@ test.describe("top page staging transform", () => {
   test("staging variant drops GA, adds noindex and rewrites asset paths", async ({ page }) => {
     const response = await page.goto("/staging/");
     expect(response.status()).toBe(200);
-    await expect(page.getByText("ステージング環境です")).toBeVisible();
+    await expect(page.getByText("STAGING｜")).toBeVisible();
     const html = await page.content();
     expect(html).not.toContain("googletagmanager.com");
     expect(html).toContain('src="/staging/js/main.js"');
@@ -24,6 +24,6 @@ test.describe("top page staging transform", () => {
     expect(response.status()).toBe(200);
     const html = await page.content();
     expect(html).toContain("googletagmanager.com");
-    await expect(page.getByText("ステージング環境です")).toHaveCount(0);
+    await expect(page.getByText("STAGING｜")).toHaveCount(0);
   });
 });
