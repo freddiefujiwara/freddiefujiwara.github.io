@@ -1,11 +1,16 @@
 import { test, expect } from "@playwright/test";
-import { GAS, APPS, execUrl, stagingPath } from "./apps.js";
+import { GAS, APPS, execUrl, stagingPath, blockAnalytics } from "./apps.js";
 
 // Staging gate: run by other repositories' pull requests (via the reusable
 // workflow) after their staging preview is deployed. Set APP to limit the
 // run to one app; without APP every app is checked.
 const TARGET = process.env.APP || null;
 const targets = APPS.filter((a) => !TARGET || a.name === TARGET);
+
+// Keep this gate's own page views out of GA4.
+test.beforeEach(async ({ page }) => {
+  await blockAnalytics(page);
+});
 
 for (const app of targets) {
   test(`${app.name} staging page loads and uses the staging backend`, async ({
