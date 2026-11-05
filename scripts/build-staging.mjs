@@ -29,6 +29,11 @@ export const STAGING_LINKS = [
   ["資産", "/asset/staging/"],
 ];
 
+// The link back to production, appended after the staging links.
+// Red and bold on purpose: production is the dangerous side, and the
+// link must never be mistaken for one of the staging links.
+export const PROD_LINK = ["本番トップ", "/"];
+
 export function stagingBannerHtml() {
   // text-decoration is set explicitly: the top page's own stylesheet
   // removes underlines from links (a { text-decoration: none; }), while
@@ -37,7 +42,9 @@ export function stagingBannerHtml() {
   const links = STAGING_LINKS.map(
     ([text, href]) => `<a href="${href}" style="color:#8f2a12;text-decoration:underline;">${text}</a>`
   ).join(" ・ ");
-  return `<div style="background:#f7e9e2;color:#8f2a12;text-align:center;font-size:12px;line-height:2.2;letter-spacing:.06em;">STAGING ― これはステージング環境です（本番ではありません）｜ ${links}</div>`;
+  const [prodText, prodHref] = PROD_LINK;
+  const prod = `<a href="${prodHref}" style="color:#c62828;font-weight:700;text-decoration:underline;">${prodText}</a>`;
+  return `<div style="background:#f7e9e2;color:#8f2a12;text-align:center;font-size:12px;line-height:2.2;letter-spacing:.06em;">STAGING ― これはステージング環境です（本番ではありません）｜ ${links} ｜ ${prod}</div>`;
 }
 
 export function transformHtml(html) {
