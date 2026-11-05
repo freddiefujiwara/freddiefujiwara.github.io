@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { transformHtml, stagingBannerHtml, STAGING_LINKS } from '../scripts/build-staging.mjs';
+import { transformHtml, stagingBannerHtml, STAGING_LINKS, PROD_LINK } from '../scripts/build-staging.mjs';
 
 const sample = `<!doctype html>
 <html>
@@ -59,5 +59,15 @@ describe('stagingBannerHtml', () => {
 
   it('リンクに下線を指定する（トップ側の a の下線なし指定に打ち消されないため）', () => {
     expect(stagingBannerHtml()).toContain('text-decoration:underline');
+  });
+
+  it('末尾に本番トップへの赤い太字リンクを含む', () => {
+    const html = stagingBannerHtml();
+    const [text, href] = PROD_LINK;
+    expect(text).toBe('本番トップ');
+    expect(href).toBe('/');
+    expect(html).toContain(`<a href="/" style="color:#c62828;font-weight:700;text-decoration:underline;">本番トップ</a>`);
+    // 本番リンクはステージングリンクの後（末尾）に来る
+    expect(html.indexOf('本番トップ')).toBeGreaterThan(html.indexOf('href="/asset/staging/"'));
   });
 });
