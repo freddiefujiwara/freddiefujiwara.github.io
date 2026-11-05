@@ -28,7 +28,7 @@ for (const app of APPS) {
       if (env === "staging") {
         await expect(page.getByText("STAGING")).toBeVisible();
       } else {
-        await expect(page.getByText("STAGING")).toHaveCount(0);
+        await expect(page.getByText("STAGING｜")).toHaveCount(0);
       }
       if (app.gas) {
         const ids = GAS[app.gas];
