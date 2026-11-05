@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>ページが見つかりません｜藤原史和</title>
+    <script>
+      // Blog articles are sometimes linked without the /blog/ prefix
+      // (for example https://freddiefujiwara.com/<article-id>). Those
+      // URLs land here; send them to the canonical article URL
+      // instead of a dead end. Article ids are Google Doc ids: they
+      // start with a digit and are long URL-safe tokens.
+      (function () {
+        var m = window.location.pathname.match(/^\/([0-9][A-Za-z0-9_-]{24,})$/);
+        if (m) {
+          window.location.replace(
+            "/blog/" + m[1] + window.location.search + window.location.hash
+          );
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <p>ページが見つかりませんでした。<a href="/">トップページへ</a></p>
+  </body>
+</html>

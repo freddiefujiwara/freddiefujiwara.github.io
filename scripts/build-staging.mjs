@@ -87,6 +87,11 @@ export function buildStaging(srcDir, outDir) {
   rmSync(outDir, { recursive: true, force: true });
   cpSync(srcDir, outDir, { recursive: true });
   rmSync(join(outDir, "CNAME"), { force: true });
+  // The custom 404 page belongs to the production root only: its
+  // article redirect targets production /blog/ paths, and GitHub
+  // Pages falls back to the root 404.html for /staging/ misses when
+  // no staging copy exists.
+  rmSync(join(outDir, "404.html"), { force: true });
   rmSync(join(outDir, "js", "gtag.js"), { force: true });
   const indexPath = join(outDir, "index.html");
   writeFileSync(indexPath, transformHtml(readFileSync(indexPath, "utf8")));
