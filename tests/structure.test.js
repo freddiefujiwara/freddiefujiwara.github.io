@@ -74,3 +74,30 @@ describe('ページ構造の不変条件', () => {
     }
   });
 });
+
+describe('活動・発信の短いURLハブ', () => {
+  it('ルートにドメインが表示される', () => {
+    const rootEl = document.querySelector('#activity .hub-root-name');
+    expect(rootEl.textContent.trim()).toBe('freddiefujiwara.com');
+  });
+
+  it('枝が短縮URLの並びどおりに並んでいる', () => {
+    const branches = [...document.querySelectorAll('#activity .hub-branches a')].map(
+      (a) => [a.querySelector('.hub-url').textContent.trim(), a.getAttribute('href')],
+    );
+    expect(branches).toEqual([
+      ['/instagram', 'https://freddiefujiwara.com/instagram'],
+      ['/blog', 'https://freddiefujiwara.com/blog/'],
+      ['/threads', 'https://freddiefujiwara.com/threads'],
+      ['/room', 'https://freddiefujiwara.com/room'],
+      ['/list-of-stuff', 'https://freddiefujiwara.com/list-of-stuff/'],
+      ['/map', 'https://freddiefujiwara.com/map'],
+    ]);
+  });
+
+  it('旧来のリンク行・埋め込み地図・写真は残っていない', () => {
+    expect(document.querySelector('#activity .act-list')).toBeNull();
+    expect(document.querySelector('#activity iframe')).toBeNull();
+    expect(document.querySelector('#activity .photo-duo')).toBeNull();
+  });
+});

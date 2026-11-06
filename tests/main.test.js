@@ -118,28 +118,6 @@ describe('スクロールスパイ', () => {
   });
 });
 
-describe('埋め込み iframe の遅延読み込み', () => {
-  it('画面に近づくまで src が入らず、交差で data-src が読み込まれる', () => {
-    const { window, document } = loadPage();
-    runMain(window);
-    const frame = document.querySelector('iframe[data-src]');
-    expect(frame.getAttribute('src')).toBeNull();
-    const loader = MockIntersectionObserver.observing(frame);
-    expect(loader).toBeDefined();
-    loader.trigger([{ isIntersecting: true, target: frame }]);
-    expect(frame.getAttribute('src')).toBe(frame.getAttribute('data-src'));
-    // 読み込み後は監視対象から外れる
-    expect(loader.elements.has(frame)).toBe(false);
-  });
-
-  it('IntersectionObserver が無い環境では即時に読み込む', () => {
-    const { window, document } = loadPage({ withObserver: false });
-    runMain(window);
-    const frame = document.querySelector('iframe[data-src]');
-    expect(frame.getAttribute('src')).toBe(frame.getAttribute('data-src'));
-  });
-});
-
 describe('ナビのクリック計測', () => {
   const clickNavLink = (window, document, label) => {
     const link = [...document.querySelectorAll('.site-nav ul a')].find(

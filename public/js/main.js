@@ -16,22 +16,6 @@
       .catch(function () {});
   }
 
-  // 埋め込みiframe（Googleマイマップ）は画面に近づいてから読み込む
-  var frames = document.querySelectorAll("iframe[data-src]");
-  function mountFrame(f) {
-    if (!f.getAttribute("src")) f.setAttribute("src", f.getAttribute("data-src"));
-  }
-  if ("IntersectionObserver" in window && frames.length) {
-    var loader = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (e.isIntersecting) { mountFrame(e.target); loader.unobserve(e.target); }
-      });
-    }, { rootMargin: "400px 0px" });
-    frames.forEach(function (f) { loader.observe(f); });
-  } else {
-    frames.forEach(mountFrame);
-  }
-
   // ナビのクリック計測（GA）。どの項目が押されたかを nav_click イベントで送る。
   // gtag はステージングでは読み込まれないため、無い環境では何もしない
   // （ステージングの操作で本番の計測を汚さない）。
