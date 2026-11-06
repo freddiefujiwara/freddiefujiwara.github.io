@@ -313,6 +313,24 @@ a.hero-inner { /* ヒーローをリンクにする場合の共通指定 */
 
 ---
 
+## 8. 短縮URL（転送ページ）
+
+口頭や印刷物で案内するための短いURLです。トップのリポジトリの
+`public/<名前>/index.html` が転送ページの実体で、meta refresh と
+`location.replace` で飛び先へ即時に転送します。転送ページは
+noindex とし、計測タグ（gtag）は入れません。飛び先を変えるときは
+転送ページとこの表とテスト（tests/redirects.test.js）を一緒に直します。
+
+| 短縮URL | 飛び先 |
+|---|---|
+| https://freddiefujiwara.com/instagram | https://www.instagram.com/freddiefujiwara |
+| https://freddiefujiwara.com/facebook | https://www.facebook.com/freddiefujiwara |
+| https://freddiefujiwara.com/x | https://x.com/freddiefujiwara |
+| https://freddiefujiwara.com/threads | https://www.threads.com/@freddiefujiwara |
+| https://freddiefujiwara.com/map | https://freddiefujiwara.com/blog/1bNigXcTT-1LSXjUYAlfFQuJPX6U7U3ELeWAfG5XIb58（川口のリールを、地図にまとめました） |
+
+---
+
 ## サイト固有差分（揃えなくてよいもの）
 
 | 項目 | トップ | ブログ | 持ち物 |
