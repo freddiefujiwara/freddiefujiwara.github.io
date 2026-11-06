@@ -144,4 +144,16 @@ smokeDescribe("GAS endpoints", () => {
     const data = await r.json();
     expect(data.status).toBe(401);
   });
+
+  smokeTest("bucket production is auth-gated", async ({ request }) => {
+    const r = await request.get(execUrl(GAS.bucket.prod));
+    const data = await r.json();
+    expect(data.error.code).toBe(401);
+  });
+
+  smokeTest("bucket staging is auth-gated", async ({ request }) => {
+    const r = await request.get(execUrl(GAS.bucket.staging));
+    const data = await r.json();
+    expect(data.error.code).toBe(401);
+  });
 });
