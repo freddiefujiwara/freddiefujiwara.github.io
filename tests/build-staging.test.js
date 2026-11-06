@@ -58,7 +58,7 @@ describe('stagingBannerHtml', () => {
     for (const [, href] of STAGING_LINKS) {
       expect(html).toContain(`href="${href}"`);
     }
-    expect(STAGING_LINKS).toHaveLength(8);
+    expect(STAGING_LINKS).toHaveLength(9);
   });
 
   it('リンクに下線を指定する（トップ側の a の下線なし指定に打ち消されないため）', () => {
@@ -72,6 +72,6 @@ describe('stagingBannerHtml', () => {
     expect(href).toBe('/');
     expect(html).toContain(`<a href="/" style="color:#c62828;font-weight:700;text-decoration:underline;">本番</a>`);
     // 本番リンクはステージングリンクの後（末尾）に来る
-    expect(html.indexOf('>本番</a>')).toBeGreaterThan(html.indexOf('href="/asset/staging/"'));
+    expect(html.indexOf('>本番</a>')).toBeGreaterThan(html.indexOf('href="/bucket-list/staging/"'));
   });
 });
