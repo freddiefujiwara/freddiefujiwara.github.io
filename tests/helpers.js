@@ -8,6 +8,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const indexHtml = readFileSync(path.join(root, 'public/index.html'), 'utf8');
 export const mainJs = readFileSync(path.join(root, 'public/js/main.js'), 'utf8');
 export const gtagJs = readFileSync(path.join(root, 'public/js/gtag.js'), 'utf8');
+export const webVitalsGaJs = readFileSync(path.join(root, 'public/js/web-vitals-ga.js'), 'utf8');
 
 // IntersectionObserver のモック。生成されたインスタンスを保持し、
 // テスト側から交差イベントを発火できるようにする。

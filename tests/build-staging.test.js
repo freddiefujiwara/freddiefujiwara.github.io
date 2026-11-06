@@ -14,6 +14,8 @@ const sample = `<!doctype html>
   <body>
     <a href="/blog/">ブログ</a>
     <script src="/js/main.js"></script>
+    <script src="/js/web-vitals.iife.js"></script>
+    <script src="/js/web-vitals-ga.js"></script>
   </body>
 </html>`;
 
@@ -27,6 +29,8 @@ describe('transformHtml', () => {
 
   it('アセットのパスを /staging/ 配下に付け替える', () => {
     expect(out).toContain('src="/staging/js/main.js"');
+    expect(out).toContain('src="/staging/js/web-vitals.iife.js"');
+    expect(out).toContain('src="/staging/js/web-vitals-ga.js"');
     expect(out).toContain('href="/staging/favicon.ico"');
     expect(out).toContain('href="/staging/apple-touch-icon.png"');
   });

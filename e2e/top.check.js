@@ -12,6 +12,8 @@ test.describe("top page staging transform", () => {
     const html = await page.content();
     expect(html).not.toContain("googletagmanager.com");
     expect(html).toContain('src="/staging/js/main.js"');
+    expect(html).toContain('src="/staging/js/web-vitals.iife.js"');
+    expect(html).toContain('src="/staging/js/web-vitals-ga.js"');
     const robots = await page.locator('meta[name="robots"]').getAttribute("content");
     expect(robots).toContain("noindex");
     // The banner links to every staging environment.
