@@ -72,6 +72,6 @@ describe('stagingBannerHtml', () => {
     expect(href).toBe('/');
     expect(html).toContain(`<a href="/" style="color:#c62828;font-weight:700;text-decoration:underline;">本番</a>`);
     // 本番リンクはステージングリンクの後（末尾）に来る
-    expect(html.indexOf('>本番</a>')).toBeGreaterThan(html.indexOf('href="/bucket-list/staging/"'));
+    expect(html.indexOf('>本番</a>')).toBeGreaterThan(html.indexOf('href="/bucket-list-admin/staging/"'));
   });
 });

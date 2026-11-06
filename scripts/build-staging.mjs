@@ -28,7 +28,7 @@ export const STAGING_LINKS = [
   ["健康", "/health/staging/"],
   ["資産", "/asset/staging/"],
   ["GA", "/ga/staging/"],
-  ["バケットリスト", "/bucket-list/staging/"],
+  ["バケットリスト", "/bucket-list-admin/staging/"],
 ];
 
 // The link back to production, appended after the staging links.
