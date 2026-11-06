@@ -92,6 +92,14 @@ describe('活動・発信の短いURLハブ', () => {
       ['Threads', 'https://freddiefujiwara.com/threads'],
       ['川口マップ', 'https://freddiefujiwara.com/map'],
       ['楽天ROOM', 'https://freddiefujiwara.com/room'],
+      ['ブログ', 'https://freddiefujiwara.com/blog/'],
+      ['持ち物リスト', 'https://freddiefujiwara.com/list-of-stuff/'],
     ]);
+  });
+
+  it('旧来のリンク行・埋め込み地図・写真は残っていない', () => {
+    expect(document.querySelector('#activity .act-list')).toBeNull();
+    expect(document.querySelector('#activity iframe')).toBeNull();
+    expect(document.querySelector('#activity .photo-duo')).toBeNull();
   });
 });

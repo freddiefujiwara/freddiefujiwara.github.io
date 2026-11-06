@@ -227,7 +227,7 @@
       .profile-facts dt { color: var(--ink-3); font-weight: 700; letter-spacing: 0.06em; }
       .profile-facts dd { color: var(--ink); }
 
-      /* activities */
+/* activities list rows (also used by the contact section) */
       .act-list { border-top: 1px solid var(--line); }
       .act {
         display: grid; grid-template-columns: 44px 1fr auto; gap: 18px; align-items: center;
@@ -250,81 +250,52 @@
       a.act:hover .go { transform: translateX(4px); }
       a.act:hover h3 { color: var(--accent); }
 
-      /* short-URL hub: the domain on the left, one branch per destination */
-      .hub { --hub-line: color-mix(in srgb, var(--ink-3) 45%, transparent); display: flex; align-items: stretch; margin-top: 26px; }
-      .hub-root {
-        align-self: center; flex: none; text-align: center;
-        background: var(--ink); color: var(--bg);
-        border-radius: 10px; padding: 16px 20px;
+      /* activities: short-URL hub (type and lines only, no boxes) */
+      .hub-lead { margin: 0; color: var(--ink-2); font-size: 15px; line-height: 1.9; max-width: 640px; }
+      .hub {
+        --hub-line: color-mix(in srgb, var(--ink-3) 45%, transparent);
+        display: flex; align-items: stretch; margin-top: 30px;
       }
-      .hub-root-name { display: block; font-weight: 900; font-size: 16.5px; letter-spacing: 0.02em; }
-      .hub-root-sub { display: block; margin-top: 3px; font-size: 12px; opacity: 0.7; }
-      .hub-trunk { flex: 0 0 40px; position: relative; }
+      .hub-root { align-self: center; flex: none; }
+      .hub-root-name {
+        display: block; font-family: "Shippori Mincho B1", serif; font-weight: 800;
+        font-size: clamp(24px, 4.6vw, 38px); letter-spacing: 0.01em; line-height: 1.3;
+      }
+      .hub-root-sub { display: block; margin-top: 6px; color: var(--ink-3); font-size: 13px; letter-spacing: 0.08em; }
+      .hub-trunk { flex: 0 0 44px; position: relative; }
       .hub-trunk::before {
         content: ""; position: absolute; left: 0; right: 0; top: 50%;
         border-top: 2px solid var(--hub-line);
       }
-      .hub-branches {
-        list-style: none; margin: 0; padding: 0; flex: 1; position: relative;
-        display: flex; flex-direction: column;
-      }
-      .hub-branches::before {
-        content: ""; position: absolute; left: 0;
-        top: calc(100% / 12); bottom: calc(100% / 12);
-        border-left: 2px solid var(--hub-line);
-      }
-      .hub-branches li {
-        flex: 1; display: flex; align-items: center; position: relative;
-        padding: 5px 0 5px 28px;
-      }
+      .hub-branches { list-style: none; margin: 0; padding: 0; flex: 1; display: flex; flex-direction: column; }
+      .hub-branches li { flex: 1; position: relative; display: flex; align-items: center; padding: 12px 0 12px 30px; }
       .hub-branches li::before {
-        content: ""; position: absolute; left: 0; top: 50%; width: 28px;
+        content: ""; position: absolute; left: 0; top: 50%; width: 30px;
         border-top: 2px solid var(--hub-line);
       }
-      .hub-branches a {
-        display: flex; flex-direction: column; gap: 1px;
-        padding: 9px 14px; border: 1px solid var(--line); border-radius: 10px;
-        background: var(--surface);
-        transition: border-color 0.15s ease, transform 0.15s ease;
+      .hub-branches li::after {
+        content: ""; position: absolute; left: 0; top: 0; bottom: 0;
+        border-left: 2px solid var(--hub-line);
       }
-      .hub-branches a:hover { text-decoration: none; border-color: var(--accent); transform: translateX(3px); }
-      .hub-name { font-weight: 700; font-size: 14.5px; }
-      .hub-url { font-size: 12.5px; color: var(--ink-3); letter-spacing: 0.02em; }
+      .hub-branches li:first-child::after { top: 50%; }
+      .hub-branches li:last-child::after { bottom: 50%; }
+      .hub-link { display: block; }
+      .hub-link:hover { text-decoration: none; }
+      .hub-link:hover .hub-name { color: var(--accent); }
+      .hub-name { display: block; font-weight: 900; font-size: 16.5px; letter-spacing: 0.02em; transition: color 0.15s ease; }
+      .hub-url { display: block; margin-top: 2px; font-size: 13px; color: var(--ink-3); letter-spacing: 0.02em; }
+      .hub-desc { display: block; margin-top: 5px; font-size: 14px; line-height: 1.75; color: var(--ink-2); max-width: 560px; }
       @media (max-width: 700px) {
-        .hub { flex-direction: column; }
-        .hub-root { align-self: flex-start; }
-        .hub-trunk { flex: 0 0 26px; }
+        .hub { flex-direction: column; margin-top: 24px; }
+        .hub-trunk { flex: 0 0 28px; }
         .hub-trunk::before {
           left: 26px; right: auto; top: 0; bottom: 0;
           border-top: 0; border-left: 2px solid var(--hub-line);
         }
         .hub-branches { margin-left: 26px; }
+        .hub-branches li { padding: 11px 0 11px 24px; }
+        .hub-branches li::before { width: 24px; }
       }
-
-      .photo-break { margin-top: clamp(48px, 7vw, 72px); }
-      .photo-duo { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(16px, 2.6vw, 26px); }
-      @media (max-width: 640px) { .photo-duo { grid-template-columns: 1fr; } }
-      .photo-duo figure { margin: 0; }
-      .photo-duo img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 6px; }
-      .photo-duo figcaption { font-size: 12px; color: var(--ink-3); margin-top: 10px; }
-
-      /* embeds (reels / map) */
-      .sub-head { display: flex; align-items: baseline; gap: 14px; margin: clamp(46px, 6vw, 64px) 0 8px; }
-      .sub-head h3 {
-        font-family: "Shippori Mincho B1", serif; font-weight: 700;
-        font-size: clamp(20px, 3.6vw, 26px); margin: 0; line-height: 1.35;
-      }
-      .sub-head .more { margin-left: auto; font-size: 13.5px; font-weight: 700; white-space: nowrap; }
-      .sub-lead { margin: 0 0 22px; color: var(--ink-2); font-size: 14.5px; max-width: 640px; }
-      .map-frame {
-        position: relative; width: 100%; aspect-ratio: 16 / 9; min-height: 320px;
-        border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--accent-soft);
-      }
-      @media (max-width: 640px) { .map-frame { aspect-ratio: 4 / 3.4; } }
-      .map-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-      .map-note { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 20px; margin-top: 12px; }
-      .map-note p { margin: 0; font-size: 13.5px; color: var(--ink-3); }
-      .map-note a { font-size: 13.5px; font-weight: 700; }
 
       /* contact */
       .contact {
@@ -467,73 +438,7 @@
           <h2>活動・発信</h2>
           <span class="en">Activities</span>
         </div>
-        <div class="act-list rv">
-          <a class="act" href="https://www.instagram.com/freddiefujiwara" target="_blank" rel="noopener">
-            <span class="ic" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.6" fill="currentColor"/></svg>
-            </span>
-            <span>
-              <h3>Instagram<span class="handle">@freddiefujiwara</span></h3>
-              <p>川口市のお店をめぐる街歩きリールが中心。自然体で、実際に訪れたお店の空気感をそのまま届けます。</p>
-            </span>
-            <span class="go" aria-hidden="true">→</span>
-          </a>
-          <a class="act" href="https://www.google.com/maps/d/viewer?mid=13lbAcrd5hOq5xSvPsbX607gmzqNdw0E" target="_blank" rel="noopener">
-            <span class="ic" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.6-7-11a7 7 0 1 1 14 0c0 5.4-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
-            </span>
-            <span>
-              <h3>川口を歩くQAエンジニアマップ<span class="handle">Googleマイマップ</span></h3>
-              <p>リールで紹介した川口のお店26件をレイヤー分けして公開中。飲食店21件、理容・サロン4件、リラクゼーション1件。下に地図も埋め込んでいます。</p>
-            </span>
-            <span class="go" aria-hidden="true">→</span>
-          </a>
-          <a class="act" href="https://www.google.com/maps/contrib/105456242747265663411/reviews" target="_blank" rel="noopener">
-            <span class="ic" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-8.5 8.4c-1.5 0-3-.4-4.2-1.1L3 20l1.3-5A8.4 8.4 0 1 1 21 11.5z"/><path d="M8.5 10.5h7M8.5 13.5h4"/></svg>
-            </span>
-            <span>
-              <h3>Googleマップの口コミ<span class="handle">ローカルガイド レベル8</span></h3>
-              <p>実際に訪れたお店の口コミをGoogleマップにも投稿しています。口コミの一覧はプロフィールページから見られます。</p>
-            </span>
-            <span class="go" aria-hidden="true">→</span>
-          </a>
-          <a class="act" href="https://room.rakuten.co.jp/freddiefujiwara/items" target="_blank" rel="noopener">
-            <span class="ic" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16l-1.5 12.5a1.5 1.5 0 0 1-1.5 1.5H7A1.5 1.5 0 0 1 5.5 19.5L4 7z"/><path d="M8.5 10V6.5a3.5 3.5 0 0 1 7 0V10"/></svg>
-            </span>
-            <span>
-              <h3>楽天ROOM<span class="handle">「藤原史和｜川口を歩くQAエンジニア」</span></h3>
-              <p>楽天市場で購入したものを中心に、実際に買ってよかったもの、使ってよかったものだけを置いています。</p>
-            </span>
-            <span class="go" aria-hidden="true">→</span>
-          </a>
-          <a class="act" href="https://freddiefujiwara.com/blog/" target="_blank" rel="noopener">
-            <span class="ic" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-            </span>
-            <span>
-              <h3>ブログ<span class="handle">freddiefujiwara.com/blog</span></h3>
-              <p>川口歩きの記録に、AIや自動化で暮らしを軽くする工夫、中国語学習のメモなどを書いています。</p>
-            </span>
-            <span class="go" aria-hidden="true">→</span>
-          </a>
-          <a class="act" href="https://freddiefujiwara.com/list-of-stuff/" target="_blank" rel="noopener">
-            <span class="ic" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3 8l9 5 9-5"/><path d="M12 13v8"/></svg>
-            </span>
-            <span>
-              <h3>持ち物リスト<span class="handle">freddiefujiwara.com/list-of-stuff</span></h3>
-              <p>ミニマリストの持ち物リストです。<span id="stuff-count"></span></p>
-            </span>
-            <span class="go" aria-hidden="true">→</span>
-          </a>
-        </div>
-
-        <div class="sub-head rv">
-          <h3>このサイトの短いURL</h3>
-        </div>
-        <p class="sub-lead rv">発信先ごとに短いURLを用意しています。freddiefujiwara.com から、それぞれの場所へつながります。</p>
+        <p class="hub-lead rv">このサイトを起点に、発信している場所をまとめました。SNSや地図、楽天ROOMまで、それぞれ短いURLでつながります。</p>
         <div class="hub rv">
           <div class="hub-root">
             <span class="hub-root-name">freddiefujiwara.com</span>
@@ -541,36 +446,63 @@
           </div>
           <div class="hub-trunk" aria-hidden="true"></div>
           <ul class="hub-branches">
-            <li><a href="https://freddiefujiwara.com/instagram" target="_blank" rel="noopener"><span class="hub-name">Instagram</span><span class="hub-url">freddiefujiwara.com/instagram</span></a></li>
-            <li><a href="https://freddiefujiwara.com/facebook" target="_blank" rel="noopener"><span class="hub-name">Facebook</span><span class="hub-url">freddiefujiwara.com/facebook</span></a></li>
-            <li><a href="https://freddiefujiwara.com/x" target="_blank" rel="noopener"><span class="hub-name">X</span><span class="hub-url">freddiefujiwara.com/x</span></a></li>
-            <li><a href="https://freddiefujiwara.com/threads" target="_blank" rel="noopener"><span class="hub-name">Threads</span><span class="hub-url">freddiefujiwara.com/threads</span></a></li>
-            <li><a href="https://freddiefujiwara.com/map"><span class="hub-name">川口マップ</span><span class="hub-url">freddiefujiwara.com/map</span></a></li>
-            <li><a href="https://freddiefujiwara.com/room" target="_blank" rel="noopener"><span class="hub-name">楽天ROOM</span><span class="hub-url">freddiefujiwara.com/room</span></a></li>
+            <li>
+              <a class="hub-link" href="https://freddiefujiwara.com/instagram" target="_blank" rel="noopener">
+                <span class="hub-name">Instagram</span>
+                <span class="hub-url">freddiefujiwara.com/instagram</span>
+                <span class="hub-desc">川口市のお店をめぐる街歩きリールが中心。自然体で、実際に訪れたお店の空気感をそのまま届けます。</span>
+              </a>
+            </li>
+            <li>
+              <a class="hub-link" href="https://freddiefujiwara.com/facebook" target="_blank" rel="noopener">
+                <span class="hub-name">Facebook</span>
+                <span class="hub-url">freddiefujiwara.com/facebook</span>
+                <span class="hub-desc">ブログとホームページの更新をお知らせしています。仕事まわりのつながりもこちらです。</span>
+              </a>
+            </li>
+            <li>
+              <a class="hub-link" href="https://freddiefujiwara.com/x" target="_blank" rel="noopener">
+                <span class="hub-name">X</span>
+                <span class="hub-url">freddiefujiwara.com/x</span>
+                <span class="hub-desc">QAや技術まわりの発信が中心です。</span>
+              </a>
+            </li>
+            <li>
+              <a class="hub-link" href="https://freddiefujiwara.com/threads" target="_blank" rel="noopener">
+                <span class="hub-name">Threads</span>
+                <span class="hub-url">freddiefujiwara.com/threads</span>
+                <span class="hub-desc">川口の暮らしのことを、気軽に書いています。</span>
+              </a>
+            </li>
+            <li>
+              <a class="hub-link" href="https://freddiefujiwara.com/map">
+                <span class="hub-name">川口マップ</span>
+                <span class="hub-url">freddiefujiwara.com/map</span>
+                <span class="hub-desc">リールで紹介した川口のお店を、ブログ記事に地図つきでまとめました。</span>
+              </a>
+            </li>
+            <li>
+              <a class="hub-link" href="https://freddiefujiwara.com/room" target="_blank" rel="noopener">
+                <span class="hub-name">楽天ROOM</span>
+                <span class="hub-url">freddiefujiwara.com/room</span>
+                <span class="hub-desc">楽天市場で購入したものを中心に、実際に買ってよかったもの、使ってよかったものだけを置いています。</span>
+              </a>
+            </li>
+            <li>
+              <a class="hub-link" href="https://freddiefujiwara.com/blog/">
+                <span class="hub-name">ブログ</span>
+                <span class="hub-url">freddiefujiwara.com/blog</span>
+                <span class="hub-desc">川口歩きの記録に、AIや自動化で暮らしを軽くする工夫、中国語学習のメモなどを書いています。</span>
+              </a>
+            </li>
+            <li>
+              <a class="hub-link" href="https://freddiefujiwara.com/list-of-stuff/">
+                <span class="hub-name">持ち物リスト</span>
+                <span class="hub-url">freddiefujiwara.com/list-of-stuff</span>
+                <span class="hub-desc">ミニマリストの持ち物リストです。<span id="stuff-count"></span></span>
+              </a>
+            </li>
           </ul>
-        </div>
-
-        <div class="sub-head rv">
-          <h3>川口を歩くQAエンジニアマップ</h3>
-          <a class="more" href="https://www.google.com/maps/d/viewer?mid=13lbAcrd5hOq5xSvPsbX607gmzqNdw0E" target="_blank" rel="noopener">Googleマップで開く ↗</a>
-        </div>
-        <p class="sub-lead rv">リールで紹介した川口のお店26件をまとめた、Googleマイマップです。地図のまま拡大・移動して使えます。</p>
-        <div class="map-frame rv">
-          <iframe data-src="https://www.google.com/maps/d/embed?mid=13lbAcrd5hOq5xSvPsbX607gmzqNdw0E" title="川口を歩くQAエンジニアマップ（Googleマイマップ埋め込み）" loading="lazy" referrerpolicy="no-referrer"></iframe>
-        </div>
-        <div class="map-note">
-          <p>飲食店21件・理容サロン4件・リラクゼーション1件をレイヤー分けしています。各ピンの詳細にはリールのリンクと紹介文が入っています。</p>
-        </div>
-
-        <div class="photo-break photo-duo rv">
-          <figure>
-            <picture><source srcset="assets/skyline.webp" type="image/webp" /><img src="assets/skyline.jpg" alt="青空の下、屋上から望む川口の街並み。マンションや住宅が広がる" loading="lazy" /></picture>
-            <figcaption>屋上から望む川口の街並み</figcaption>
-          </figure>
-          <figure>
-            <picture><source srcset="assets/river-sunset.webp" type="image/webp" /><img src="assets/river-sunset.jpg" alt="夕景の川口。入道雲が夕日に染まり、川面に映る。土手沿いにサイクリングロードが続く" loading="lazy" /></picture>
-            <figcaption>夕景の川と入道雲。サイクリングでよく通る川辺</figcaption>
-          </figure>
         </div>
       </section>
 
