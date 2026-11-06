@@ -87,13 +87,11 @@ describe('活動・発信の短いURLハブ', () => {
     );
     expect(branches).toEqual([
       ['/instagram', 'https://freddiefujiwara.com/instagram'],
-      ['/facebook', 'https://freddiefujiwara.com/facebook'],
-      ['/x', 'https://freddiefujiwara.com/x'],
-      ['/threads', 'https://freddiefujiwara.com/threads'],
-      ['/map', 'https://freddiefujiwara.com/map'],
-      ['/room', 'https://freddiefujiwara.com/room'],
       ['/blog', 'https://freddiefujiwara.com/blog/'],
+      ['/threads', 'https://freddiefujiwara.com/threads'],
+      ['/room', 'https://freddiefujiwara.com/room'],
       ['/list-of-stuff', 'https://freddiefujiwara.com/list-of-stuff/'],
+      ['/map', 'https://freddiefujiwara.com/map'],
     ]);
   });
 
