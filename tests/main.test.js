@@ -139,3 +139,37 @@ describe('埋め込み iframe の遅延読み込み', () => {
     expect(frame.getAttribute('src')).toBe(frame.getAttribute('data-src'));
   });
 });
+
+describe('ナビのクリック計測', () => {
+  const clickNavLink = (window, document, label) => {
+    const link = [...document.querySelectorAll('.site-nav ul a')].find(
+      (a) => a.textContent.trim() === label,
+    );
+    link.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+  };
+
+  it('各項目のクリックで nav_click が項目名つきで送られる', () => {
+    const { window, document } = loadPage();
+    const calls = [];
+    window.gtag = (...args) => calls.push(args);
+    runMain(window);
+    for (const label of ['トップ', 'プロフィール', '活動・発信', '情報交換', 'ブログ', '持ち物']) {
+      clickNavLink(window, document, label);
+    }
+    expect(calls).toEqual([
+      ['event', 'nav_click', { nav_item: 'top' }],
+      ['event', 'nav_click', { nav_item: 'about' }],
+      ['event', 'nav_click', { nav_item: 'activity' }],
+      ['event', 'nav_click', { nav_item: 'contact' }],
+      ['event', 'nav_click', { nav_item: 'blog' }],
+      ['event', 'nav_click', { nav_item: 'list' }],
+    ]);
+  });
+
+  it('gtag が無い環境（ステージング等）ではクリックしても壊れない', () => {
+    const { window, document } = loadPage();
+    runMain(window);
+    expect(() => clickNavLink(window, document, 'ブログ')).not.toThrow();
+    expect(() => clickNavLink(window, document, 'プロフィール')).not.toThrow();
+  });
+});
