@@ -269,21 +269,21 @@
         border-top: 2px solid var(--hub-line);
       }
       .hub-branches { list-style: none; margin: 0; padding: 0; flex: 1; display: flex; flex-direction: column; }
-      .hub-branches li { flex: 1; position: relative; display: flex; align-items: center; padding: 12px 0 12px 30px; }
+      .hub-branches li { flex: 1; position: relative; display: flex; align-items: flex-start; padding: 12px 0 12px 30px; }
       .hub-branches li::before {
-        content: ""; position: absolute; left: 0; top: 50%; width: 30px;
+        content: ""; position: absolute; left: 0; top: 24px; width: 30px;
         border-top: 2px solid var(--hub-line);
       }
       .hub-branches li::after {
         content: ""; position: absolute; left: 0; top: 0; bottom: 0;
         border-left: 2px solid var(--hub-line);
       }
-      .hub-branches li:first-child::after { top: 50%; }
-      .hub-branches li:last-child::after { bottom: 50%; }
+      .hub-branches li:first-child::after { top: 24px; }
+      .hub-branches li:last-child::after { bottom: auto; height: 24px; }
       .hub-link { display: block; }
       .hub-link:hover { text-decoration: none; }
       .hub-link:hover .hub-name { color: var(--accent); }
-      .hub-name { display: block; font-weight: 900; font-size: 16.5px; letter-spacing: 0.02em; transition: color 0.15s ease; }
+      .hub-name { display: block; font-weight: 900; font-size: 16.5px; letter-spacing: 0.02em; color: var(--ink); transition: color 0.15s ease; }
       .hub-url { display: block; margin-top: 2px; font-size: 13px; color: var(--ink-3); letter-spacing: 0.02em; }
       .hub-desc { display: block; margin-top: 5px; font-size: 14px; line-height: 1.75; color: var(--ink-2); max-width: 560px; }
       @media (max-width: 700px) {
@@ -449,56 +449,56 @@
             <li>
               <a class="hub-link" href="https://freddiefujiwara.com/instagram" target="_blank" rel="noopener">
                 <span class="hub-name">Instagram</span>
-                <span class="hub-url">freddiefujiwara.com/instagram</span>
+                <span class="hub-url">/instagram</span>
                 <span class="hub-desc">川口市のお店をめぐる街歩きリールが中心。自然体で、実際に訪れたお店の空気感をそのまま届けます。</span>
               </a>
             </li>
             <li>
               <a class="hub-link" href="https://freddiefujiwara.com/facebook" target="_blank" rel="noopener">
                 <span class="hub-name">Facebook</span>
-                <span class="hub-url">freddiefujiwara.com/facebook</span>
+                <span class="hub-url">/facebook</span>
                 <span class="hub-desc">ブログとホームページの更新をお知らせしています。仕事まわりのつながりもこちらです。</span>
               </a>
             </li>
             <li>
               <a class="hub-link" href="https://freddiefujiwara.com/x" target="_blank" rel="noopener">
                 <span class="hub-name">X</span>
-                <span class="hub-url">freddiefujiwara.com/x</span>
+                <span class="hub-url">/x</span>
                 <span class="hub-desc">QAや技術まわりの発信が中心です。</span>
               </a>
             </li>
             <li>
               <a class="hub-link" href="https://freddiefujiwara.com/threads" target="_blank" rel="noopener">
                 <span class="hub-name">Threads</span>
-                <span class="hub-url">freddiefujiwara.com/threads</span>
+                <span class="hub-url">/threads</span>
                 <span class="hub-desc">川口の暮らしのことを、気軽に書いています。</span>
               </a>
             </li>
             <li>
               <a class="hub-link" href="https://freddiefujiwara.com/map">
                 <span class="hub-name">川口マップ</span>
-                <span class="hub-url">freddiefujiwara.com/map</span>
+                <span class="hub-url">/map</span>
                 <span class="hub-desc">リールで紹介した川口のお店を、ブログ記事に地図つきでまとめました。</span>
               </a>
             </li>
             <li>
               <a class="hub-link" href="https://freddiefujiwara.com/room" target="_blank" rel="noopener">
                 <span class="hub-name">楽天ROOM</span>
-                <span class="hub-url">freddiefujiwara.com/room</span>
+                <span class="hub-url">/room</span>
                 <span class="hub-desc">楽天市場で購入したものを中心に、実際に買ってよかったもの、使ってよかったものだけを置いています。</span>
               </a>
             </li>
             <li>
               <a class="hub-link" href="https://freddiefujiwara.com/blog/">
                 <span class="hub-name">ブログ</span>
-                <span class="hub-url">freddiefujiwara.com/blog</span>
+                <span class="hub-url">/blog</span>
                 <span class="hub-desc">川口歩きの記録に、AIや自動化で暮らしを軽くする工夫、中国語学習のメモなどを書いています。</span>
               </a>
             </li>
             <li>
               <a class="hub-link" href="https://freddiefujiwara.com/list-of-stuff/">
                 <span class="hub-name">持ち物リスト</span>
-                <span class="hub-url">freddiefujiwara.com/list-of-stuff</span>
+                <span class="hub-url">/list-of-stuff</span>
                 <span class="hub-desc">ミニマリストの持ち物リストです。<span id="stuff-count"></span></span>
               </a>
             </li>
