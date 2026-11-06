@@ -83,17 +83,21 @@ describe('活動・発信の短いURLハブ', () => {
 
   it('枝が短縮URLの並びどおりに並んでいる', () => {
     const branches = [...document.querySelectorAll('#activity .hub-branches a')].map(
-      (a) => [a.querySelector('.hub-name').textContent.trim(), a.getAttribute('href')],
+      (a) => [
+        a.querySelector('.hub-name').textContent.trim(),
+        a.querySelector('.hub-url').textContent.trim(),
+        a.getAttribute('href'),
+      ],
     );
     expect(branches).toEqual([
-      ['Instagram', 'https://freddiefujiwara.com/instagram'],
-      ['Facebook', 'https://freddiefujiwara.com/facebook'],
-      ['X', 'https://freddiefujiwara.com/x'],
-      ['Threads', 'https://freddiefujiwara.com/threads'],
-      ['川口マップ', 'https://freddiefujiwara.com/map'],
-      ['楽天ROOM', 'https://freddiefujiwara.com/room'],
-      ['ブログ', 'https://freddiefujiwara.com/blog/'],
-      ['持ち物リスト', 'https://freddiefujiwara.com/list-of-stuff/'],
+      ['Instagram', '/instagram', 'https://freddiefujiwara.com/instagram'],
+      ['Facebook', '/facebook', 'https://freddiefujiwara.com/facebook'],
+      ['X', '/x', 'https://freddiefujiwara.com/x'],
+      ['Threads', '/threads', 'https://freddiefujiwara.com/threads'],
+      ['川口マップ', '/map', 'https://freddiefujiwara.com/map'],
+      ['楽天ROOM', '/room', 'https://freddiefujiwara.com/room'],
+      ['ブログ', '/blog', 'https://freddiefujiwara.com/blog/'],
+      ['持ち物リスト', '/list-of-stuff', 'https://freddiefujiwara.com/list-of-stuff/'],
     ]);
   });
 
