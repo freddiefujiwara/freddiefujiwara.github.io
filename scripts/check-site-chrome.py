@@ -430,7 +430,7 @@ def build_rows(data):
     # --- フッター ---
     add("フッター共通リンク（14件）",
         per_site(lambda d, s: _footer_value(footer_block(d['html'] + d['js']))),
-        note="自己リンク3件（トップ / ブログ / 持ち物）＋ 外部9件（Instagram / Facebook / Googleマップ / 楽天トラベル / 食べログ / Retty / X / GitHub / LinkedIn）")
+        note="自己リンク3件（トップ / ブログ / 持ち物）＋ 外部11件（Instagram / Facebook / Googleマップ / 楽天トラベル / 食べログ / Retty / X / GitHub / LinkedIn / YOUTRUST / ラクマ）")
     add("フッター .foot-links gap",
         per_site(lambda d, s: decl(rule_block(d["css"], [".foot-links"]), "gap")))
     add("フッター .copy font-size",
