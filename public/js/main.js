@@ -32,6 +32,26 @@
     frames.forEach(mountFrame);
   }
 
+  // ナビのクリック計測（GA）。どの項目が押されたかを nav_click イベントで送る。
+  // gtag はステージングでは読み込まれないため、無い環境では何もしない
+  // （ステージングの操作で本番の計測を汚さない）。
+  function navItemOf(a) {
+    var spy = a.getAttribute("data-spy");
+    if (spy) return spy;
+    var href = a.getAttribute("href") || "";
+    if (href.indexOf("/blog/") >= 0) return "blog";
+    if (href.indexOf("/list-of-stuff/") >= 0) return "list";
+    return null;
+  }
+  document.querySelectorAll(".site-nav a").forEach(function (a) {
+    a.addEventListener("click", function () {
+      var item = navItemOf(a);
+      if (item && typeof window.gtag === "function") {
+        window.gtag("event", "nav_click", { nav_item: item });
+      }
+    });
+  });
+
   var links = document.querySelectorAll(".site-nav a[data-spy]");
   var BASE_TITLE = document.title;
   var SECTION_TITLES = { about: "プロフィール", activity: "活動・発信", contact: "情報交換" };
