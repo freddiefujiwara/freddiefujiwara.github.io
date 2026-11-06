@@ -29,9 +29,9 @@ describe('ページ構造の不変条件', () => {
     ]);
   });
 
-  it('フッターのリンクは12件で、先頭がサイト内リンク3件', () => {
+  it('フッターのリンクは14件で、先頭がサイト内リンク3件', () => {
     const links = [...document.querySelectorAll('.foot-links a')];
-    expect(links).toHaveLength(12);
+    expect(links).toHaveLength(14);
     expect(links.slice(0, 3).map((a) => a.getAttribute('href'))).toEqual([
       'https://freddiefujiwara.com/',
       'https://freddiefujiwara.com/blog/',
