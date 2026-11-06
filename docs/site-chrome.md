@@ -255,11 +255,11 @@ a.hero-inner { /* ヒーローをリンクにする場合の共通指定 */
 ```
 
 - 著作権行の文言は3サイト共通: `© {年} 藤原史和（Fumikazu Fujiwara）— freddiefujiwara.com`
-- リンク集合（12件共通）: 自己リンク3件＋外部リンク9件です。
+- リンク集合（14件共通）: 自己リンク3件＋外部リンク11件です。
   - 自己リンク: トップ（https://freddiefujiwara.com/）/ ブログ（https://freddiefujiwara.com/blog/）/
     持ち物（https://freddiefujiwara.com/list-of-stuff/）
   - 外部リンク: Instagram / Facebook / Googleマップの口コミ / 楽天トラベルの口コミ /
-    食べログの口コミ / Rettyの口コミ / X / GitHub / LinkedIn
+    食べログの口コミ / Rettyの口コミ / X / GitHub / LinkedIn / YOUTRUST / ラクマ
   （各リンクに ↗ つき、target="_blank" rel="noopener"）
 
 ## 6. favicon と OGP
@@ -406,7 +406,7 @@ a.hero-inner { /* ヒーローをリンクにする場合の共通指定 */
 
 `scripts/check-site-chrome.py` は本番3サイトの HTML / CSS / JS を取得し、
 ナビの高さ・背景・リンク集合（6件）とモバイル時のリンク値、box-sizing、scrollbar-gutter、text-size-adjust、ヒーロー帯（ブログ／持ち物）、
-フッターのリンク集合（12件）と寸法、デザイントークン（変数名の対応づけ込み）、og:image、favicon の集合を比べて表示します。
+フッターのリンク集合（14件）と寸法、デザイントークン（変数名の対応づけ込み）、og:image、favicon の集合を比べて表示します。
 
 - 「一致」: 正本どおり。
 - 「差異あり」: 「既知の未統一」か「サイト固有差分」のどちらかで説明できるか確認してください。
