@@ -250,6 +250,57 @@
       a.act:hover .go { transform: translateX(4px); }
       a.act:hover h3 { color: var(--accent); }
 
+      /* short-URL hub: the domain on the left, one branch per destination */
+      .hub { --hub-line: color-mix(in srgb, var(--ink-3) 45%, transparent); display: flex; align-items: stretch; margin-top: 26px; }
+      .hub-root {
+        align-self: center; flex: none; text-align: center;
+        background: var(--ink); color: var(--bg);
+        border-radius: 10px; padding: 16px 20px;
+      }
+      .hub-root-name { display: block; font-weight: 900; font-size: 16.5px; letter-spacing: 0.02em; }
+      .hub-root-sub { display: block; margin-top: 3px; font-size: 12px; opacity: 0.7; }
+      .hub-trunk { flex: 0 0 40px; position: relative; }
+      .hub-trunk::before {
+        content: ""; position: absolute; left: 0; right: 0; top: 50%;
+        border-top: 2px solid var(--hub-line);
+      }
+      .hub-branches {
+        list-style: none; margin: 0; padding: 0; flex: 1; position: relative;
+        display: flex; flex-direction: column;
+      }
+      .hub-branches::before {
+        content: ""; position: absolute; left: 0;
+        top: calc(100% / 12); bottom: calc(100% / 12);
+        border-left: 2px solid var(--hub-line);
+      }
+      .hub-branches li {
+        flex: 1; display: flex; align-items: center; position: relative;
+        padding: 5px 0 5px 28px;
+      }
+      .hub-branches li::before {
+        content: ""; position: absolute; left: 0; top: 50%; width: 28px;
+        border-top: 2px solid var(--hub-line);
+      }
+      .hub-branches a {
+        display: flex; flex-direction: column; gap: 1px;
+        padding: 9px 14px; border: 1px solid var(--line); border-radius: 10px;
+        background: var(--surface);
+        transition: border-color 0.15s ease, transform 0.15s ease;
+      }
+      .hub-branches a:hover { text-decoration: none; border-color: var(--accent); transform: translateX(3px); }
+      .hub-name { font-weight: 700; font-size: 14.5px; }
+      .hub-url { font-size: 12.5px; color: var(--ink-3); letter-spacing: 0.02em; }
+      @media (max-width: 700px) {
+        .hub { flex-direction: column; }
+        .hub-root { align-self: flex-start; }
+        .hub-trunk { flex: 0 0 26px; }
+        .hub-trunk::before {
+          left: 26px; right: auto; top: 0; bottom: 0;
+          border-top: 0; border-left: 2px solid var(--hub-line);
+        }
+        .hub-branches { margin-left: 26px; }
+      }
+
       .photo-break { margin-top: clamp(48px, 7vw, 72px); }
       .photo-duo { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(16px, 2.6vw, 26px); }
       @media (max-width: 640px) { .photo-duo { grid-template-columns: 1fr; } }
@@ -477,6 +528,26 @@
             </span>
             <span class="go" aria-hidden="true">→</span>
           </a>
+        </div>
+
+        <div class="sub-head rv">
+          <h3>このサイトの短いURL</h3>
+        </div>
+        <p class="sub-lead rv">発信先ごとに短いURLを用意しています。freddiefujiwara.com から、それぞれの場所へつながります。</p>
+        <div class="hub rv">
+          <div class="hub-root">
+            <span class="hub-root-name">freddiefujiwara.com</span>
+            <span class="hub-root-sub">このサイト</span>
+          </div>
+          <div class="hub-trunk" aria-hidden="true"></div>
+          <ul class="hub-branches">
+            <li><a href="https://freddiefujiwara.com/instagram" target="_blank" rel="noopener"><span class="hub-name">Instagram</span><span class="hub-url">freddiefujiwara.com/instagram</span></a></li>
+            <li><a href="https://freddiefujiwara.com/facebook" target="_blank" rel="noopener"><span class="hub-name">Facebook</span><span class="hub-url">freddiefujiwara.com/facebook</span></a></li>
+            <li><a href="https://freddiefujiwara.com/x" target="_blank" rel="noopener"><span class="hub-name">X</span><span class="hub-url">freddiefujiwara.com/x</span></a></li>
+            <li><a href="https://freddiefujiwara.com/threads" target="_blank" rel="noopener"><span class="hub-name">Threads</span><span class="hub-url">freddiefujiwara.com/threads</span></a></li>
+            <li><a href="https://freddiefujiwara.com/map"><span class="hub-name">川口マップ</span><span class="hub-url">freddiefujiwara.com/map</span></a></li>
+            <li><a href="https://freddiefujiwara.com/room" target="_blank" rel="noopener"><span class="hub-name">楽天ROOM</span><span class="hub-url">freddiefujiwara.com/room</span></a></li>
+          </ul>
         </div>
 
         <div class="sub-head rv">

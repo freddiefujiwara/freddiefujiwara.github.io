@@ -20,6 +20,7 @@ const REDIRECTS = [
     'map',
     'https://freddiefujiwara.com/blog/1bNigXcTT-1LSXjUYAlfFQuJPX6U7U3ELeWAfG5XIb58',
   ],
+  ['room', 'https://room.rakuten.co.jp/freddiefujiwara/items'],
 ];
 
 describe('短縮URLの転送ページ', () => {
