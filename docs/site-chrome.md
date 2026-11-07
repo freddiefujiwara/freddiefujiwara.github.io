@@ -329,6 +329,7 @@ noindex とし、計測タグ（gtag）は入れません。飛び先を変え�
 | https://freddiefujiwara.com/threads | https://www.threads.com/@freddiefujiwara |
 | https://freddiefujiwara.com/map | https://freddiefujiwara.com/blog/1bNigXcTT-1LSXjUYAlfFQuJPX6U7U3ELeWAfG5XIb58（川口のリールを、地図にまとめました） |
 | https://freddiefujiwara.com/room | https://room.rakuten.co.jp/freddiefujiwara/items |
+| https://freddiefujiwara.com/music | https://suno.com/@freddiefujiwara |
 
 ---
 
