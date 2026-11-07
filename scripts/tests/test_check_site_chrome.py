@@ -327,7 +327,7 @@ class TestBoxSizing(unittest.TestCase):
 
 
 class TestFooterSelfLinks(unittest.TestCase):
-    """フッターの自己リンク（3件）は href の完全一致で数える。"""
+    """フッターの自己リンク（4件）は href の完全一致で数える。"""
 
     def test_self_link_counted_from_href(self):
         text = '<a href="https://freddiefujiwara.com/">トップ</a>'
@@ -353,10 +353,10 @@ class TestFooterSelfLinks(unittest.TestCase):
 
     def test_footer_row_agrees_when_all_eleven(self):
         rows = chrome.build_rows(aligned_data())
-        row = rows_by_label(rows)["フッター共通リンク（14件）"]
+        row = rows_by_label(rows)["フッター共通リンク（15件）"]
         self.assertEqual(chrome.judge_row(row), "一致")
         for site in ("トップ", "ブログ", "持ち物"):
-            self.assertEqual(row[1][site], "14/14 件")
+            self.assertEqual(row[1][site], "15/15 件")
 
     def test_footer_row_detects_missing_self_link(self):
         data = aligned_data()
@@ -365,9 +365,9 @@ class TestFooterSelfLinks(unittest.TestCase):
         data["ブログ"]["js"] = data["ブログ"]["js"].replace(
             'href="https://freddiefujiwara.com/list-of-stuff/"', "")
         rows = chrome.build_rows(data)
-        row = rows_by_label(rows)["フッター共通リンク（14件）"]
+        row = rows_by_label(rows)["フッター共通リンク（15件）"]
         self.assertEqual(chrome.judge_row(row), "差異あり")
-        self.assertEqual(row[1]["ブログ"], "13/14 件（不足: 持ち物）")
+        self.assertEqual(row[1]["ブログ"], "14/15 件（不足: 持ち物）")
 
     def test_footer_row_scoped_to_footer_block(self):
         # ナビのブランド等、フッター外の href はフッター分として数えない
@@ -376,9 +376,9 @@ class TestFooterSelfLinks(unittest.TestCase):
             '<a href="https://freddiefujiwara.com/">リンク</a>', "")
         data["ブログ"]["js"] = block + nav_markup(NAV_HREFS_BLOG)
         rows = chrome.build_rows(data)
-        row = rows_by_label(rows)["フッター共通リンク（14件）"]
+        row = rows_by_label(rows)["フッター共通リンク（15件）"]
         self.assertEqual(chrome.judge_row(row), "差異あり")
-        self.assertEqual(row[1]["ブログ"], "13/14 件（不足: トップ）")
+        self.assertEqual(row[1]["ブログ"], "14/15 件（不足: トップ）")
 
     def test_footer_block_from_spa_static_string(self):
         # SPA では <footer> は描画関数側にあり、静的文字列には
@@ -507,7 +507,7 @@ class TestFixtureHelpers(unittest.TestCase):
 
     def test_footer_links_from_text(self):
         found = chrome.footer_links(FOOTER_URLS)
-        self.assertEqual(len(found), 14)
+        self.assertEqual(len(found), 15)
         self.assertEqual(found, set(chrome.FOOTER_LINKS))
         self.assertEqual(chrome.footer_links("no links here"), set())
 
