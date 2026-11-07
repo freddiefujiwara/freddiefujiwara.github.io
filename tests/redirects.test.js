@@ -11,15 +11,14 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 // introduced by word of mouth or in print. The canonical list of
 // destinations is docs/site-chrome.md section 8; this test keeps the
 // stubs and the registered destinations from drifting apart.
+// Three short URLs (map / bucket-list / list-of-stuff) are no longer
+// stubs: they serve a generated static article page instead, covered
+// by tests/static-articles.test.js.
 const REDIRECTS = [
   ['instagram', 'https://www.instagram.com/freddiefujiwara'],
   ['facebook', 'https://www.facebook.com/freddiefujiwara'],
   ['x', 'https://x.com/freddiefujiwara'],
   ['threads', 'https://www.threads.com/@freddiefujiwara'],
-  [
-    'map',
-    'https://freddiefujiwara.com/blog/1bNigXcTT-1LSXjUYAlfFQuJPX6U7U3ELeWAfG5XIb58',
-  ],
   ['room', 'https://room.rakuten.co.jp/freddiefujiwara/items'],
   ['music', 'https://suno.com/@freddiefujiwara'],
 ];
