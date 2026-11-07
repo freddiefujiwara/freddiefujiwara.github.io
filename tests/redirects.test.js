@@ -22,6 +22,7 @@ const REDIRECTS = [
   ],
   ['room', 'https://room.rakuten.co.jp/freddiefujiwara/items'],
   ['music', 'https://suno.com/@freddiefujiwara'],
+  ['chinese', 'https://freddiefujiwara.com/blog/tag/中国語'],
 ];
 
 describe('短縮URLの転送ページ', () => {
