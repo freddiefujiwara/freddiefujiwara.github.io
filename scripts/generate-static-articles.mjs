@@ -813,9 +813,34 @@ export const MUSIC_PLAYER_SCRIPT = `
         }
 
         var latestActivation = 0;
+
+        // Once one track is in, quietly fetch the rest of the
+        // playlist in the background, one at a time. Most switches
+        // then find their bytes already in the session cache, which
+        // also keeps iOS from treating a long-delayed programmatic
+        // play() as unsolicited autoplay. Runs at most once.
+        var prefetchStarted = false;
+        function prefetchRemainingTracks(player) {
+          if (prefetchStarted) return;
+          var audios = (player && player.list && player.list.audios) || [];
+          var files = [];
+          audios.forEach(function (entry) {
+            try {
+              var file = new URL(entry.url).searchParams.get("track") || "";
+              if (file && AUDIO_FILE_PATTERN.test(file)) files.push(file);
+            } catch (err) {
+              // A malformed playlist entry must not break the prefetch.
+            }
+          });
+          if (!files.length) return;
+          prefetchStarted = true;
+          files.reduce(function (chain, file) {
+            return chain.then(function () { return fetchTrackBlob(file); }).catch(function () {});
+          }, Promise.resolve());
+        }
+
         function gasAudioType(audioElement, audio, player) {
           var activation = ++latestActivation;
-          var shouldResume = Boolean(player && !player.paused);
           audioElement.pause();
           audioElement.removeAttribute("src");
           audioElement.load();
@@ -835,7 +860,18 @@ export const MUSIC_PLAYER_SCRIPT = `
             .then(function (blob) {
               if (activation !== latestActivation) return;
               audioElement.src = URL.createObjectURL(blob);
-              if (shouldResume) {
+              prefetchRemainingTracks(player);
+              // Whether to resume is decided HERE, when the bytes
+              // arrive, by reading player.paused now — not at
+              // handler entry. APlayer's play() flips the flag to
+              // false synchronously after the handler returns, and
+              // the ended -> skipForward -> play() sequence of a
+              // natural track end does exactly that. Reading it at
+              // entry missed the loop-around cases (all-repeat and
+              // one-repeat): right after a track ends the player
+              // still reads paused, so the next round loaded but
+              // never started.
+              if (player && !player.paused) {
                 var attempt = audioElement.play();
                 if (attempt && typeof attempt.catch === "function") attempt.catch(function () {});
               }
