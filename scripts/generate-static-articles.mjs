@@ -53,6 +53,12 @@ export const ARTICLES = [
     heroLabel: "KAWAGUCHI — LIST OF STUFF",
     navActive: "list",
   },
+  {
+    slug: "music",
+    docId: "1V7cXplHKbsT48EhLarl-SPHfDV-lSEafEId2OMgExkg",
+    heroLabel: "KAWAGUCHI — MUSIC",
+    navActive: null,
+  },
 ];
 
 const SITE_ORIGIN = "https://freddiefujiwara.com";
@@ -129,6 +135,67 @@ export const delimitBareUrls = (markdown) =>
     .map((segment, index) => (index % 2 === 1 ? segment : wrapBareUrls(segment)))
     .join("");
 
+// Lyrics blocks: an article can present a song's lyrics as a boxed
+// sheet by putting a paragraph that is only "**歌詞**" followed by
+// one paragraph per lyric line. The block is rewritten here — before
+// parsing — into a raw HTML box, because Markdown itself has no
+// grouping for it. The lines are consumed until the block can no
+// longer be a lyric line: a heading, a raw HTML block (the music
+// player placeholders, link cards), a Markdown link or marker line,
+// a long paragraph, or a sentence ending in "。" — prose paragraphs
+// (a section's introduction, an article's closing line) end lyrics
+// instead of being boxed in. Bracketed part labels ("[Chorus]")
+// become muted part headings inside the box.
+// (Ported from the blog's src/services/markdown.js so the static
+// pages render lyrics exactly like the blog does.)
+const LYRICS_LABEL = "**歌詞**";
+const LYRICS_PART_PATTERN = /^\[[^\]]*\]$/;
+
+const escapeHtmlText = (text) => String(text)
+  .replace(/&/g, "&amp;")
+  .replace(/</g, "&lt;")
+  .replace(/>/g, "&gt;");
+
+const isLyricLine = (block) => {
+  if (!block || block.length > 40) return false;
+  if (block.startsWith("#")) return false;
+  if (block.startsWith("<")) return false;
+  if (block.startsWith("[[")) return false;
+  if (block.includes("](")) return false;
+  if (block.endsWith("。")) return false;
+  return true;
+};
+
+export const wrapLyricsBlocks = (markdown) => {
+  const blocks = String(markdown ?? "").split(/\n{2,}/);
+  const out = [];
+  let i = 0;
+  while (i < blocks.length) {
+    if (blocks[i].trim() !== LYRICS_LABEL) {
+      out.push(blocks[i]);
+      i += 1;
+      continue;
+    }
+    const lines = [];
+    let j = i + 1;
+    while (j < blocks.length && isLyricLine(blocks[j].trim())) {
+      lines.push(blocks[j].trim());
+      j += 1;
+    }
+    if (!lines.length) {
+      out.push(blocks[i]);
+      i += 1;
+      continue;
+    }
+    const inner = lines.map((line) => (LYRICS_PART_PATTERN.test(line)
+      ? `<p class="lyrics-part">${escapeHtmlText(line)}</p>`
+      : `<p class="lyrics-line">${escapeHtmlText(line)}</p>`)).join("");
+    out.push(`<div class="lyrics"><p class="lyrics-label">歌詞</p>${inner}</div>`);
+    i = j;
+  }
+  return out.join("\n\n");
+};
+
 // Renders an article's markdown to HTML. Headings receive the
 // hashed id of their text; the second and later headings with the
 // same text gain a "-2", "-3", ... suffix so ids stay unique.
@@ -157,7 +224,7 @@ export const renderMarkdown = (markdown) => {
     const id = count === 1 ? base : `${base}-${count}`;
     return `<h${level} id="${id}">${text}</h${level}>\n`;
   };
-  return marked.parse(delimitBareUrls(markdown ?? ""), { renderer });
+  return marked.parse(wrapLyricsBlocks(delimitBareUrls(markdown ?? "")), { renderer });
 };
 
 // Builds an article's table of contents from its rendered HTML.
@@ -574,6 +641,79 @@ const PAGE_CSS = `
       }
       .tag-chip:hover { color: var(--accent); border-color: var(--accent); text-decoration: none; }
 
+      /* ---------- lyrics (the blog's boxed lyric sheet) ---------- */
+      article .lyrics {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 18px 22px;
+        margin: 20px 0;
+      }
+      article .lyrics-label {
+        font-weight: 700;
+        margin: 0 0 10px;
+      }
+      article .lyrics-line {
+        margin: 0 0 3px;
+        line-height: 1.8;
+      }
+      article .lyrics-part {
+        color: var(--ink-2);
+        font-size: 0.85em;
+        margin: 14px 0 5px;
+      }
+      article .lyrics-label + .lyrics-part {
+        margin-top: 2px;
+      }
+
+      /* ---------- music player (APlayer, themed like the blog) ---------- */
+      article .music-player .aplayer {
+        color: var(--ink);
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(34, 29, 22, 0.08);
+        font-family: inherit;
+      }
+      article .music-player .aplayer.aplayer-withlist .aplayer-info {
+        border-bottom: 1px solid var(--line);
+      }
+      article .music-player .aplayer .aplayer-info .aplayer-music .aplayer-title {
+        color: var(--ink);
+        font-size: 15px;
+        font-weight: 700;
+      }
+      article .music-player .aplayer .aplayer-list ol li {
+        font-size: 14px;
+      }
+      article .music-player .aplayer .aplayer-list ol li .aplayer-list-title {
+        color: var(--ink);
+        font-weight: 500;
+      }
+      article .music-player .aplayer .aplayer-list ol li .aplayer-list-index {
+        color: var(--ink-2);
+      }
+      article .music-player .aplayer .aplayer-info .aplayer-music .aplayer-author,
+      article .music-player .aplayer .aplayer-list ol li .aplayer-list-author {
+        color: var(--ink-2);
+      }
+      article .music-player .aplayer .aplayer-info .aplayer-controller .aplayer-time {
+        color: var(--ink-3);
+      }
+      article .music-player .aplayer .aplayer-list ol li {
+        border-top: 1px solid var(--line);
+      }
+      article .music-player .aplayer .aplayer-list ol li:hover,
+      article .music-player .aplayer .aplayer-list ol li.aplayer-list-light {
+        background: var(--accent-soft);
+      }
+      article .music-player .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar {
+        background: var(--line);
+      }
+      article .music-player .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar .aplayer-loaded {
+        background: var(--ink-3);
+      }
+
       /* ---------- footer (shared site chrome) ---------- */
       footer { margin-top: 56px; border-top: 1px solid var(--line); padding: 24px 0 46px; }
       .foot-links { display: flex; flex-wrap: wrap; gap: 10px 22px; margin-bottom: 22px; }
@@ -616,6 +756,166 @@ const FALLBACK_SCRIPT = `
     </script>
 `;
 
+// Emitted only on pages whose article carries music-track
+// placeholders (today: the /music page), so other static pages
+// ship no player code at all.
+export const MUSIC_PLAYER_SCRIPT = `
+    <script>
+      (function () {
+        // Embedded music player, ported from the blog's
+        // src/services/musicPlayer.js. blog-gas turns a document
+        // paragraph [[music|title|file.mp3]] into a placeholder div;
+        // this script collects the article's placeholders into a
+        // single APlayer playlist at the first placeholder's place.
+        // The MP3s live in Google Drive, whose direct links browsers
+        // refuse to play, so tracks are fetched from the music-gas
+        // endpoint as base64 JSON and handed to the element as Blob
+        // object URLs through APlayer's custom audio type.
+        var MUSIC_ENDPOINT = "https://script.google.com/macros/s/AKfycbzhGqDJUY9qoyHx81sUiV2SSBAR1XzMQxdnqx-guYpIwhHikt8WlaN21PHcL9NkJA-Mbg/exec";
+        var VENDOR_BASE = "https://freddiefujiwara.com/vendor/";
+        var AUDIO_FILE_PATTERN = /^[A-Za-z0-9_-]+\\.mp3$/;
+
+        function musicTrackApiUrl(file) {
+          return AUDIO_FILE_PATTERN.test(file || "")
+            ? MUSIC_ENDPOINT + "?track=" + encodeURIComponent(file)
+            : "";
+        }
+
+        function decodeBase64ToBlob(base64, mime) {
+          var binary = atob(String(base64 == null ? "" : base64));
+          var chunkSize = 0x8000;
+          var parts = [];
+          for (var offset = 0; offset < binary.length; offset += chunkSize) {
+            var chunk = binary.slice(offset, offset + chunkSize);
+            var bytes = new Uint8Array(chunk.length);
+            for (var i = 0; i < chunk.length; i += 1) bytes[i] = chunk.charCodeAt(i);
+            parts.push(bytes);
+          }
+          return new Blob(parts, { type: mime || "audio/mpeg" });
+        }
+
+        var blobCache = {};
+        function fetchTrackBlob(file) {
+          if (blobCache[file]) return blobCache[file];
+          var promise = (async function () {
+            var url = musicTrackApiUrl(file);
+            if (!url) throw new Error("music endpoint is not configured");
+            var response = await fetch(url);
+            var payload = await response.json();
+            if (!payload || !payload.ok) {
+              throw new Error((payload && payload.error) || "music-gas request failed");
+            }
+            return decodeBase64ToBlob(payload.data, payload.mime);
+          })();
+          blobCache[file] = promise;
+          promise.catch(function () { delete blobCache[file]; });
+          return promise;
+        }
+
+        var latestActivation = 0;
+        function gasAudioType(audioElement, audio, player) {
+          var activation = ++latestActivation;
+          var shouldResume = Boolean(player && !player.paused);
+          audioElement.pause();
+          audioElement.removeAttribute("src");
+          audioElement.load();
+          var file = "";
+          try {
+            file = new URL(audio.url).searchParams.get("track") || "";
+          } catch (err) {
+            file = "";
+          }
+          if (!file) {
+            if (player && typeof player.notice === "function") {
+              player.notice("音源を読み込めませんでした", 2000);
+            }
+            return;
+          }
+          fetchTrackBlob(file)
+            .then(function (blob) {
+              if (activation !== latestActivation) return;
+              audioElement.src = URL.createObjectURL(blob);
+              if (shouldResume) {
+                var attempt = audioElement.play();
+                if (attempt && typeof attempt.catch === "function") attempt.catch(function () {});
+              }
+            })
+            .catch(function () {
+              if (activation === latestActivation && player && typeof player.notice === "function") {
+                player.notice("音源を読み込めませんでした", 2000);
+              }
+            });
+        }
+
+        var loadPromise = null;
+        function loadAPlayer() {
+          if (window.APlayer) return Promise.resolve(window.APlayer);
+          if (loadPromise) return loadPromise;
+          loadPromise = new Promise(function (resolve) {
+            var link = document.createElement("link");
+            link.rel = "stylesheet";
+            link.href = VENDOR_BASE + "APlayer.min.css";
+            document.head.appendChild(link);
+            var script = document.createElement("script");
+            script.src = VENDOR_BASE + "APlayer.min.js";
+            script.onload = function () { resolve(window.APlayer || null); };
+            script.onerror = function () { resolve(null); };
+            document.head.appendChild(script);
+          });
+          return loadPromise;
+        }
+
+        function mount() {
+          var root = document.querySelector(".article-content");
+          if (!root) return;
+          var placeholders = Array.prototype.slice.call(
+            root.querySelectorAll(".music-track")
+          );
+          if (!placeholders.length) return;
+          var tracks = placeholders
+            .map(function (el) {
+              return { title: el.dataset.title || "", file: el.dataset.file || "" };
+            })
+            .filter(function (track) { return AUDIO_FILE_PATTERN.test(track.file); });
+          var container = document.createElement("div");
+          container.className = "music-player";
+          placeholders[0].replaceWith(container);
+          placeholders.forEach(function (el) { el.remove(); });
+          if (!tracks.length) return;
+          loadAPlayer().then(function (APlayer) {
+            if (!APlayer || !container.isConnected) return;
+            var theme = "#b23a1f";
+            try {
+              var value = getComputedStyle(document.documentElement)
+                .getPropertyValue("--accent")
+                .trim();
+              if (value) theme = value;
+            } catch (err) { /* keep the fallback theme */ }
+            new APlayer({
+              container: container,
+              theme: theme,
+              listFolded: false,
+              customAudioType: { gas: gasAudioType },
+              audio: tracks.map(function (track) {
+                return {
+                  name: track.title,
+                  artist: "藤原史和",
+                  url: musicTrackApiUrl(track.file),
+                  type: "gas"
+                };
+              })
+            });
+          });
+        }
+
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", mount);
+        } else {
+          mount();
+        }
+      })();
+    </script>
+`;
 // Renders one complete static article page.
 export const renderStaticArticlePage = ({ article, payload, year, latestArticleId }) => {
   // The title is the blog's title, used exactly as fetched — no
@@ -636,6 +936,9 @@ export const renderStaticArticlePage = ({ article, payload, year, latestArticleI
   const heroHref = latestArticleId
     ? `${SITE_ORIGIN}/blog/${latestArticleId}`
     : `${SITE_ORIGIN}/blog/`;
+  const musicScript = bodyHtml.includes('class="music-track"')
+    ? MUSIC_PLAYER_SCRIPT
+    : "";
   return `<!doctype html>
 <html lang="ja">
   <head>
@@ -682,7 +985,7 @@ ${bodyHtml}          </div>
       </div>
     </main>
     ${buildFooterHtml(year)}
-${FALLBACK_SCRIPT}  </body>
+${FALLBACK_SCRIPT}${musicScript}  </body>
 </html>
 `;
 };

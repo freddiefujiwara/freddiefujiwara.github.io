@@ -14,7 +14,9 @@ import {
   normalizeTagList,
   renderArticleBody,
   renderMarkdown,
+  MUSIC_PLAYER_SCRIPT,
   renderStaticArticlePage,
+  wrapLyricsBlocks,
   splitHtmlAtTocMarkers,
 } from '../scripts/generate-static-articles.mjs';
 
@@ -276,6 +278,72 @@ describe('ヒーローはブログと同じく最新記事へのリンク', () =
     const hero = document.querySelector('header.hero a.hero-inner');
     expect(hero).not.toBeNull();
     expect(hero.getAttribute('href')).toBe('https://freddiefujiwara.com/blog/');
+  });
+});
+
+describe('歌詞の箱（ブログの wrapLyricsBlocks と同じ変換）', () => {
+  it('「**歌詞**」と歌詞行を箱に変換する（パート見出し付き）', () => {
+    const md = [
+      '紹介文です。',
+      '',
+      '**歌詞**',
+      '',
+      '[Intro]',
+      '',
+      'あさのひかり',
+      '',
+      'かわをわたる',
+      '',
+      '締めの文章です。',
+    ].join('\n');
+    const out = wrapLyricsBlocks(md);
+    expect(out).toContain('<div class="lyrics"><p class="lyrics-label">歌詞</p>');
+    expect(out).toContain('<p class="lyrics-part">[Intro]</p>');
+    expect(out).toContain('<p class="lyrics-line">あさのひかり</p>');
+    expect(out).toContain('<p class="lyrics-line">かわをわたる</p>');
+    // 「。」で終わる散文は箱に入らず、変換の外に残る
+    expect(out).toContain('締めの文章です。');
+    expect(out.indexOf('締めの文章です。')).toBeGreaterThan(out.indexOf('</div>'));
+  });
+
+  it('歌詞行が続かないラベルは変換しない', () => {
+    const md = '**歌詞**\n\nこれは歌詞ではない長い説明の段落です、という文章。';
+    expect(wrapLyricsBlocks(md)).toBe(md);
+  });
+});
+
+describe('音楽プレイヤー（music-track プレースホルダ）', () => {
+  const trackPayload = {
+    title: '2026-09-22 川口のSunoリリックVlogを、まとめました',
+    markdown:
+      '曲の紹介です。\n\n<div class="music-track" data-title="テスト曲" data-file="test-track.mp3"></div>',
+    tags: ['音楽'],
+  };
+
+  it('ARTICLES に music が登録されている', () => {
+    const music = ARTICLES.find((a) => a.slug === 'music');
+    expect(music?.docId).toBe('1V7cXplHKbsT48EhLarl-SPHfDV-lSEafEId2OMgExkg');
+  });
+
+  it('トラックのある記事にはプレイヤーのスクリプトが入る', () => {
+    const page = renderStaticArticlePage({
+      article: ARTICLES.find((a) => a.slug === 'music'),
+      payload: trackPayload,
+      year: 2026,
+    });
+    expect(page).toContain('class="music-track"');
+    expect(page).toContain('APlayer.min.js');
+    expect(page).toContain('music-gas request failed');
+    expect(page).toContain(MUSIC_PLAYER_SCRIPT.trim().slice(0, 40));
+  });
+
+  it('トラックのない記事にはプレイヤーのスクリプトが入らない', () => {
+    const page = renderStaticArticlePage({
+      article: ARTICLES[0],
+      payload: { title: 'タイトル', markdown: '本文です。', tags: [] },
+      year: 2026,
+    });
+    expect(page).not.toContain('APlayer.min.js');
   });
 });
 
