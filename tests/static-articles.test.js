@@ -337,6 +337,12 @@ describe('音楽プレイヤー（music-track プレースホルダ）', () => {
     expect(page).toContain(MUSIC_PLAYER_SCRIPT.trim().slice(0, 40));
   });
 
+  it('再開判定は fetch 完了時点の player.paused で行う（ブログ側の修正と同一）', () => {
+    expect(MUSIC_PLAYER_SCRIPT).not.toContain('shouldResume');
+    expect(MUSIC_PLAYER_SCRIPT).toContain('prefetchRemainingTracks(player)');
+    expect(MUSIC_PLAYER_SCRIPT).toContain('if (player && !player.paused)');
+  });
+
   it('トラックのない記事にはプレイヤーのスクリプトが入らない', () => {
     const page = renderStaticArticlePage({
       article: ARTICLES[0],
