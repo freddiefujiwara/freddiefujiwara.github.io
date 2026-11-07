@@ -314,7 +314,7 @@
       </ul>
     </nav>
     <header class="hero">
-      <a class="hero-inner hero-link" href="https://freddiefujiwara.com/blog/1egcvG9FvC232mYN--ZYr7nH65uVPDT5QgUlNhAGAm-w">
+      <a class="hero-inner hero-link" href="https://freddiefujiwara.com/blog/1rb1BZG19mzzSQ9qK8thIl_LpGySGJgi7K2ZoKLzCB7U">
         <p class="hero-place">KAWAGUCHI — MUSIC</p>
         <h1><span class="h1-name">藤原史和</span><span class="h1-sep" aria-hidden="true">｜</span><span class="h1-role">川口を歩くQAエンジニア</span></h1>
       </a>
@@ -394,7 +394,7 @@
 <p>少しずつ空が明るくなって、赤羽一番街を抜けて赤羽駅へ。そこから歩いて、毎週日曜の朝の坐禅の静勝寺まで。いつもの122も、夜明け前に走るとまた違って見えました。</p>
 <p><a href="https://www.instagram.com/reel/DdxiL7yTs5o/" target="_blank" rel="noopener noreferrer">▶️Instagramを見る</a></p>
 <p><a href="https://suno.com/song/aa3f1613-6d7d-4790-ab32-012ca3a79e64" target="_blank" rel="noopener noreferrer">▶️Suno で曲を聴く</a></p>
-<div class="lyrics"><p class="lyrics-label">歌詞</p><p class="lyrics-line">夜明け前の</p><p class="lyrics-line">ワン ツー ツー</p><p class="lyrics-line">鳩ヶ谷から</p><p class="lyrics-line">南へ走る</p><p class="lyrics-line">変電所</p><p class="lyrics-line">まだ真っ暗</p><p class="lyrics-line">南鳩ヶ谷</p><p class="lyrics-line">街は寝てる</p><p class="lyrics-line">ガオーメン</p><p class="lyrics-line">川口のソウルフード</p><p class="lyrics-line">十勝甘納豆</p><p class="lyrics-line">朝はまだ閉まってる</p><p class="lyrics-line">ワン ツー ツー</p><p class="lyrics-line">ずっとまっすぐ</p><p class="lyrics-line">空が少し</p><p class="lyrics-line">明るくなった</p><p class="lyrics-line">東京都</p><p class="lyrics-line">あらっ？ もう北区？</p><p class="lyrics-line">赤羽一番街</p><p class="lyrics-line">朝は別の顔</p><p class="lyrics-line">赤羽駅</p><p class="lyrics-line">ここまで来た</p><p class="lyrics-line">でも目的地は</p><p class="lyrics-line">もうちょい先</p><p class="lyrics-line">静勝寺</p><p class="lyrics-line">この階段か</p><p class="lyrics-line">朝から登る</p><p class="lyrics-line">地味にきつい</p><p class="lyrics-line">参道抜けたら</p><p class="lyrics-line">急に静か</p><p class="lyrics-line">静勝寺</p><p class="lyrics-line">やっと着いた</p><p class="lyrics-line">夜明け前の</p><p class="lyrics-line">ワン ツー ツー</p><p class="lyrics-line">ゴールは</p><p class="lyrics-line">坐禅</p></div>
+<div class="lyrics"><p class="lyrics-label">歌詞</p><p class="lyrics-line">夜明け前の</p><p class="lyrics-line">ワン ツー ツー</p><p class="lyrics-line">鳩ヶ谷から</p><p class="lyrics-line">南へ走る</p><p class="lyrics-line">変電所</p><p class="lyrics-line">まだ真っ暗</p><p class="lyrics-line">南鳩ヶ谷</p><p class="lyrics-line">街は寝てる</p><p class="lyrics-line">ガオーメン</p><p class="lyrics-line">川口のソウルフード</p><p class="lyrics-line">十勝甘納豆</p><p class="lyrics-line">朝はまだ閉まってる</p><p class="lyrics-line">ワン ツー ツー</p><p class="lyrics-line">ずっとまっすぐ</p><p class="lyrics-line">空が少し</p><p class="lyrics-line">明るくなった</p><p class="lyrics-line">東京都</p><p class="lyrics-line">あらっ？ もう北区？</p><p class="lyrics-line">赤羽一番街</p><p class="lyrics-line">朝は別の顔</p><p class="lyrics-line">赤羽駅</p><p class="lyrics-line">ここまで来た</p><p class="lyrics-line">でも目的地は</p><p class="lyrics-line">もうちょい先</p><p class="lyrics-line">静勝寺</p><p class="lyrics-line">この階段か</p><p class="lyrics-line">朝から登る</p><p class="lyrics-line">地味にきつい</p><p class="lyrics-line">参道抜けたら</p><p class="lyrics-line">急に静か</p><p class="lyrics-line">静勝寺</p><p class="lyrics-line">やっと着いた</p><p class="lyrics-line">夜明け前の</p><p class="lyrics-line">ワン ツー ツー</p><p class="lyrics-line">ゴールは</p><p class="lyrics-line">坐禅</p><p class="lyrics-line">夜明け前の</p><p class="lyrics-line">ワン ツー ツー</p></div>
 
 <h2 id="h-e09d4e68">2026-09-22 川口の東（第2弾）</h2>
 <p>武南警察署からスタートして、見沼遊歩道、坂下町商店街、日光御成道、山田うどん、辰井公園を抜けて、首都高の下をひたすら東へ。</p>
@@ -519,9 +519,34 @@
         }
 
         var latestActivation = 0;
+
+        // Once one track is in, quietly fetch the rest of the
+        // playlist in the background, one at a time. Most switches
+        // then find their bytes already in the session cache, which
+        // also keeps iOS from treating a long-delayed programmatic
+        // play() as unsolicited autoplay. Runs at most once.
+        var prefetchStarted = false;
+        function prefetchRemainingTracks(player) {
+          if (prefetchStarted) return;
+          var audios = (player && player.list && player.list.audios) || [];
+          var files = [];
+          audios.forEach(function (entry) {
+            try {
+              var file = new URL(entry.url).searchParams.get("track") || "";
+              if (file && AUDIO_FILE_PATTERN.test(file)) files.push(file);
+            } catch (err) {
+              // A malformed playlist entry must not break the prefetch.
+            }
+          });
+          if (!files.length) return;
+          prefetchStarted = true;
+          files.reduce(function (chain, file) {
+            return chain.then(function () { return fetchTrackBlob(file); }).catch(function () {});
+          }, Promise.resolve());
+        }
+
         function gasAudioType(audioElement, audio, player) {
           var activation = ++latestActivation;
-          var shouldResume = Boolean(player && !player.paused);
           audioElement.pause();
           audioElement.removeAttribute("src");
           audioElement.load();
@@ -541,7 +566,18 @@
             .then(function (blob) {
               if (activation !== latestActivation) return;
               audioElement.src = URL.createObjectURL(blob);
-              if (shouldResume) {
+              prefetchRemainingTracks(player);
+              // Whether to resume is decided HERE, when the bytes
+              // arrive, by reading player.paused now — not at
+              // handler entry. APlayer's play() flips the flag to
+              // false synchronously after the handler returns, and
+              // the ended -> skipForward -> play() sequence of a
+              // natural track end does exactly that. Reading it at
+              // entry missed the loop-around cases (all-repeat and
+              // one-repeat): right after a track ends the player
+              // still reads paused, so the next round loaded but
+              // never started.
+              if (player && !player.paused) {
                 var attempt = audioElement.play();
                 if (attempt && typeof attempt.catch === "function") attempt.catch(function () {});
               }
