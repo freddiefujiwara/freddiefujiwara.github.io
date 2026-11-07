@@ -219,6 +219,79 @@
       }
       .tag-chip:hover { color: var(--accent); border-color: var(--accent); text-decoration: none; }
 
+      /* ---------- lyrics (the blog's boxed lyric sheet) ---------- */
+      article .lyrics {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 18px 22px;
+        margin: 20px 0;
+      }
+      article .lyrics-label {
+        font-weight: 700;
+        margin: 0 0 10px;
+      }
+      article .lyrics-line {
+        margin: 0 0 3px;
+        line-height: 1.8;
+      }
+      article .lyrics-part {
+        color: var(--ink-2);
+        font-size: 0.85em;
+        margin: 14px 0 5px;
+      }
+      article .lyrics-label + .lyrics-part {
+        margin-top: 2px;
+      }
+
+      /* ---------- music player (APlayer, themed like the blog) ---------- */
+      article .music-player .aplayer {
+        color: var(--ink);
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(34, 29, 22, 0.08);
+        font-family: inherit;
+      }
+      article .music-player .aplayer.aplayer-withlist .aplayer-info {
+        border-bottom: 1px solid var(--line);
+      }
+      article .music-player .aplayer .aplayer-info .aplayer-music .aplayer-title {
+        color: var(--ink);
+        font-size: 15px;
+        font-weight: 700;
+      }
+      article .music-player .aplayer .aplayer-list ol li {
+        font-size: 14px;
+      }
+      article .music-player .aplayer .aplayer-list ol li .aplayer-list-title {
+        color: var(--ink);
+        font-weight: 500;
+      }
+      article .music-player .aplayer .aplayer-list ol li .aplayer-list-index {
+        color: var(--ink-2);
+      }
+      article .music-player .aplayer .aplayer-info .aplayer-music .aplayer-author,
+      article .music-player .aplayer .aplayer-list ol li .aplayer-list-author {
+        color: var(--ink-2);
+      }
+      article .music-player .aplayer .aplayer-info .aplayer-controller .aplayer-time {
+        color: var(--ink-3);
+      }
+      article .music-player .aplayer .aplayer-list ol li {
+        border-top: 1px solid var(--line);
+      }
+      article .music-player .aplayer .aplayer-list ol li:hover,
+      article .music-player .aplayer .aplayer-list ol li.aplayer-list-light {
+        background: var(--accent-soft);
+      }
+      article .music-player .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar {
+        background: var(--line);
+      }
+      article .music-player .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar .aplayer-loaded {
+        background: var(--ink-3);
+      }
+
       /* ---------- footer (shared site chrome) ---------- */
       footer { margin-top: 56px; border-top: 1px solid var(--line); padding: 24px 0 46px; }
       .foot-links { display: flex; flex-wrap: wrap; gap: 10px 22px; margin-bottom: 22px; }
@@ -256,7 +329,7 @@
           <div class="article-body">
 <p>📍川口のリールを、地図にまとめました</p>
 <p>これまでInstagramで紹介してきた川口のお店を、Googleマイマップに全部ピン留めしました。</p>
-<p>🍜 飲食店 25軒</p>
+<p>🍜 飲食店 26軒</p>
 <p>💈 理容・サロン 4軒</p>
 <p>🧘 リラクゼーション 3軒</p>
 <p>ピンをタップすると、そのお店のリールと一言メモが見られます。</p>
@@ -268,6 +341,7 @@
     <p class="toc-heading">目次</p>
     <ul class="toc-list">
       <li class="toc-item"><a href="#h-dd97fdcb">飲食店</a></li>
+      <li class="toc-item toc-item-sub"><a href="#h-21403752">ToiToiToi apartment（安行領根岸）</a></li>
       <li class="toc-item toc-item-sub"><a href="#h-3286eda7">琉菊（栄町）</a></li>
       <li class="toc-item toc-item-sub"><a href="#h-51cd8501">ラホンバンマーラータン 西川口店（並木）</a></li>
       <li class="toc-item toc-item-sub"><a href="#h-9c31a221">オルブロード ミカド（坂下町）</a></li>
@@ -305,6 +379,10 @@
     </ul>
   </nav>
 <h2 id="h-dd97fdcb">飲食店</h2>
+<h3 id="h-21403752">ToiToiToi apartment（安行領根岸）</h3>
+<p>安行領根岸のシェアショップで味わう、沖縄料理研究家・宮澤かおるさんの琉球料理ランチ。黒米ごはんにイナムドゥチ、ミヌダル、クーブイリチー、田芋の唐揚げなど、琉球宮廷料理の流れをくむ御膳がワンドリンク付き1,990円でした。全部美味しかったです。</p>
+<p><a href="https://www.instagram.com/reel/Dfb1jt0ztWM/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
+<p><a class="link-card" href="https://www.google.com/maps/search/?api=1&amp;query=ToiToiToi+Apartment+%E5%9F%BC%E7%8E%89%E7%9C%8C%E5%B7%9D%E5%8F%A3%E5%B8%82%E5%AE%89%E8%A1%8C%E9%A0%98%E6%A0%B9%E5%B2%B82004" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://maps.google.com/maps/api/staticmap?center=37.0625%2C-95.677068&amp;zoom=4&amp;size=900x900&amp;language=en&amp;sensor=false&amp;key=AIzaSyBoYjeRtfVI0Jd8Q_9mnflo9i4sOYpShB0&amp;signature=bhDRZQvDkRDlhzWj6J7pTMYyH5k" alt=""><span class="link-card-body"><span class="link-card-title">Google Maps</span><span class="link-card-description">Find local businesses, view maps and get driving directions in Google Maps.</span><span class="link-card-domain">www.google.com</span></span></a></p>
 <h3 id="h-3286eda7">琉菊（栄町）</h3>
 <p>川口元郷駅そば、ミエル川口の向かいにある町中華。ラーメンは450円で、大きなチャーシューに海苔、ナルト、メンマがのった、あっさり醤油の昔ながらの一杯です。定食も750円中心と、全体に手頃な価格でした。</p>
 <p><a href="https://www.instagram.com/reel/DfQ8CuMTQnQ/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
@@ -435,7 +513,7 @@
 <h3 id="h-f046fd0a">中国式イヤーエステ 朴境 西川口店（西川口）</h3>
 <p>47歳、初めての中国式イヤーエステ。子どもの頃は親にしてもらう耳掃除がくすぐったくて苦手でしたが、大人になって改めてやってもらうと、やっぱりくすぐったいけれど不思議と気持ちいい。耳掃除の印象が少し変わりました。</p>
 <p><a href="https://www.instagram.com/reel/DdfpVT2z_0l/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://beauty.hotpepper.jp/kr/slnH000824243/" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://imgbp.hotp.jp/CSP/IMG_SRC_K/54/08/C062765408/C062765408.jpg?impolicy=HPB_policy_default&amp;w=119&amp;h=89" alt=""><span class="link-card-body"><span class="link-card-title">朴境(パクキョウ)｜ホットペッパービューティー</span><span class="link-card-description">【ホットペッパービューティー】朴境(パクキョウ)のサロン情報。サロンの内外装、お得なクーポン、ブログ、口コミ、住所、電話番号など知りたい情報満載です。ホットペッパービューティーの２４時間いつでもOKなネット予約を活用しよう！</span><span class="link-card-domain">beauty.hotpepper.jp</span></span></a></p>
+<p><a class="link-card" href="https://beauty.hotpepper.jp/kr/slnH000824243/" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://imgbp.hotp.jp/CSP/IMG_SRC_K/31/68/C064183168/C064183168.jpg?impolicy=HPB_policy_default&amp;w=119&amp;h=89" alt=""><span class="link-card-body"><span class="link-card-title">朴境(パクキョウ)｜ホットペッパービューティー</span><span class="link-card-description">【ホットペッパービューティー】朴境(パクキョウ)のサロン情報。サロンの内外装、お得なクーポン、ブログ、口コミ、住所、電話番号など知りたい情報満載です。ホットペッパービューティーの２４時間いつでもOKなネット予約を活用しよう！</span><span class="link-card-domain">beauty.hotpepper.jp</span></span></a></p>
 <p>みなさんの「川口のおすすめ」もぜひ教えてください。行ってみます。</p>
           </div>
         </article>
