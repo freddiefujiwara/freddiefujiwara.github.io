@@ -52,14 +52,6 @@ export const ARTICLES = [
     docId: "1tn5P1vB1jnKHSay_FC2AEtNxH0gQZ3_jffRnHuz4YpM",
     heroLabel: "KAWAGUCHI — LIST OF STUFF",
     navActive: "list",
-    // The display title is fixed to 「持ち物リスト」 by the owner's
-    // decision (2026-11-07), whatever title the API returns: the
-    // fetched title currently alternates between the stale working
-    // title 「持ち物リスト（試作）」 and the dated
-    // 「2021-02-16 全持ち物リスト、大公開！！」 depending on cache
-    // state (the 6-hourly auto-regeneration rolls the document's
-    // name back; the root fix is handled on the list-of-stuff side).
-    displayTitle: "持ち物リスト",
   },
 ];
 
@@ -233,27 +225,6 @@ export const normalizeTagList = (value) => {
   return tags;
 };
 
-// Article titles in the blog carry a leading "YYYY-MM-DD " (the
-// publication date). These pages are evergreen landing pages, not
-// dated posts, so the date is dropped from the displayed title.
-export const stripDatePrefix = (title) =>
-  String(title ?? "").replace(/^\d{4}-\d{2}-\d{2}\s+/, "");
-
-// The title a page is displayed under. Normally the fetched title
-// minus its date prefix; an article with a configured displayTitle
-// (see ARTICLES) always uses that fixed title instead, and
-// `overridden` reports whether it differs from what the fetched
-// title alone would have produced.
-export const resolveDisplayTitle = (article, fetchedTitle) => {
-  if (article.displayTitle) {
-    return {
-      title: article.displayTitle,
-      overridden: stripDatePrefix(fetchedTitle) !== article.displayTitle,
-    };
-  }
-  return { title: stripDatePrefix(fetchedTitle), overridden: false };
-};
-
 export const escapeHtml = (text) =>
   String(text ?? "")
     .replace(/&/g, "&amp;")
@@ -322,6 +293,10 @@ export const renderArticleBody = (markdown) => {
   return tocHtml + html;
 };
 
+// The tag chips under the article title, mirroring the blog's
+// TagChips component: same markup and classes, and the same link
+// destination the blog's chips resolve to — the blog's tag page
+// under the site origin. An article without tags gets no chips.
 export const buildTagChipsHtml = (tags) => {
   const normalized = normalizeTagList(tags);
   if (!normalized.length) {
@@ -330,7 +305,7 @@ export const buildTagChipsHtml = (tags) => {
   const items = normalized
     .map(
       (tag) =>
-        `      <li class="tag-chip-item"><a class="tag-chip" href="/blog/tag/${encodeURIComponent(tag)}">${escapeHtml(tag)}</a></li>`
+        `      <li class="tag-chip-item"><a class="tag-chip" href="${SITE_ORIGIN}/blog/tag/${encodeURIComponent(tag)}">${escapeHtml(tag)}</a></li>`
     )
     .join("\n");
   return `<ul class="tag-chips">
@@ -638,7 +613,12 @@ const FALLBACK_SCRIPT = `
 
 // Renders one complete static article page.
 export const renderStaticArticlePage = ({ article, payload, year }) => {
-  const title = resolveDisplayTitle(article, payload.title).title;
+  // The title is the blog's title, used exactly as fetched — no
+  // date stripping, no fixed replacement (the owner's instruction,
+  // 2026-11-07: the static pages must match the blog's output). The
+  // blog's article page carries the payload title (leading date
+  // included, no decoration) in its <title>, og:title and h1 alike.
+  const title = String(payload.title ?? "");
   const bodyHtml = renderArticleBody(payload.markdown);
   const description = buildDescription(bodyHtml);
   const pageUrl = `${SITE_ORIGIN}/${article.slug}`;
@@ -666,7 +646,7 @@ export const renderStaticArticlePage = ({ article, payload, year }) => {
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <title>${escapeHtml(title)}｜藤原史和</title>
+    <title>${escapeHtml(title)}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet" />
@@ -753,13 +733,6 @@ export const generateStaticArticles = async ({
       `fetched ${article.slug}: "${payload.title}" ` +
         `(${payload.markdown.length} chars, ${seconds}s)`
     );
-    const display = resolveDisplayTitle(article, payload.title);
-    if (display.overridden) {
-      log(
-        `title override ${article.slug}: "${payload.title}" ` +
-          `-> "${display.title}" (fixed display title)`
-      );
-    }
     pages.push({
       article,
       html: renderStaticArticlePage({ article, payload, year }),

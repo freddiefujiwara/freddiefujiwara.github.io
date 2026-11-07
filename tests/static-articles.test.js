@@ -15,48 +15,54 @@ import {
   renderArticleBody,
   renderMarkdown,
   renderStaticArticlePage,
-  resolveDisplayTitle,
   splitHtmlAtTocMarkers,
-  stripDatePrefix,
 } from '../scripts/generate-static-articles.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
-describe('stripDatePrefix', () => {
-  it('先頭の日付を取り除く', () => {
-    expect(stripDatePrefix('2026-10-27 川口のリールを、地図にまとめました')).toBe(
-      '川口のリールを、地図にまとめました',
-    );
-    expect(stripDatePrefix('2025-12-27 死ぬまでにやりたいことリスト')).toBe(
-      '死ぬまでにやりたいことリスト',
-    );
-  });
-
-  it('日付のないタイトルはそのまま', () => {
-    expect(stripDatePrefix('持ち物リスト（試作）')).toBe('持ち物リスト（試作）');
-  });
-});
-
-describe('resolveDisplayTitle', () => {
-  const stuff = ARTICLES.find((a) => a.slug === 'list-of-stuff');
-
-  it('持ち物リストの表示タイトルは、取得タイトルにかかわらず「持ち物リスト」固定', () => {
-    expect(resolveDisplayTitle(stuff, '持ち物リスト（試作）')).toEqual({
-      title: '持ち物リスト',
-      overridden: true,
+// 静的ページはブログの出力と完全一致させる（所有者の指示
+// 2026-11-07）：タイトルはペイロードの title を一切加工せず、
+// ブログ記事ページと同じく <title>・og:title・h1 にそのまま入る。
+describe('タイトルはブログと完全一致（無加工）', () => {
+  it('先頭の日付も含めてそのまま使う（<title> に接尾辞も付けない）', () => {
+    const page = renderStaticArticlePage({
+      article: ARTICLES[0],
+      payload: {
+        title: '2026-10-27 川口のリールを、地図にまとめました',
+        markdown: '本文です。',
+        tags: [],
+      },
+      year: 2026,
     });
+    const { document } = new JSDOM(page).window;
+    expect(document.title).toBe('2026-10-27 川口のリールを、地図にまとめました');
     expect(
-      resolveDisplayTitle(stuff, '2021-02-16 全持ち物リスト、大公開！！'),
-    ).toEqual({ title: '持ち物リスト', overridden: true });
+      document.querySelector('meta[property="og:title"]')?.getAttribute('content'),
+    ).toBe('2026-10-27 川口のリールを、地図にまとめました');
+    expect(document.querySelector('article h1')?.textContent).toBe(
+      '2026-10-27 川口のリールを、地図にまとめました',
+    );
   });
 
-  it('他の記事には固定タイトルは効かない', () => {
-    expect(
-      resolveDisplayTitle(ARTICLES[0], '2026-10-27 川口のリールを、地図にまとめました'),
-    ).toEqual({
-      title: '川口のリールを、地図にまとめました',
-      overridden: false,
+  it('持ち物リストにも固定タイトルの差し替えはない', () => {
+    const stuff = ARTICLES.find((a) => a.slug === 'list-of-stuff');
+    const page = renderStaticArticlePage({
+      article: stuff,
+      payload: { title: '2021-02-16 持ち物リスト', markdown: '本文です。', tags: [] },
+      year: 2026,
     });
+    const { document } = new JSDOM(page).window;
+    expect(document.title).toBe('2021-02-16 持ち物リスト');
+    expect(document.querySelector('article h1')?.textContent).toBe(
+      '2021-02-16 持ち物リスト',
+    );
+    // 取得タイトルが旧名でも、生成側では直さずそのまま出す
+    const stale = renderStaticArticlePage({
+      article: stuff,
+      payload: { title: '持ち物リスト（試作）', markdown: '本文です。', tags: [] },
+      year: 2026,
+    });
+    expect(new JSDOM(stale).window.document.title).toBe('持ち物リスト（試作）');
   });
 });
 
@@ -186,12 +192,45 @@ describe('タグチップ', () => {
     expect(normalizeTagList(undefined)).toEqual([]);
   });
 
-  it('チップはブログのタグページへリンクする', () => {
+  it('チップはブログのタグページ（絶対 URL）へリンクする', () => {
     const html = buildTagChipsHtml(['川口']);
     expect(html).toContain(
-      `<a class="tag-chip" href="/blog/tag/${encodeURIComponent('川口')}">川口</a>`,
+      `<a class="tag-chip" href="https://freddiefujiwara.com/blog/tag/${encodeURIComponent('川口')}">川口</a>`,
     );
     expect(buildTagChipsHtml([])).toBe('');
+  });
+
+  it('ページではタイトル直下にチップが並び、タグなしなら出ない', () => {
+    const withTags = renderStaticArticlePage({
+      article: ARTICLES[0],
+      payload: {
+        title: '2026-10-27 川口のリールを、地図にまとめました',
+        markdown: '本文です。',
+        tags: ['川口', '暮らし'],
+      },
+      year: 2026,
+    });
+    const { document } = new JSDOM(withTags).window;
+    const h1 = document.querySelector('article h1');
+    const chips = document.querySelector('article .tag-chips');
+    expect(chips).not.toBeNull();
+    expect(h1.nextElementSibling).toBe(chips);
+    expect([...chips.querySelectorAll('.tag-chip')].map((a) => a.textContent)).toEqual([
+      '川口',
+      '暮らし',
+    ]);
+    expect(chips.querySelector('.tag-chip')?.getAttribute('href')).toBe(
+      `https://freddiefujiwara.com/blog/tag/${encodeURIComponent('川口')}`,
+    );
+
+    const withoutTags = renderStaticArticlePage({
+      article: ARTICLES[0],
+      payload: { title: 'タイトル', markdown: '本文です。', tags: [] },
+      year: 2026,
+    });
+    expect(
+      new JSDOM(withoutTags).window.document.querySelector('.tag-chips'),
+    ).toBeNull();
   });
 });
 
@@ -218,12 +257,12 @@ describe('renderStaticArticlePage', () => {
     year: 2026,
   });
 
-  it('title と og が日付なしタイトルで入る', () => {
+  it('title と og がブログと同じく取得タイトルそのままで入る', () => {
     expect(page).toContain(
-      '<title>川口のリールを、地図にまとめました｜藤原史和</title>',
+      '<title>2026-10-27 川口のリールを、地図にまとめました</title>',
     );
     expect(page).toContain(
-      '<meta property="og:title" content="川口のリールを、地図にまとめました" />',
+      '<meta property="og:title" content="2026-10-27 川口のリールを、地図にまとめました" />',
     );
     expect(page).toContain(
       '<meta property="og:url" content="https://freddiefujiwara.com/map" />',
@@ -256,7 +295,7 @@ describe('renderStaticArticlePage', () => {
     ]);
     expect(document.querySelectorAll('footer .foot-links a')).toHaveLength(15);
     expect(document.querySelector('article h1')?.textContent).toBe(
-      '川口のリールを、地図にまとめました',
+      '2026-10-27 川口のリールを、地図にまとめました',
     );
   });
 });
@@ -305,28 +344,45 @@ describe('生成済みの静的ページ', () => {
     expect(html).toContain('class="link-card-image"');
   });
 
-  it('持ち物リストの表示タイトルは「持ち物リスト」固定', () => {
+  it('持ち物リストのタイトルはブログと同じ（日付付き・無加工）', () => {
     const html = readFileSync(
       path.join(root, 'public', 'list-of-stuff', 'index.html'),
       'utf8',
     );
     const { document } = new JSDOM(html).window;
     expect(document.querySelector('article h1')?.textContent).toBe(
-      '持ち物リスト',
+      '2021-02-16 持ち物リスト',
     );
-    expect(document.title).toBe('持ち物リスト｜藤原史和');
+    expect(document.title).toBe('2021-02-16 持ち物リスト');
     expect(html).not.toContain('持ち物リスト（試作）');
   });
 
-  it('地図のページにはタイトルと川口タグのチップが含まれる', () => {
+  it('地図のページにはブログと同じタイトルと川口タグのチップが含まれる', () => {
     const html = readFileSync(
       path.join(root, 'public', 'map', 'index.html'),
       'utf8',
     );
     const { document } = new JSDOM(html).window;
     expect(document.querySelector('article h1')?.textContent).toBe(
-      '川口のリールを、地図にまとめました',
+      '2026-10-27 川口のリールを、地図にまとめました',
     );
-    expect(document.querySelector('.tag-chip')?.textContent).toBe('川口');
+    expect(document.title).toBe('2026-10-27 川口のリールを、地図にまとめました');
+    const chip = document.querySelector('.tag-chip');
+    expect(chip?.textContent).toBe('川口');
+    expect(chip?.getAttribute('href')).toBe(
+      `https://freddiefujiwara.com/blog/tag/${encodeURIComponent('川口')}`,
+    );
+  });
+
+  it('バケットリストのタイトルもブログと同じ（日付付き）', () => {
+    const html = readFileSync(
+      path.join(root, 'public', 'bucket-list', 'index.html'),
+      'utf8',
+    );
+    const { document } = new JSDOM(html).window;
+    expect(document.querySelector('article h1')?.textContent).toBe(
+      '2025-12-27 死ぬまでにやりたいことリスト',
+    );
+    expect(document.title).toBe('2025-12-27 死ぬまでにやりたいことリスト');
   });
 });
