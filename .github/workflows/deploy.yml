@@ -6,6 +6,8 @@ on:
   schedule:
     # Daily 06:45 JST: regenerate the sitemap even on days without code changes.
     - cron: "45 21 * * *"
+    # Every 6 hours (03/09/15/21 JST): refresh the static articles.
+    - cron: "0 0,6,12,18 * * *"
   workflow_dispatch:
 
 jobs:
@@ -20,6 +22,12 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '20'
+
+    - name: Generate static articles
+      continue-on-error: true
+      run: |
+        npm install
+        node scripts/generate-static-articles.mjs
 
     - name: Assemble publish folder (production + staging variant)
       run: |

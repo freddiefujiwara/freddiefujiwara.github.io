@@ -327,10 +327,24 @@ noindex とし、計測タグ（gtag）は入れません。飛び先を変え�
 | https://freddiefujiwara.com/facebook | https://www.facebook.com/freddiefujiwara |
 | https://freddiefujiwara.com/x | https://x.com/freddiefujiwara |
 | https://freddiefujiwara.com/threads | https://www.threads.com/@freddiefujiwara |
-| https://freddiefujiwara.com/map | https://freddiefujiwara.com/blog/1bNigXcTT-1LSXjUYAlfFQuJPX6U7U3ELeWAfG5XIb58（川口のリールを、地図にまとめました） |
 | https://freddiefujiwara.com/room | https://room.rakuten.co.jp/freddiefujiwara/items |
 | https://freddiefujiwara.com/music | https://suno.com/@freddiefujiwara |
 | https://freddiefujiwara.com/chinese | https://freddiefujiwara.com/blog/tag/中国語 |
+
+### 静的記事ページ（転送しない短縮URL）
+
+次の3つは転送ページではなく、ブログ記事そのものを静的HTMLで表示します。
+ブログ側のGAS変換が重い（持ち物リストは変換に数十秒）ためで、原稿は
+Googleドキュメント（blog-gas）のまま、`scripts/generate-static-articles.mjs`
+が変換済み本文を取得して `public/<名前>/index.html` を生成します。
+定期実行のワークフローが再生成し、内容が変わったときだけコミットされます。
+テストは tests/static-articles.test.js です。
+
+| 短縮URL | 記事（Googleドキュメント） |
+|---|---|
+| https://freddiefujiwara.com/map | 川口のリールを、地図にまとめました（1bNigXcTT-1LSXjUYAlfFQuJPX6U7U3ELeWAfG5XIb58） |
+| https://freddiefujiwara.com/bucket-list | 死ぬまでにやりたいことリスト（1WPrZI3RqXZcBIrVfrvY7Qn6AF-pFBHdNWXcK7PIwokM） |
+| https://freddiefujiwara.com/list-of-stuff | 全持ち物リスト（1tn5P1vB1jnKHSay_FC2AEtNxH0gQZ3_jffRnHuz4YpM） |
 
 ---
 
