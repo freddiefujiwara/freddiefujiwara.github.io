@@ -46,7 +46,21 @@ jobs:
         ls -lh publish/ogp.png
 
     - name: Generate sitemap.xml
+      id: sitemap
+      continue-on-error: true
       run: node scripts/generate-sitemap.mjs publish
+
+    # generate-sitemap fails on purpose when the blog API is
+    # unreachable (an empty sitemap must never be published). Fall
+    # back to the currently published sitemap so one backend hiccup
+    # does not fail the whole deploy; fail only when no fallback is
+    # available either.
+    - name: Fall back to the published sitemap.xml
+      if: steps.sitemap.outcome == 'failure'
+      run: |
+        curl -fsSL --max-time 60 https://freddiefujiwara.com/sitemap.xml -o publish/sitemap.xml
+        test -s publish/sitemap.xml
+        grep -q '<urlset' publish/sitemap.xml
 
     - name: "Deploy to gh-pages 🚀"
       uses: JamesIves/github-pages-deploy-action@releases/v3
