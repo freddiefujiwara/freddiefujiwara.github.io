@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 Disallow: /staging/
 Disallow: /blog/staging/
-Disallow: /list-of-stuff/staging/
+Disallow: /list-of-stuff-admin/staging/
 Disallow: /tweet/staging/
 Disallow: /alarm/staging/
 Disallow: /health/staging/
