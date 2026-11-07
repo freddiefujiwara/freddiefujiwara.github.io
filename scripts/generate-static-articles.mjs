@@ -365,6 +365,7 @@ const FOOTER_LINKS = [
   ["https://freddiefujiwara.com/", "トップ"],
   ["https://freddiefujiwara.com/blog/", "ブログ"],
   ["https://freddiefujiwara.com/list-of-stuff/", "持ち物"],
+  ["https://freddiefujiwara.com/bucket-list/", "バケットリスト"],
   ["https://www.instagram.com/freddiefujiwara", "Instagram"],
   ["https://www.facebook.com/freddiefujiwara", "Facebook"],
   [

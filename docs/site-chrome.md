@@ -255,9 +255,10 @@ a.hero-inner { /* ヒーローをリンクにする場合の共通指定 */
 ```
 
 - 著作権行の文言は3サイト共通: `© {年} 藤原史和（Fumikazu Fujiwara）— freddiefujiwara.com`
-- リンク集合（14件共通）: 自己リンク3件＋外部リンク11件です。
+- リンク集合（15件共通）: 自己リンク4件＋外部リンク11件です。
   - 自己リンク: トップ（https://freddiefujiwara.com/）/ ブログ（https://freddiefujiwara.com/blog/）/
-    持ち物（https://freddiefujiwara.com/list-of-stuff/）
+    持ち物（https://freddiefujiwara.com/list-of-stuff/）/
+    バケットリスト（https://freddiefujiwara.com/bucket-list/）
   - 外部リンク: Instagram / Facebook / Googleマップの口コミ / 楽天トラベルの口コミ /
     食べログの口コミ / Rettyの口コミ / X / GitHub / LinkedIn / YOUTRUST / ラクマ
   （各リンクに ↗ つき、target="_blank" rel="noopener"）
