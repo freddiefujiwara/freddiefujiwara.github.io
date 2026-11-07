@@ -20,7 +20,7 @@ const REDIRECTS = [
   ['x', 'https://x.com/freddiefujiwara'],
   ['threads', 'https://www.threads.com/@freddiefujiwara'],
   ['room', 'https://room.rakuten.co.jp/freddiefujiwara/items'],
-  ['music', 'https://suno.com/@freddiefujiwara'],
+  ['music', 'https://freddiefujiwara.com/blog/1V7cXplHKbsT48EhLarl-SPHfDV-lSEafEId2OMgExkg'],
   ['chinese', 'https://freddiefujiwara.com/blog/tag/中国語'],
 ];
 

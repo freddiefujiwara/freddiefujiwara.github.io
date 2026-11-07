@@ -329,7 +329,7 @@ noindex とし、計測タグ（gtag）は入れません。飛び先を変え�
 | https://freddiefujiwara.com/x | https://x.com/freddiefujiwara |
 | https://freddiefujiwara.com/threads | https://www.threads.com/@freddiefujiwara |
 | https://freddiefujiwara.com/room | https://room.rakuten.co.jp/freddiefujiwara/items |
-| https://freddiefujiwara.com/music | https://suno.com/@freddiefujiwara |
+| https://freddiefujiwara.com/music | https://freddiefujiwara.com/blog/1V7cXplHKbsT48EhLarl-SPHfDV-lSEafEId2OMgExkg |
 | https://freddiefujiwara.com/chinese | https://freddiefujiwara.com/blog/tag/中国語 |
 
 ### 静的記事ページ（転送しない短縮URL）
