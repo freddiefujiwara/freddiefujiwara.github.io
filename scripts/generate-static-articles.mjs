@@ -52,16 +52,14 @@ export const ARTICLES = [
     docId: "1tn5P1vB1jnKHSay_FC2AEtNxH0gQZ3_jffRnHuz4YpM",
     heroLabel: "KAWAGUCHI — LIST OF STUFF",
     navActive: "list",
-    // The API currently returns the stale working title for this
-    // article: the 6-hourly auto-regeneration rolls the document's
-    // name back to 「持ち物リスト（試作）」 (the root fix is handled
-    // on the list-of-stuff side). While that is the fetched title,
-    // display the article's real title instead. Once the API returns
-    // 「2021-02-16 全持ち物リスト、大公開！！」 again, the ordinary
-    // date-stripping below yields the same display title and this
-    // override simply stops firing.
-    staleTitle: "持ち物リスト（試作）",
-    displayTitle: "全持ち物リスト、大公開！！",
+    // The display title is fixed to 「持ち物リスト」 by the owner's
+    // decision (2026-11-07), whatever title the API returns: the
+    // fetched title currently alternates between the stale working
+    // title 「持ち物リスト（試作）」 and the dated
+    // 「2021-02-16 全持ち物リスト、大公開！！」 depending on cache
+    // state (the 6-hourly auto-regeneration rolls the document's
+    // name back; the root fix is handled on the list-of-stuff side).
+    displayTitle: "持ち物リスト",
   },
 ];
 
@@ -242,13 +240,16 @@ export const stripDatePrefix = (title) =>
   String(title ?? "").replace(/^\d{4}-\d{2}-\d{2}\s+/, "");
 
 // The title a page is displayed under. Normally the fetched title
-// minus its date prefix; for an article whose configured staleTitle
-// comes back from the API (see ARTICLES), the configured
-// displayTitle is used instead and `overridden` reports that the
-// substitution happened.
+// minus its date prefix; an article with a configured displayTitle
+// (see ARTICLES) always uses that fixed title instead, and
+// `overridden` reports whether it differs from what the fetched
+// title alone would have produced.
 export const resolveDisplayTitle = (article, fetchedTitle) => {
-  if (article.staleTitle && fetchedTitle === article.staleTitle) {
-    return { title: article.displayTitle, overridden: true };
+  if (article.displayTitle) {
+    return {
+      title: article.displayTitle,
+      overridden: stripDatePrefix(fetchedTitle) !== article.displayTitle,
+    };
   }
   return { title: stripDatePrefix(fetchedTitle), overridden: false };
 };
@@ -755,7 +756,7 @@ export const generateStaticArticles = async ({
     if (display.overridden) {
       log(
         `title override ${article.slug}: "${payload.title}" ` +
-          `-> "${display.title}" (stale API title)`
+          `-> "${display.title}" (fixed display title)`
       );
     }
     pages.push({

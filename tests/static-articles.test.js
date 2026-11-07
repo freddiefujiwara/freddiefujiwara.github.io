@@ -40,20 +40,17 @@ describe('stripDatePrefix', () => {
 describe('resolveDisplayTitle', () => {
   const stuff = ARTICLES.find((a) => a.slug === 'list-of-stuff');
 
-  it('持ち物リストは、古い試作タイトルが返ったら本来のタイトルに差し替える', () => {
+  it('持ち物リストの表示タイトルは、取得タイトルにかかわらず「持ち物リスト」固定', () => {
     expect(resolveDisplayTitle(stuff, '持ち物リスト（試作）')).toEqual({
-      title: '全持ち物リスト、大公開！！',
+      title: '持ち物リスト',
       overridden: true,
     });
-  });
-
-  it('本来のタイトルが返れば日付を除いた形になり、差し替えは起きない', () => {
     expect(
       resolveDisplayTitle(stuff, '2021-02-16 全持ち物リスト、大公開！！'),
-    ).toEqual({ title: '全持ち物リスト、大公開！！', overridden: false });
+    ).toEqual({ title: '持ち物リスト', overridden: true });
   });
 
-  it('他の記事には差し替えは効かない', () => {
+  it('他の記事には固定タイトルは効かない', () => {
     expect(
       resolveDisplayTitle(ARTICLES[0], '2026-10-27 川口のリールを、地図にまとめました'),
     ).toEqual({
@@ -308,16 +305,16 @@ describe('生成済みの静的ページ', () => {
     expect(html).toContain('class="link-card-image"');
   });
 
-  it('持ち物リストの表示タイトルは「全持ち物リスト、大公開！！」', () => {
+  it('持ち物リストの表示タイトルは「持ち物リスト」固定', () => {
     const html = readFileSync(
       path.join(root, 'public', 'list-of-stuff', 'index.html'),
       'utf8',
     );
     const { document } = new JSDOM(html).window;
     expect(document.querySelector('article h1')?.textContent).toBe(
-      '全持ち物リスト、大公開！！',
+      '持ち物リスト',
     );
-    expect(document.title).toBe('全持ち物リスト、大公開！！｜藤原史和');
+    expect(document.title).toBe('持ち物リスト｜藤原史和');
     expect(html).not.toContain('持ち物リスト（試作）');
   });
 
