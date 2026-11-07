@@ -246,6 +246,39 @@ describe('buildDescription', () => {
   });
 });
 
+describe('ヒーローはブログと同じく最新記事へのリンク', () => {
+  const base = {
+    article: ARTICLES[0],
+    payload: { title: 'タイトル', markdown: '本文です。', tags: [] },
+    year: 2026,
+  };
+
+  it('最新記事の id があるときは、その記事ページへリンクする', () => {
+    const page = renderStaticArticlePage({
+      ...base,
+      latestArticleId: '1LatestArticleIdExample',
+    });
+    const { document } = new JSDOM(page).window;
+    const hero = document.querySelector('header.hero a.hero-inner');
+    expect(hero).not.toBeNull();
+    expect(hero.classList.contains('hero-link')).toBe(true);
+    expect(hero.getAttribute('href')).toBe(
+      'https://freddiefujiwara.com/blog/1LatestArticleIdExample',
+    );
+    expect(hero.querySelector('.hero-place')?.textContent).toBe(
+      ARTICLES[0].heroLabel,
+    );
+  });
+
+  it('最新記事の id が無いときはブログトップへリンクする', () => {
+    const page = renderStaticArticlePage({ ...base });
+    const { document } = new JSDOM(page).window;
+    const hero = document.querySelector('header.hero a.hero-inner');
+    expect(hero).not.toBeNull();
+    expect(hero.getAttribute('href')).toBe('https://freddiefujiwara.com/blog/');
+  });
+});
+
 describe('renderStaticArticlePage', () => {
   const page = renderStaticArticlePage({
     article: ARTICLES[0],

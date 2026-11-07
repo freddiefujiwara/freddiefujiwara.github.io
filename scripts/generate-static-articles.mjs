@@ -471,6 +471,11 @@ const PAGE_CSS = `
         position: relative; z-index: 2; width: 100%;
         max-width: 820px; margin: 0 auto; padding: 96px 20px 36px;
       }
+      a.hero-inner {
+        color: inherit;
+        text-decoration: none;
+        cursor: pointer;
+      }
       .hero-place {
         display: inline-flex; align-items: center; gap: 10px;
         font-size: 12px; letter-spacing: 0.22em; font-weight: 700; margin: 0 0 14px;
@@ -612,7 +617,7 @@ const FALLBACK_SCRIPT = `
 `;
 
 // Renders one complete static article page.
-export const renderStaticArticlePage = ({ article, payload, year }) => {
+export const renderStaticArticlePage = ({ article, payload, year, latestArticleId }) => {
   // The title is the blog's title, used exactly as fetched — no
   // date stripping, no fixed replacement (the owner's instruction,
   // 2026-11-07: the static pages must match the blog's output). The
@@ -624,6 +629,13 @@ export const renderStaticArticlePage = ({ article, payload, year }) => {
   const pageUrl = `${SITE_ORIGIN}/${article.slug}`;
   const ogImage = `${SITE_ORIGIN}/blog/ogp/${article.docId}.png`;
   const chips = buildTagChipsHtml(payload.tags);
+  // The blog's hero band is a link to the latest article (App.vue:
+  // router-link to `/${ids[0]}`), and the blog top shows that same
+  // article, so the static pages link their hero the same way. When
+  // the latest id is unknown, fall back to the blog top itself.
+  const heroHref = latestArticleId
+    ? `${SITE_ORIGIN}/blog/${latestArticleId}`
+    : `${SITE_ORIGIN}/blog/`;
   return `<!doctype html>
 <html lang="ja">
   <head>
@@ -655,10 +667,10 @@ export const renderStaticArticlePage = ({ article, payload, year }) => {
   <body>
     ${buildNavHtml(article.navActive)}
     <header class="hero">
-      <div class="hero-inner">
+      <a class="hero-inner hero-link" href="${heroHref}">
         <p class="hero-place">${article.heroLabel}</p>
         <h1><span class="h1-name">藤原史和</span><span class="h1-sep" aria-hidden="true">｜</span><span class="h1-role">川口を歩くQAエンジニア</span></h1>
-      </div>
+      </a>
     </header>
     <main>
       <div class="wrap">
@@ -724,6 +736,18 @@ export const generateStaticArticles = async ({
   year = new Date().getFullYear(),
   log = console.log,
 } = {}) => {
+  // The hero link target: the blog's latest article id (the first id
+  // in the list response). A failed list fetch must not block the
+  // generation itself — the pages then link to the blog top instead.
+  let latestArticleId = null;
+  try {
+    const list = await fetchJsonOnce(API_BASE, fetchImpl);
+    if (Array.isArray(list?.ids) && list.ids.length > 0) {
+      latestArticleId = list.ids[0];
+    }
+  } catch {
+    latestArticleId = null;
+  }
   const pages = [];
   for (const article of ARTICLES) {
     const started = Date.now();
@@ -735,7 +759,7 @@ export const generateStaticArticles = async ({
     );
     pages.push({
       article,
-      html: renderStaticArticlePage({ article, payload, year }),
+      html: renderStaticArticlePage({ article, payload, year, latestArticleId }),
     });
   }
   return pages.map(({ article, html }) => {
