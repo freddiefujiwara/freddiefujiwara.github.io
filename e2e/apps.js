@@ -64,7 +64,7 @@ export async function blockAnalytics(page) {
 export const APPS = [
   { name: "top", path: "/", gas: null, dataOnLoad: false },
   { name: "blog", path: "/blog/", gas: "blog", dataOnLoad: true },
-  { name: "list", path: "/list-of-stuff-admin/", gas: "list", dataOnLoad: true },
+  { name: "list", path: "/list-of-stuff-admin/", gas: "list", dataOnLoad: false },
   { name: "tweet", path: "/tweet/", gas: "tweet", dataOnLoad: false },
   { name: "alarm", path: "/alarm/", gas: "alarm", dataOnLoad: false },
   { name: "health", path: "/health/", gas: "health", dataOnLoad: true },
