@@ -178,11 +178,12 @@ FOOTER_COMMON_LINKS = [
     "https://fril.jp/shop/freddiefujiwara",
 ]
 
-# フッターの自己リンク（サイト間の相互リンク）。外部リンクと合わせて14件が正本。
+# フッターの自己リンク（サイト間の相互リンク）。外部リンクと合わせて15件が正本。
 FOOTER_SELF_LINKS = [
     "https://freddiefujiwara.com/",
     "https://freddiefujiwara.com/blog/",
     "https://freddiefujiwara.com/list-of-stuff/",
+    "https://freddiefujiwara.com/bucket-list/",
 ]
 
 FOOTER_LINKS = FOOTER_SELF_LINKS + FOOTER_COMMON_LINKS
@@ -200,7 +201,7 @@ def _href_present(text, url):
 
 
 def footer_links(text):
-    """フッターのリンク集合（14件）のうちテキストに含まれるものの集合。
+    """フッターのリンク集合（15件）のうちテキストに含まれるものの集合。
 
     外部リンク11件は URL の部分一致で数える。自己リンク3件は、トップの URL が
     ブログ／持ち物の URL の接頭辞になるため、href の完全一致で数える。
@@ -229,6 +230,7 @@ FOOTER_LINK_LABELS = {
     "https://freddiefujiwara.com/": "トップ",
     "https://freddiefujiwara.com/blog/": "ブログ",
     "https://freddiefujiwara.com/list-of-stuff/": "持ち物",
+    "https://freddiefujiwara.com/bucket-list/": "バケットリスト",
     "https://www.instagram.com/freddiefujiwara": "Instagram",
     "https://www.facebook.com/freddiefujiwara": "Facebook",
     "https://www.google.com/maps/contrib/105456242747265663411/reviews": "Googleマップ",
@@ -248,8 +250,8 @@ def _footer_value(block):
     found = footer_links(block)
     missing = [FOOTER_LINK_LABELS[u] for u in FOOTER_LINKS if u not in found]
     if not missing:
-        return "14/14 件"
-    return f"{len(found)}/14 件（不足: {'、'.join(missing)}）"
+        return "15/15 件"
+    return f"{len(found)}/15 件（不足: {'、'.join(missing)}）"
 
 
 SITE_ORIGIN = "https://freddiefujiwara.com"
@@ -428,9 +430,9 @@ def build_rows(data):
         compare=("ブログ", "持ち物"), note="トップは固有デザイン")
 
     # --- フッター ---
-    add("フッター共通リンク（14件）",
+    add("フッター共通リンク（15件）",
         per_site(lambda d, s: _footer_value(footer_block(d['html'] + d['js']))),
-        note="自己リンク3件（トップ / ブログ / 持ち物）＋ 外部11件（Instagram / Facebook / Googleマップ / 楽天トラベル / 食べログ / Retty / X / GitHub / LinkedIn / YOUTRUST / ラクマ）")
+        note="自己リンク4件（トップ / ブログ / 持ち物 / バケットリスト）＋ 外部11件（Instagram / Facebook / Googleマップ / 楽天トラベル / 食べログ / Retty / X / GitHub / LinkedIn / YOUTRUST / ラクマ）")
     add("フッター .foot-links gap",
         per_site(lambda d, s: decl(rule_block(d["css"], [".foot-links"]), "gap")))
     add("フッター .copy font-size",

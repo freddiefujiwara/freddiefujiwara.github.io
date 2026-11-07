@@ -29,13 +29,14 @@ describe('ページ構造の不変条件', () => {
     ]);
   });
 
-  it('フッターのリンクは14件で、先頭がサイト内リンク3件', () => {
+  it('フッターのリンクは15件で、先頭がサイト内リンク4件', () => {
     const links = [...document.querySelectorAll('.foot-links a')];
-    expect(links).toHaveLength(14);
-    expect(links.slice(0, 3).map((a) => a.getAttribute('href'))).toEqual([
+    expect(links).toHaveLength(15);
+    expect(links.slice(0, 4).map((a) => a.getAttribute('href'))).toEqual([
       'https://freddiefujiwara.com/',
       'https://freddiefujiwara.com/blog/',
       'https://freddiefujiwara.com/list-of-stuff/',
+      'https://freddiefujiwara.com/bucket-list/',
     ]);
   });
 

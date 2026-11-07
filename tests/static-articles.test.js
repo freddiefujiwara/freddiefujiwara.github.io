@@ -254,7 +254,7 @@ describe('renderStaticArticlePage', () => {
       '/blog/',
       'https://freddiefujiwara.com/list-of-stuff/',
     ]);
-    expect(document.querySelectorAll('footer .foot-links a')).toHaveLength(14);
+    expect(document.querySelectorAll('footer .foot-links a')).toHaveLength(15);
     expect(document.querySelector('article h1')?.textContent).toBe(
       '川口のリールを、地図にまとめました',
     );
