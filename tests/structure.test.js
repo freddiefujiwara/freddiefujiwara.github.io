@@ -89,6 +89,7 @@ describe('活動・発信の短いURLハブ', () => {
       ['/instagram', 'https://freddiefujiwara.com/instagram'],
       ['/blog', 'https://freddiefujiwara.com/blog/'],
       ['/threads', 'https://freddiefujiwara.com/threads'],
+      ['/music', 'https://freddiefujiwara.com/music'],
       ['/room', 'https://freddiefujiwara.com/room'],
       ['/list-of-stuff', 'https://freddiefujiwara.com/list-of-stuff/'],
       ['/map', 'https://freddiefujiwara.com/map'],
