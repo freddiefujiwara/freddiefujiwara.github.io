@@ -1,0 +1,70 @@
+name: Deploy to gh-pages
+
+on:
+  push:
+    branches: ["master"]
+  schedule:
+    # Daily 06:45 JST: regenerate the sitemap even on days without code changes.
+    - cron: "45 21 * * *"
+    # Every 6 hours (03/09/15/21 JST): refresh the static articles.
+    - cron: "0 0,6,12,18 * * *"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Use Node.js 20.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Generate static articles
+      continue-on-error: true
+      run: |
+        npm install
+        node scripts/generate-static-articles.mjs
+
+    - name: Assemble publish folder (production + staging variant)
+      run: |
+        npm install
+        npm run build:staging
+        mkdir publish
+        cp -r public/. publish/
+        mkdir publish/staging
+        cp -r staging-dist/. publish/staging/
+
+    - name: Generate OGP image
+      run: |
+        # URL-encoded title: 川口を、歩く。
+        JSON_RESPONSE=$(curl -L -s "https://script.google.com/macros/s/AKfycbzbMAKxkzHlwN8SY7ygJA34xYESMNNdkGNt8vv1XMcZSksgHsUwOxCCdP-wgg6fv7M/exec?t=%E5%B7%9D%E5%8F%A3%E3%82%92%E3%80%81%E6%AD%A9%E3%81%8F%E3%80%82")
+        echo $JSON_RESPONSE | jq -r '.png' | base64 -d > publish/ogp.png
+        ls -lh publish/ogp.png
+
+    - name: Generate sitemap.xml
+      id: sitemap
+      continue-on-error: true
+      run: node scripts/generate-sitemap.mjs publish
+
+    # generate-sitemap fails on purpose when the blog API is
+    # unreachable (an empty sitemap must never be published). Fall
+    # back to the currently published sitemap so one backend hiccup
+    # does not fail the whole deploy; fail only when no fallback is
+    # available either.
+    - name: Fall back to the published sitemap.xml
+      if: steps.sitemap.outcome == 'failure'
+      run: |
+        curl -fsSL --max-time 60 https://freddiefujiwara.com/sitemap.xml -o publish/sitemap.xml
+        test -s publish/sitemap.xml
+        grep -q '<urlset' publish/sitemap.xml
+
+    - name: "Deploy to gh-pages 🚀"
+      uses: JamesIves/github-pages-deploy-action@releases/v3
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        BRANCH: gh-pages
+        FOLDER: publish
