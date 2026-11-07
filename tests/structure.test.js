@@ -88,6 +88,7 @@ describe('活動・発信の短いURLハブ', () => {
     expect(branches).toEqual([
       ['/instagram', 'https://freddiefujiwara.com/instagram'],
       ['/blog', 'https://freddiefujiwara.com/blog/'],
+      ['/chinese', 'https://freddiefujiwara.com/chinese'],
       ['/threads', 'https://freddiefujiwara.com/threads'],
       ['/music', 'https://freddiefujiwara.com/music'],
       ['/room', 'https://freddiefujiwara.com/room'],
