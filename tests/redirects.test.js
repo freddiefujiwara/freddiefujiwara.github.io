@@ -19,6 +19,7 @@ const REDIRECTS = [
   ['facebook', 'https://www.facebook.com/freddiefujiwara'],
   ['x', 'https://x.com/freddiefujiwara'],
   ['threads', 'https://www.threads.com/@freddiefujiwara'],
+  ['youtube', 'https://www.youtube.com/@freddiefujiwara'],
   ['room', 'https://room.rakuten.co.jp/freddiefujiwara/items'],
   ['chinese', 'https://freddiefujiwara.com/blog/tag/中国語'],
 ];
