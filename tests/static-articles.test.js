@@ -659,6 +659,7 @@ describe('sns-count.json の生成', () => {
       media_count: null,
       views_30d: null,
       non_follower_pct: null,
+      followers_breakdown: null,
       updated_at: '2026-11-08T12:45:00.000Z',
     });
   });
@@ -688,6 +689,7 @@ describe('sns-count.json の生成', () => {
       media_count: 2420,
       views_30d: 576645,
       non_follower_pct: 94.5,
+      followers_breakdown: { instagram: 1991, youtube: 9, threads: null },
       updated_at: '2026-11-08T19:25:52.088Z',
     });
   });
@@ -812,6 +814,7 @@ describe('sns-count.json の生成', () => {
       media_count: 2404,
       views_30d: 823456,
       non_follower_pct: 96.3,
+      followers_breakdown: { instagram: 1988, youtube: null, threads: null },
       updated_at: 't1',
     });
   });
@@ -894,6 +897,94 @@ describe('sns-count.json の生成', () => {
       expect((await refreshSnsCountJson(options)).refreshed).toBe(true);
       const file = path.join(dir, 'sns-count.json');
       expect(JSON.parse(readFileSync(file, 'utf8')).media_count).toBe(2405);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('refreshSnsCountJson はフラットな応答からフォロワー数の内訳を JSON に入れる', async () => {
+    const dir = mkdtempSync(path.join(tmpdir(), 'sns-count-'));
+    try {
+      const fetchImpl = async () =>
+        okResponse({
+          ok: true,
+          action: 'sns_counts',
+          collected_at: '2026-11-08T19:25:52.088Z',
+          youtube: { subscribers: 9 },
+          instagram: { freddiefujiwara: 1991, anemone_cancer: 59 },
+          threads: { followers: null },
+        });
+      const result = await refreshSnsCountJson({
+        outDir: dir,
+        apiUrl: 'https://example.invalid/exec',
+        fetchImpl,
+        log: () => {},
+      });
+      expect(result.refreshed).toBe(true);
+      const file = path.join(dir, 'sns-count.json');
+      // 内訳の Instagram はメインアカウントのみ（anemone_cancer の
+      // 59人は合計には入るが内訳には含めない）。
+      expect(JSON.parse(readFileSync(file, 'utf8'))).toEqual({
+        total: 2059,
+        followers_breakdown: { instagram: 1991, youtube: 9, threads: null },
+        updated_at: '2026-11-08T19:25:52.088Z',
+      });
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('refreshSnsCountJson は内訳だけが変わっても書き直す', async () => {
+    const dir = mkdtempSync(path.join(tmpdir(), 'sns-count-'));
+    try {
+      let instagramFollowers = 1991;
+      const fetchImpl = async () =>
+        okResponse({
+          ok: true,
+          total: 2000,
+          instagram: { freddiefujiwara: instagramFollowers },
+          youtube: { subscribers: 9 },
+          fetched_at: 't1',
+        });
+      const options = {
+        outDir: dir,
+        apiUrl: 'https://example.invalid/exec',
+        fetchImpl,
+        log: () => {},
+      };
+      expect((await refreshSnsCountJson(options)).refreshed).toBe(true);
+      expect((await refreshSnsCountJson(options)).refreshed).toBe(false);
+      instagramFollowers = 1992;
+      expect((await refreshSnsCountJson(options)).refreshed).toBe(true);
+      const file = path.join(dir, 'sns-count.json');
+      const written = JSON.parse(readFileSync(file, 'utf8'));
+      expect(written.total).toBe(2000);
+      expect(written.followers_breakdown.instagram).toBe(1992);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('refreshSnsCountJson は counts 形式だけの応答では内訳を JSON に入れない', async () => {
+    const dir = mkdtempSync(path.join(tmpdir(), 'sns-count-'));
+    try {
+      const fetchImpl = async () =>
+        okResponse({
+          ok: true,
+          counts: { instagram: 2000, threads: 300 },
+          fetched_at: 't1',
+        });
+      const result = await refreshSnsCountJson({
+        outDir: dir,
+        apiUrl: 'https://example.invalid/exec',
+        fetchImpl,
+        log: () => {},
+      });
+      expect(result.refreshed).toBe(true);
+      const file = path.join(dir, 'sns-count.json');
+      const written = JSON.parse(readFileSync(file, 'utf8'));
+      expect(written).toEqual({ total: 2300, updated_at: 't1' });
+      expect('followers_breakdown' in written).toBe(false);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

@@ -1692,6 +1692,38 @@ const extractInstagramMetrics = (data) => {
   return metrics;
 };
 
+// The per-network follower breakdown shown in the small note under
+// the hero's combined total. Only the flat response shape carries
+// it — the older `counts` map and a ready-made `total` have no
+// per-network objects to read — so those responses yield null and
+// sns-count.json omits the breakdown entirely, leaving the note at
+// its static fallback. Each network is independently nullable.
+// Note the Instagram figure is the main account only: the total
+// above still adds the secondary account when the snapshot carries
+// it, but the owner wants the breakdown to describe the main
+// account, so anemone_cancer is deliberately not read here.
+const extractFollowersBreakdown = (data) => {
+  const number = (value) =>
+    typeof value === "number" && Number.isFinite(value) ? value : null;
+  const breakdown = {
+    instagram:
+      data.instagram && typeof data.instagram === "object"
+        ? number(data.instagram.freddiefujiwara)
+        : null,
+    youtube:
+      data.youtube && typeof data.youtube === "object"
+        ? number(data.youtube.subscribers)
+        : null,
+    threads:
+      data.threads && typeof data.threads === "object"
+        ? number(data.threads.followers)
+        : null,
+  };
+  return Object.values(breakdown).some((value) => value !== null)
+    ? breakdown
+    : null;
+};
+
 // Fetches the latest SNS follower snapshot from ga-gas's public
 // sns_counts action and reduces it to the combined total, plus the
 // Instagram-only metrics the hero shows alongside it. The GAS
@@ -1766,7 +1798,12 @@ export const fetchSnsCounts = async (apiUrl, fetchImpl = fetch) => {
         : typeof data.collected_at === "string"
           ? data.collected_at
           : null;
-  return { total, ...extractInstagramMetrics(data), updated_at: updatedAt };
+  return {
+    total,
+    ...extractInstagramMetrics(data),
+    followers_breakdown: extractFollowersBreakdown(data),
+    updated_at: updatedAt,
+  };
 };
 
 // Refreshes <outDir>/sns-count.json, the tiny file the top page
@@ -1778,8 +1815,10 @@ export const fetchSnsCounts = async (apiUrl, fetchImpl = fetch) => {
 // numbers that actually arrived are written: each Instagram metric
 // is independently nullable, so a metric the snapshot did not
 // provide stays out of the file and keeps its static fallback on
-// the page. The file is only rewritten when one of the numbers
-// changed, so runs without a change produce no commit noise.
+// the page. The per-network followers breakdown is written only
+// when the snapshot carried one. The file is only rewritten when
+// one of the numbers (breakdown included) changed, so runs without
+// a change produce no commit noise.
 export const refreshSnsCountJson = async ({
   outDir,
   apiUrl,
@@ -1802,6 +1841,9 @@ export const refreshSnsCountJson = async ({
       values[key] = payload[key];
     }
   }
+  if (payload.followers_breakdown) {
+    values.followers_breakdown = payload.followers_breakdown;
+  }
   const target = join(outDir, "sns-count.json");
   let previous = null;
   if (existsSync(target)) {
@@ -1812,9 +1854,24 @@ export const refreshSnsCountJson = async ({
     }
   }
   const numberKeys = ["total", ...SNS_INSTAGRAM_METRICS];
+  const breakdownOf = (obj) =>
+    obj && typeof obj.followers_breakdown === "object"
+      ? obj.followers_breakdown
+      : null;
+  const breakdownKeys = ["instagram", "youtube", "threads"];
+  const nextBreakdown = breakdownOf(values);
+  const previousBreakdown = breakdownOf(previous);
+  const breakdownUnchanged =
+    (nextBreakdown === null && previousBreakdown === null) ||
+    (nextBreakdown !== null &&
+      previousBreakdown !== null &&
+      breakdownKeys.every(
+        (key) => (previousBreakdown[key] ?? null) === (nextBreakdown[key] ?? null),
+      ));
   const unchanged =
     previous !== null &&
-    numberKeys.every((key) => (previous[key] ?? null) === (values[key] ?? null));
+    numberKeys.every((key) => (previous[key] ?? null) === (values[key] ?? null)) &&
+    breakdownUnchanged;
   if (unchanged) {
     log(`unchanged: sns-count.json (total=${payload.total})`);
     return { refreshed: false, reason: "numbers unchanged" };

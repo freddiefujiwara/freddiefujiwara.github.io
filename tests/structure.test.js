@@ -82,15 +82,22 @@ describe('ページ構造の不変条件', () => {
     }
   });
 
-  it('ヒーローの最初の数字は SNS延べフォロワー数で、差し替え先と静的な初期値を持つ', () => {
+  it('ヒーローの最初の数字は集計対象を添えた延べフォロワー数で、差し替え先と静的な初期値を持つ', () => {
     const first = document.querySelector('.stats .stat');
     expect(first.querySelector('.label').textContent.trim()).toBe(
-      'SNS延べフォロワー数',
+      'SNS（Instagram、YouTube）延べフォロワー数',
     );
+    expect(first.querySelector('.sns-total-label')).not.toBeNull();
     const total = first.querySelector('.sns-follower-total');
     expect(total).not.toBeNull();
     expect(total.textContent).toBe('2,307');
     expect(first.querySelector('.num small').textContent).toBe('人');
+  });
+
+  it('ヒーローの数字ブロックの下に、数字全体の時点の注記がある', () => {
+    const note = document.querySelector('.stats-note.sns-stats-date');
+    expect(note).not.toBeNull();
+    expect(note.textContent.trim()).toBe('数字は2026年11月9日時点');
   });
 
   it('ヒーローの残り3つの数字は時点表記なしのラベルと差し替え先を持つ', () => {
