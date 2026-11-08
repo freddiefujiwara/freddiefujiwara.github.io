@@ -663,6 +663,35 @@ describe('sns-count.json の生成', () => {
     });
   });
 
+  it('fetchSnsCounts は実際の ga-gas 応答（フラットなネットワーク別オブジェクト）を合算する', async () => {
+    // Fixture: the live action=sns_counts response observed on
+    // 2026-11-09 04:25 JST.
+    const fetchImpl = async () =>
+      okResponse({
+        ok: true,
+        action: 'sns_counts',
+        collected_at: '2026-11-08T19:25:52.088Z',
+        youtube: { subscribers: 9 },
+        instagram: {
+          freddiefujiwara: 1991,
+          anemone_cancer: null,
+          media_count: 2420,
+          views_30d: 576645,
+          non_follower_pct: 94.5,
+          insights_error: null,
+        },
+        threads: { followers: null },
+      });
+    const payload = await fetchSnsCounts('https://example.invalid/exec', fetchImpl);
+    expect(payload).toEqual({
+      total: 2000,
+      media_count: 2420,
+      views_30d: 576645,
+      non_follower_pct: 94.5,
+      updated_at: '2026-11-08T19:25:52.088Z',
+    });
+  });
+
   it('fetchSnsCounts は null や欠けた項目を合計から除く', async () => {
     const fetchImpl = async () =>
       okResponse({

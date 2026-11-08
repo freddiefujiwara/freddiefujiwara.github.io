@@ -1695,12 +1695,15 @@ const extractInstagramMetrics = (data) => {
 // Fetches the latest SNS follower snapshot from ga-gas's public
 // sns_counts action and reduces it to the combined total, plus the
 // Instagram-only metrics the hero shows alongside it. The GAS
-// side returns a per-network breakdown in `counts`; networks that
-// are missing or null are left out of the sum. If the GAS side ever
-// provides a ready-made `total`, that wins. Anything else is
-// rejected as malformed so a spec drift can never publish a wrong
-// (or partial but presented as complete) number. The endpoint URL
-// is passed in (the caller reads it from the GA_GAS_EXEC_URL
+// side returns a flat response with one object per network
+// (youtube.subscribers, instagram.freddiefujiwara /
+// instagram.anemone_cancer, threads.followers); networks that are
+// missing or null are left out of the sum. A ready-made `total`
+// wins when present, and the older flat `counts` map is still
+// accepted for backward compatibility. Anything else is rejected
+// as malformed so a spec drift can never publish a wrong (or
+// partial but presented as complete) number. The endpoint URL is
+// passed in (the caller reads it from the GA_GAS_EXEC_URL
 // environment variable): the URL itself is a capability and is
 // never written into this repository.
 export const fetchSnsCounts = async (apiUrl, fetchImpl = fetch) => {
@@ -1719,14 +1722,33 @@ export const fetchSnsCounts = async (apiUrl, fetchImpl = fetch) => {
   let total = null;
   if (typeof data.total === "number" && Number.isFinite(data.total)) {
     total = data.total;
-  } else if (data.counts && typeof data.counts === "object") {
+  } else {
     let sum = 0;
     let seen = false;
-    for (const key of SNS_COUNT_KEYS) {
-      const value = data.counts[key];
+    const add = (value) => {
       if (typeof value === "number" && Number.isFinite(value)) {
         sum += value;
         seen = true;
+      }
+    };
+    if (data.counts && typeof data.counts === "object") {
+      for (const key of SNS_COUNT_KEYS) {
+        add(data.counts[key]);
+      }
+    }
+    if (!seen) {
+      // The flat shape ga-gas returns today: one object per
+      // network, each carrying its follower count under its own
+      // field name.
+      if (data.instagram && typeof data.instagram === "object") {
+        add(data.instagram.freddiefujiwara);
+        add(data.instagram.anemone_cancer);
+      }
+      if (data.threads && typeof data.threads === "object") {
+        add(data.threads.followers);
+      }
+      if (data.youtube && typeof data.youtube === "object") {
+        add(data.youtube.subscribers);
       }
     }
     if (seen) {
@@ -1741,7 +1763,9 @@ export const fetchSnsCounts = async (apiUrl, fetchImpl = fetch) => {
       ? data.fetched_at
       : typeof data.updated_at === "string"
         ? data.updated_at
-        : null;
+        : typeof data.collected_at === "string"
+          ? data.collected_at
+          : null;
   return { total, ...extractInstagramMetrics(data), updated_at: updatedAt };
 };
 
