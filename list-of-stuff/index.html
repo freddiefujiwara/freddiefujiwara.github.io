@@ -244,52 +244,247 @@
         margin-top: 2px;
       }
 
-      /* ---------- music player (APlayer, themed like the blog) ---------- */
-      article .music-player .aplayer {
-        color: var(--ink);
+      /* ---------- music player (hand-rolled, styled like the blog) ---------- */
+      article .music-player {
+        margin: 16px 0;
         background: var(--surface);
         border: 1px solid var(--line);
         border-radius: 12px;
-        box-shadow: 0 1px 3px rgba(34, 29, 22, 0.08);
-        font-family: inherit;
+        padding: 16px 18px;
       }
-      article .music-player .aplayer.aplayer-withlist .aplayer-info {
-        border-bottom: 1px solid var(--line);
-      }
-      article .music-player .aplayer .aplayer-info .aplayer-music .aplayer-title {
-        color: var(--ink);
+
+      article .music-player .mp-now {
         font-size: 15px;
         font-weight: 700;
+        margin: 0 0 12px;
       }
-      article .music-player .aplayer .aplayer-list ol li {
+
+      article .music-player .mp-controls,
+      article .music-player .mp-toggles {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      article .music-player .mp-toggles {
+        justify-content: flex-end;
+        gap: 2px;
+        margin-top: 2px;
+      }
+
+      article .music-player .mp-controls {
+        margin-bottom: 12px;
+        justify-content: center;
+      }
+
+      article .music-player .mp-button {
+        touch-action: manipulation;
+        font: inherit;
         font-size: 14px;
-      }
-      article .music-player .aplayer .aplayer-list ol li .aplayer-list-title {
         color: var(--ink);
-        font-weight: 500;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 6px 16px;
+        cursor: pointer;
       }
-      article .music-player .aplayer .aplayer-list ol li .aplayer-list-index {
-        color: var(--ink-2);
-      }
-      article .music-player .aplayer .aplayer-info .aplayer-music .aplayer-author,
-      article .music-player .aplayer .aplayer-list ol li .aplayer-list-author {
-        color: var(--ink-2);
-      }
-      article .music-player .aplayer .aplayer-info .aplayer-controller .aplayer-time {
-        color: var(--ink-3);
-      }
-      article .music-player .aplayer .aplayer-list ol li {
-        border-top: 1px solid var(--line);
-      }
-      article .music-player .aplayer .aplayer-list ol li:hover,
-      article .music-player .aplayer .aplayer-list ol li.aplayer-list-light {
+
+      article .music-player .mp-button:hover {
         background: var(--accent-soft);
       }
-      article .music-player .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar {
+
+      /* The transport buttons are circles carrying drawn SVG glyphs.
+         The play button is the player's reason to exist (its press
+         count is the top KPI), so it stands a size above the rest and
+         wears the primary color. */
+      article .music-player .mp-prev,
+      article .music-player .mp-next,
+      article .music-player .mp-play {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        padding: 0;
+      }
+
+      article .music-player .mp-prev,
+      article .music-player .mp-next {
+        width: 44px;
+        height: 44px;
+        color: var(--ink);
+      }
+
+      article .music-player .mp-prev svg,
+      article .music-player .mp-next svg {
+        width: 20px;
+        height: 20px;
+        fill: currentColor;
+      }
+
+      article .music-player .mp-play {
+        width: 58px;
+        height: 58px;
+        font-size: 20px;
+        color: var(--surface);
+        background: var(--accent);
+        border-color: var(--accent);
+      }
+
+      article .music-player .mp-play svg {
+        width: 26px;
+        height: 26px;
+        fill: currentColor;
+      }
+
+      article .music-player .mp-play:hover {
+        background: var(--accent);
+      }
+
+      /* The mode switches stay quiet on purpose: small borderless
+         icons in a muted tone, full-strength only while active. The
+         primary color belongs to the play button alone. */
+      article .music-player .mp-repeat,
+      article .music-player .mp-random {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        padding: 0;
+        color: var(--ink-3);
+        background: transparent;
+        border: none;
+        border-radius: 50%;
+      }
+
+      article .music-player .mp-repeat:hover,
+      article .music-player .mp-random:hover {
+        background: var(--accent-soft);
+      }
+
+      article .music-player .mp-repeat svg,
+      article .music-player .mp-random svg {
+        width: 18px;
+        height: 18px;
+        fill: currentColor;
+      }
+
+      article .music-player .mp-repeat.is-on,
+      article .music-player .mp-random.is-on {
+        color: var(--ink);
+      }
+
+      article .music-player .mp-badge {
+        position: absolute;
+        top: 1px;
+        right: 0;
+        font-size: 9px;
+        font-weight: 700;
+        line-height: 1;
+      }
+
+      article .music-player .mp-progress {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      article .music-player .mp-time {
+        font-size: 12px;
+        color: var(--ink-3);
+        min-width: 32px;
+      }
+
+      article .music-player .mp-time.mp-total {
+        text-align: right;
+      }
+
+      article .music-player .mp-seek {
+        flex: 1;
+        -webkit-appearance: none;
+        appearance: none;
+        height: 4px;
+        border-radius: 2px;
+        background: var(--line);
+        outline: none;
+        cursor: pointer;
+      }
+
+      article .music-player .mp-seek::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: var(--accent);
+        border: none;
+      }
+
+      article .music-player .mp-seek::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: var(--accent);
+        border: none;
+      }
+
+      article .music-player .mp-seek::-moz-range-track {
+        height: 4px;
+        border-radius: 2px;
         background: var(--line);
       }
-      article .music-player .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar .aplayer-loaded {
-        background: var(--ink-3);
+
+      article .music-player .mp-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      article .music-player .mp-item {
+        border-top: 1px solid var(--line);
+      }
+
+      article .music-player .mp-track {
+        display: flex;
+        gap: 10px;
+        width: 100%;
+        font: inherit;
+        font-size: 14px;
+        text-align: left;
+        color: var(--ink);
+        background: none;
+        border: none;
+        padding: 9px 6px;
+        cursor: pointer;
+      }
+
+      article .music-player .mp-track:hover {
+        background: var(--accent-soft);
+      }
+
+      article .music-player .mp-track.is-active {
+        background: var(--accent-soft);
+        font-weight: 700;
+      }
+
+      article .music-player .mp-track-index {
+        color: var(--ink-2);
+      }
+
+      article .music-player .mp-status {
+        font-size: 13px;
+        color: var(--ink-2);
+        margin: 10px 0 0;
+      }
+
+      article .music-player .mp-status:empty {
+        display: none;
+      }
+
+      article .music-player audio {
+        display: none;
       }
 
       /* ---------- footer (shared site chrome) ---------- */
@@ -1554,15 +1749,15 @@
 <p>povo</p>
 <p><a class="link-card" href="https://povo.jp/" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://povo.jp/cms/povo/OGP/20231201_povo_New_OGP-image_1200-630.jpg" alt=""><span class="link-card-body"><span class="link-card-title">【公式】povo2.0 | 基本料ゼロから始めるau回線のスマホプラン【公式】povo2.0</span><span class="link-card-description">povo2.0は基本料0円の格安スマホプラン。au回線だから速度もエリアも品質も安定！eSIM対応、期間縛りなし、事務手数料なし、データ使い放題もトッピングが選べて、5Gにも対応！乗り換えにおススメ！</span><span class="link-card-domain">povo.jp</span></span></a></p>
 <p>県民共済</p>
-<p><a class="link-card" href="https://www.saitama-kyosai.or.jp/" target="_blank" rel="noopener noreferrer"><span class="link-card-body"><span class="link-card-title">埼玉県民共済生活協同組合 － 公式ホームページ</span><span class="link-card-description">埼玉県民共済では、こども共済、新型・県民共済、医療・生命共済、生命共済プラス型、熟年型共済と新型火災共済などの共済事業を行っております。</span><span class="link-card-domain">www.saitama-kyosai.or.jp</span></span></a></p>
+<p><a href="https://www.saitama-kyosai.or.jp/" target="_blank" rel="noopener noreferrer">https://www.saitama-kyosai.or.jp/</a></p>
 <p>サイクル保険</p>
-<p><a class="link-card" href="https://www.rakuten-sonpo.co.jp/tabid/1182/Default.aspx" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://www.rakuten-sonpo.co.jp/Portals/0/images/common/ogp_logo.png" alt=""><span class="link-card-body"><span class="link-card-title">自転車保険は家族みんなで！楽天サイクル保険 | 楽天ポイントが貯まる・使える！</span><span class="link-card-description">楽天損保の「楽天サイクル保険」は“家族みんなで”がリーズナブル。＜賠償責任は1億円まで補償＞＜自転車事故以外も補償＞で安心。楽天ポイントも貯まる・使える！</span><span class="link-card-domain">www.rakuten-sonpo.co.jp</span></span></a></p>
+<p><a href="https://www.rakuten-sonpo.co.jp/tabid/1182/Default.aspx" target="_blank" rel="noopener noreferrer">https://www.rakuten-sonpo.co.jp/tabid/1182/Default.aspx</a></p>
 <p>Peak Chinese</p>
-<p><a class="link-card" href="https://apps.apple.com/jp/app/peakchinese-ai%E3%81%A7%E4%B8%AD%E5%9B%BD%E8%AA%9E%E3%82%92%E5%AD%A6%E3%81%BC%E3%81%86/id1462500984" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/69/3f/97/693f9750-ced9-22d9-62ab-8ea5f7531fd5/Placeholder.mill/1200x630wa.jpg" alt=""><span class="link-card-body"><span class="link-card-title">PeakChinese - AIで中国語を学ぼうアプリ - App Store</span><span class="link-card-description">Shanghai Yuxuan Information Technology Co. , Ltdの「PeakChinese - AIで中国語を学ぼう」をApp Storeでダウンロードしてください。スクリーンショット、評価とレビュー、ユーザのヒント、「PeakChinese - </span><span class="link-card-domain">apps.apple.com</span></span></a></p>
+<p><a href="https://apps.apple.com/jp/app/peakchinese-ai%E3%81%A7%E4%B8%AD%E5%9B%BD%E8%AA%9E%E3%82%92%E5%AD%A6%E3%81%BC%E3%81%86/id1462500984" target="_blank" rel="noopener noreferrer">https://apps.apple.com/jp/app/peakchinese-ai%E3%81%A7%E4%B8%AD%E5%9B%BD%E8%AA%9E%E3%82%92%E5%AD%A6%E3%81%BC%E3%81%86/id1462500984</a></p>
 <p>Suno</p>
-<p><a class="link-card" href="https://suno.com/" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://cdn-o.suno.com/meta-preview.jpg" alt=""><span class="link-card-body"><span class="link-card-title">Suno | AI Music Generator</span><span class="link-card-description">Create stunning original music for free in seconds using our AI generator. Make your own masterpieces, share with friends, and discover musi</span><span class="link-card-domain">suno.com</span></span></a></p>
+<p><a href="https://suno.com/" target="_blank" rel="noopener noreferrer">https://suno.com/</a></p>
 <p>彩虹中国語教室</p>
-<p><a class="link-card" href="https://saiko-school.com/" target="_blank" rel="noopener noreferrer"><span class="link-card-body"><span class="link-card-title">彩虹中国語スクール</span><span class="link-card-description">彩虹（さいこう）中国語スクールは経験豊富な中国語教師が教える中国語教室。埼玉県川口市、西川口駅から徒歩４分。マンツーマン、グループレッスンあり。日常会話から、ビジネス会話、資格対策まで対応します。</span><span class="link-card-domain">saiko-school.com</span></span></a></p>
+<p><a href="https://saiko-school.com/" target="_blank" rel="noopener noreferrer">https://saiko-school.com/</a></p>
           </div>
         </article>
       </div>

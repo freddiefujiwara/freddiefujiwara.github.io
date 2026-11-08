@@ -244,52 +244,247 @@
         margin-top: 2px;
       }
 
-      /* ---------- music player (APlayer, themed like the blog) ---------- */
-      article .music-player .aplayer {
-        color: var(--ink);
+      /* ---------- music player (hand-rolled, styled like the blog) ---------- */
+      article .music-player {
+        margin: 16px 0;
         background: var(--surface);
         border: 1px solid var(--line);
         border-radius: 12px;
-        box-shadow: 0 1px 3px rgba(34, 29, 22, 0.08);
-        font-family: inherit;
+        padding: 16px 18px;
       }
-      article .music-player .aplayer.aplayer-withlist .aplayer-info {
-        border-bottom: 1px solid var(--line);
-      }
-      article .music-player .aplayer .aplayer-info .aplayer-music .aplayer-title {
-        color: var(--ink);
+
+      article .music-player .mp-now {
         font-size: 15px;
         font-weight: 700;
+        margin: 0 0 12px;
       }
-      article .music-player .aplayer .aplayer-list ol li {
+
+      article .music-player .mp-controls,
+      article .music-player .mp-toggles {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      article .music-player .mp-toggles {
+        justify-content: flex-end;
+        gap: 2px;
+        margin-top: 2px;
+      }
+
+      article .music-player .mp-controls {
+        margin-bottom: 12px;
+        justify-content: center;
+      }
+
+      article .music-player .mp-button {
+        touch-action: manipulation;
+        font: inherit;
         font-size: 14px;
-      }
-      article .music-player .aplayer .aplayer-list ol li .aplayer-list-title {
         color: var(--ink);
-        font-weight: 500;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 6px 16px;
+        cursor: pointer;
       }
-      article .music-player .aplayer .aplayer-list ol li .aplayer-list-index {
-        color: var(--ink-2);
-      }
-      article .music-player .aplayer .aplayer-info .aplayer-music .aplayer-author,
-      article .music-player .aplayer .aplayer-list ol li .aplayer-list-author {
-        color: var(--ink-2);
-      }
-      article .music-player .aplayer .aplayer-info .aplayer-controller .aplayer-time {
-        color: var(--ink-3);
-      }
-      article .music-player .aplayer .aplayer-list ol li {
-        border-top: 1px solid var(--line);
-      }
-      article .music-player .aplayer .aplayer-list ol li:hover,
-      article .music-player .aplayer .aplayer-list ol li.aplayer-list-light {
+
+      article .music-player .mp-button:hover {
         background: var(--accent-soft);
       }
-      article .music-player .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar {
+
+      /* The transport buttons are circles carrying drawn SVG glyphs.
+         The play button is the player's reason to exist (its press
+         count is the top KPI), so it stands a size above the rest and
+         wears the primary color. */
+      article .music-player .mp-prev,
+      article .music-player .mp-next,
+      article .music-player .mp-play {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        padding: 0;
+      }
+
+      article .music-player .mp-prev,
+      article .music-player .mp-next {
+        width: 44px;
+        height: 44px;
+        color: var(--ink);
+      }
+
+      article .music-player .mp-prev svg,
+      article .music-player .mp-next svg {
+        width: 20px;
+        height: 20px;
+        fill: currentColor;
+      }
+
+      article .music-player .mp-play {
+        width: 58px;
+        height: 58px;
+        font-size: 20px;
+        color: var(--surface);
+        background: var(--accent);
+        border-color: var(--accent);
+      }
+
+      article .music-player .mp-play svg {
+        width: 26px;
+        height: 26px;
+        fill: currentColor;
+      }
+
+      article .music-player .mp-play:hover {
+        background: var(--accent);
+      }
+
+      /* The mode switches stay quiet on purpose: small borderless
+         icons in a muted tone, full-strength only while active. The
+         primary color belongs to the play button alone. */
+      article .music-player .mp-repeat,
+      article .music-player .mp-random {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        padding: 0;
+        color: var(--ink-3);
+        background: transparent;
+        border: none;
+        border-radius: 50%;
+      }
+
+      article .music-player .mp-repeat:hover,
+      article .music-player .mp-random:hover {
+        background: var(--accent-soft);
+      }
+
+      article .music-player .mp-repeat svg,
+      article .music-player .mp-random svg {
+        width: 18px;
+        height: 18px;
+        fill: currentColor;
+      }
+
+      article .music-player .mp-repeat.is-on,
+      article .music-player .mp-random.is-on {
+        color: var(--ink);
+      }
+
+      article .music-player .mp-badge {
+        position: absolute;
+        top: 1px;
+        right: 0;
+        font-size: 9px;
+        font-weight: 700;
+        line-height: 1;
+      }
+
+      article .music-player .mp-progress {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      article .music-player .mp-time {
+        font-size: 12px;
+        color: var(--ink-3);
+        min-width: 32px;
+      }
+
+      article .music-player .mp-time.mp-total {
+        text-align: right;
+      }
+
+      article .music-player .mp-seek {
+        flex: 1;
+        -webkit-appearance: none;
+        appearance: none;
+        height: 4px;
+        border-radius: 2px;
+        background: var(--line);
+        outline: none;
+        cursor: pointer;
+      }
+
+      article .music-player .mp-seek::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: var(--accent);
+        border: none;
+      }
+
+      article .music-player .mp-seek::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: var(--accent);
+        border: none;
+      }
+
+      article .music-player .mp-seek::-moz-range-track {
+        height: 4px;
+        border-radius: 2px;
         background: var(--line);
       }
-      article .music-player .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar .aplayer-loaded {
-        background: var(--ink-3);
+
+      article .music-player .mp-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      article .music-player .mp-item {
+        border-top: 1px solid var(--line);
+      }
+
+      article .music-player .mp-track {
+        display: flex;
+        gap: 10px;
+        width: 100%;
+        font: inherit;
+        font-size: 14px;
+        text-align: left;
+        color: var(--ink);
+        background: none;
+        border: none;
+        padding: 9px 6px;
+        cursor: pointer;
+      }
+
+      article .music-player .mp-track:hover {
+        background: var(--accent-soft);
+      }
+
+      article .music-player .mp-track.is-active {
+        background: var(--accent-soft);
+        font-weight: 700;
+      }
+
+      article .music-player .mp-track-index {
+        color: var(--ink-2);
+      }
+
+      article .music-player .mp-status {
+        font-size: 13px;
+        color: var(--ink-2);
+        margin: 10px 0 0;
+      }
+
+      article .music-player .mp-status:empty {
+        display: none;
+      }
+
+      article .music-player audio {
+        display: none;
       }
 
       /* ---------- footer (shared site chrome) ---------- */
@@ -478,18 +673,17 @@
 
     <script>
       (function () {
-        // Embedded music player, ported from the blog's
+        // Hand-rolled music player, ported from the blog's
         // src/services/musicPlayer.js. blog-gas turns a document
-        // paragraph [[music|title|file.mp3]] into a placeholder div;
-        // this script collects the article's placeholders into a
-        // single APlayer playlist at the first placeholder's place.
-        // The MP3s live in Google Drive, whose direct links browsers
-        // refuse to play, so tracks are fetched from the music-gas
-        // endpoint as base64 JSON and handed to the element as Blob
-        // object URLs through APlayer's custom audio type.
+        // paragraph [[music|title|file.mp3]] into a placeholder
+        // div; this script collects the article's placeholders
+        // into a single playlist player at the first placeholder's
+        // place. The MP3s live in Google Drive, whose direct links
+        // browsers refuse to play, so tracks are fetched from the
+        // music-gas endpoint as base64 JSON and handed to a single
+        // <audio> element as Blob object URLs.
         var MUSIC_ENDPOINT = "https://script.google.com/macros/s/AKfycbzhGqDJUY9qoyHx81sUiV2SSBAR1XzMQxdnqx-guYpIwhHikt8WlaN21PHcL9NkJA-Mbg/exec";
-        var VENDOR_BASE = "https://freddiefujiwara.com/vendor/";
-        var AUDIO_FILE_PATTERN = /^[A-Za-z0-9_-]+\.mp3$/;
+        var AUDIO_FILE_PATTERN = /^[A-Za-z0-9_-]+.mp3$/;
 
         function musicTrackApiUrl(file) {
           return AUDIO_FILE_PATTERN.test(file || "")
@@ -528,95 +722,409 @@
           return promise;
         }
 
-        var latestActivation = 0;
-
-        // Once one track is in, quietly fetch the rest of the
-        // playlist in the background, one at a time. Most switches
-        // then find their bytes already in the session cache, which
-        // also keeps iOS from treating a long-delayed programmatic
-        // play() as unsolicited autoplay. Runs at most once.
-        var prefetchStarted = false;
-        function prefetchRemainingTracks(player) {
-          if (prefetchStarted) return;
-          var audios = (player && player.list && player.list.audios) || [];
-          var files = [];
-          audios.forEach(function (entry) {
-            try {
-              var file = new URL(entry.url).searchParams.get("track") || "";
-              if (file && AUDIO_FILE_PATTERN.test(file)) files.push(file);
-            } catch (err) {
-              // A malformed playlist entry must not break the prefetch.
-            }
-          });
-          if (!files.length) return;
-          prefetchStarted = true;
-          files.reduce(function (chain, file) {
-            return chain.then(function () { return fetchTrackBlob(file); }).catch(function () {});
-          }, Promise.resolve());
+        function formatTime(seconds) {
+          var total = isFinite(seconds) && seconds > 0 ? Math.floor(seconds) : 0;
+          var minutes = Math.floor(total / 60);
+          var rest = String(total % 60);
+          if (rest.length < 2) rest = "0" + rest;
+          return minutes + ":" + rest;
         }
 
-        function gasAudioType(audioElement, audio, player) {
-          var activation = ++latestActivation;
-          audioElement.pause();
-          audioElement.removeAttribute("src");
-          audioElement.load();
-          var file = "";
+        function stepIndex(index, count, delta) {
+          if (!count) return 0;
+          return (((index + delta) % count) + count) % count;
+        }
+
+        // What happens when the current track ends (same rules as
+        // the blog's endedPlan): repeat one replays; random picks
+        // an unplayed candidate, starting a fresh round under
+        // repeat all; list order advances, wrapping under repeat
+        // all; anything else stops.
+        function endedPlan(plan) {
+          var index = plan.index, count = plan.count;
+          if (!count) return { type: "stop" };
+          if (plan.repeat === "one") return { type: "replay" };
+          var i;
+          if (plan.random) {
+            var remaining = [];
+            for (i = 0; i < count; i += 1) {
+              if (i !== index && !plan.played.has(i)) remaining.push(i);
+            }
+            if (remaining.length) return { type: "advance", candidates: remaining };
+            if (plan.repeat === "all") {
+              var fresh = [];
+              for (i = 0; i < count; i += 1) {
+                if (count === 1 || i !== index) fresh.push(i);
+              }
+              return { type: "advance", candidates: fresh, resetPlayed: true };
+            }
+            return { type: "stop" };
+          }
+          if (index + 1 < count) return { type: "advance", candidates: [index + 1] };
+          if (plan.repeat === "all") return { type: "advance", candidates: [0] };
+          return { type: "stop" };
+        }
+
+        // Transport icons are inline SVG (fill: currentColor),
+        // never unicode glyphs: iOS renders them as blue emoji
+        // tiles, which clash with the site's palette.
+        var ICON_PATHS = {
+          play: "M8 5v14l11-7z",
+          pause: "M6 5h4v14H6zM14 5h4v14h-4z",
+          prev: "M6 5h2v14H6zM20 5v14L9 12z",
+          next: "M16 5h2v14h-2zM4 5v14l11-7z",
+          repeat: "M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z",
+          shuffle: "M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"
+        };
+        function iconSvg(name) {
+          return '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="' + ICON_PATHS[name] + '"/></svg>';
+        }
+
+        var REPEAT_LABELS = { none: "リピート：なし", all: "リピート：全曲", one: "リピート：1曲" };
+        var REPEAT_CYCLE = { none: "all", all: "one", one: "none" };
+
+        function pickRandom(candidates) {
+          return candidates[Math.floor(Math.random() * candidates.length)];
+        }
+
+        function tryPlay(audio) {
           try {
-            file = new URL(audio.url).searchParams.get("track") || "";
+            var attempt = audio.play();
+            if (attempt && typeof attempt.catch === "function") attempt.catch(function () {});
           } catch (err) {
-            file = "";
+            // Playback could not start; the reader can press play again.
           }
-          if (!file) {
-            if (player && typeof player.notice === "function") {
-              player.notice("音源を読み込めませんでした", 2000);
-            }
-            return;
-          }
-          fetchTrackBlob(file)
-            .then(function (blob) {
-              if (activation !== latestActivation) return;
-              audioElement.src = URL.createObjectURL(blob);
-              prefetchRemainingTracks(player);
-              // Whether to resume is decided HERE, when the bytes
-              // arrive, by reading player.paused now — not at
-              // handler entry. APlayer's play() flips the flag to
-              // false synchronously after the handler returns, and
-              // the ended -> skipForward -> play() sequence of a
-              // natural track end does exactly that. Reading it at
-              // entry missed the loop-around cases (all-repeat and
-              // one-repeat): right after a track ends the player
-              // still reads paused, so the next round loaded but
-              // never started.
-              if (player && !player.paused) {
-                var attempt = audioElement.play();
-                if (attempt && typeof attempt.catch === "function") attempt.catch(function () {});
-              }
-            })
-            .catch(function () {
-              if (activation === latestActivation && player && typeof player.notice === "function") {
-                player.notice("音源を読み込めませんでした", 2000);
-              }
+        }
+
+        // The play button is the player's top KPI; count real
+        // presses (not automatic advances) as a GA4 event. The
+        // staging copies do not count.
+        function trackMusicPlay(method) {
+          if (location.pathname.indexOf("/staging/") !== -1) return;
+          if (typeof window.gtag !== "function") return;
+          window.gtag("event", "music_play", { method: method });
+        }
+
+        function createPlayer(container, tracks) {
+          var audio = new Audio();
+          audio.preload = "auto";
+
+          var state = {
+            index: 0,
+            repeat: "none",
+            random: false,
+            played: new Set(),
+            history: [],
+            wantPlay: false,
+            loadedFile: "",
+            loading: false,
+            loadSeq: 0,
+            destroyed: false
+          };
+
+          var objectUrls = {};
+          function objectUrlFor(file) {
+            if (objectUrls[file]) return Promise.resolve(objectUrls[file]);
+            return fetchTrackBlob(file).then(function (blob) {
+              var url = URL.createObjectURL(blob);
+              objectUrls[file] = url;
+              return url;
             });
-        }
+          }
 
-        var loadPromise = null;
-        function loadAPlayer() {
-          if (window.APlayer) return Promise.resolve(window.APlayer);
-          if (loadPromise) return loadPromise;
-          loadPromise = new Promise(function (resolve) {
-            var link = document.createElement("link");
-            link.rel = "stylesheet";
-            link.href = VENDOR_BASE + "APlayer.min.css";
-            document.head.appendChild(link);
-            var script = document.createElement("script");
-            script.src = VENDOR_BASE + "APlayer.min.js";
-            script.onload = function () { resolve(window.APlayer || null); };
-            script.onerror = function () { resolve(null); };
-            document.head.appendChild(script);
+          function el(tag, className, text) {
+            var node = document.createElement(tag);
+            if (className) node.className = className;
+            if (text != null) node.textContent = text;
+            return node;
+          }
+
+          var nowEl = el("p", "mp-now", tracks[0].title);
+          var prevButton = el("button", "mp-button mp-prev");
+          prevButton.innerHTML = iconSvg("prev");
+          var playButton = el("button", "mp-button mp-play");
+          playButton.innerHTML = iconSvg("play");
+          var nextButton = el("button", "mp-button mp-next");
+          nextButton.innerHTML = iconSvg("next");
+          [prevButton, playButton, nextButton].forEach(function (b) { b.type = "button"; });
+          prevButton.setAttribute("aria-label", "前へ");
+          prevButton.title = "前へ";
+          nextButton.setAttribute("aria-label", "次へ");
+          nextButton.title = "次へ";
+          var controlsEl = el("div", "mp-controls");
+          controlsEl.appendChild(prevButton);
+          controlsEl.appendChild(playButton);
+          controlsEl.appendChild(nextButton);
+
+          var currentTimeEl = el("span", "mp-time mp-current", "0:00");
+          var seekEl = document.createElement("input");
+          seekEl.type = "range";
+          seekEl.className = "mp-seek";
+          seekEl.min = "0";
+          seekEl.max = "0";
+          seekEl.step = "0.1";
+          seekEl.value = "0";
+          seekEl.setAttribute("aria-label", "再生位置");
+          var totalTimeEl = el("span", "mp-time mp-total", "0:00");
+          var progressEl = el("div", "mp-progress");
+          progressEl.appendChild(currentTimeEl);
+          progressEl.appendChild(seekEl);
+          progressEl.appendChild(totalTimeEl);
+
+          var repeatButton = el("button", "mp-button mp-repeat");
+          repeatButton.type = "button";
+          repeatButton.innerHTML = iconSvg("repeat");
+          var repeatBadge = el("span", "mp-badge", "1");
+          repeatBadge.hidden = true;
+          repeatButton.appendChild(repeatBadge);
+          var randomButton = el("button", "mp-button mp-random");
+          randomButton.type = "button";
+          randomButton.innerHTML = iconSvg("shuffle");
+          randomButton.setAttribute("aria-pressed", "false");
+          var togglesEl = el("div", "mp-toggles");
+          togglesEl.appendChild(repeatButton);
+          togglesEl.appendChild(randomButton);
+
+          var listEl = el("ol", "mp-list");
+          var itemButtons = tracks.map(function (track, i) {
+            var item = el("li", "mp-item");
+            var button = el("button", "mp-track");
+            button.type = "button";
+            button.appendChild(el("span", "mp-track-index", String(i + 1)));
+            button.appendChild(el("span", "mp-track-title", track.title));
+            button.addEventListener("click", function () {
+              state.wantPlay = true;
+              trackMusicPlay("list");
+              startTrack(i);
+            });
+            item.appendChild(button);
+            listEl.appendChild(item);
+            return button;
           });
-          return loadPromise;
+
+          var statusEl = el("p", "mp-status", "");
+          statusEl.setAttribute("role", "status");
+
+          container.appendChild(nowEl);
+          container.appendChild(controlsEl);
+          container.appendChild(progressEl);
+          container.appendChild(togglesEl);
+          container.appendChild(listEl);
+          container.appendChild(statusEl);
+          container.appendChild(audio);
+
+          function syncNow() {
+            nowEl.textContent = tracks[state.index].title;
+            itemButtons.forEach(function (button, i) {
+              button.classList.toggle("is-active", i === state.index);
+            });
+          }
+          function syncPlayButton() {
+            playButton.innerHTML = state.loading ? "…" : iconSvg(audio.paused ? "play" : "pause");
+            var name = state.loading ? "読み込み中" : (audio.paused ? "再生" : "一時停止");
+            playButton.setAttribute("aria-label", name);
+            playButton.title = name;
+          }
+          function syncProgress() {
+            var duration = isFinite(audio.duration) ? audio.duration : 0;
+            seekEl.max = String(duration);
+            if (document.activeElement !== seekEl) seekEl.value = String(audio.currentTime || 0);
+            var percent = duration > 0 ? Math.min(100, ((audio.currentTime || 0) / duration) * 100) : 0;
+            seekEl.style.background = "linear-gradient(to right, var(--accent) " + percent + "%, var(--line) " + percent + "%)";
+            currentTimeEl.textContent = formatTime(audio.currentTime);
+            totalTimeEl.textContent = formatTime(duration);
+          }
+          function setStatus(text) { statusEl.textContent = text; }
+
+          // Once one track is in, quietly fetch the rest of the
+          // playlist in the background, one at a time. Most
+          // switches then find their bytes already in the session
+          // cache, which also keeps iOS from treating a
+          // long-delayed programmatic play() as unsolicited
+          // autoplay.
+          var prefetchStarted = false;
+          function prefetchRemaining() {
+            if (prefetchStarted) return;
+            prefetchStarted = true;
+            tracks.reduce(function (chain, track) {
+              return chain.then(function () { return fetchTrackBlob(track.file); }).catch(function () {});
+            }, Promise.resolve());
+          }
+
+          function startTrack(i, options) {
+            var record = !options || options.record !== false;
+            state.index = i;
+            if (record) {
+              state.played.add(i);
+              state.history.push(i);
+              if (state.history.length > 100) state.history.shift();
+            }
+            syncNow();
+            var file = tracks[i].file;
+            var seq = ++state.loadSeq;
+            if (state.loadedFile === file && audio.src) {
+              audio.currentTime = 0;
+              if (state.wantPlay) tryPlay(audio);
+              syncPlayButton();
+              return;
+            }
+            state.loading = true;
+            syncPlayButton();
+            setStatus("");
+            objectUrlFor(file)
+              .then(function (url) {
+                if (state.destroyed || seq !== state.loadSeq) return;
+                state.loading = false;
+                state.loadedFile = file;
+                audio.src = url;
+                prefetchRemaining();
+                if (state.wantPlay) tryPlay(audio);
+                syncPlayButton();
+                syncProgress();
+              })
+              .catch(function () {
+                if (state.destroyed || seq !== state.loadSeq) return;
+                state.loading = false;
+                setStatus("音源を読み込めませんでした");
+                syncPlayButton();
+              });
+          }
+
+          playButton.addEventListener("click", function () {
+            if (!audio.paused) {
+              state.wantPlay = false;
+              audio.pause();
+              return;
+            }
+            state.wantPlay = true;
+            trackMusicPlay("button");
+            if (state.loadedFile === tracks[state.index].file && audio.src) {
+              tryPlay(audio);
+            } else {
+              startTrack(state.index, { record: false });
+            }
+          });
+
+          nextButton.addEventListener("click", function () {
+            if (state.random && tracks.length > 1) {
+              var others = tracks.map(function (_, i) { return i; }).filter(function (i) { return i !== state.index; });
+              startTrack(pickRandom(others));
+            } else {
+              startTrack(stepIndex(state.index, tracks.length, 1));
+            }
+          });
+
+          prevButton.addEventListener("click", function () {
+            if (state.random) {
+              var history = state.history;
+              for (var k = history.length - 2; k >= 0; k -= 1) {
+                if (history[k] !== state.index) {
+                  state.history = history.slice(0, k);
+                  startTrack(history[k]);
+                  return;
+                }
+              }
+            }
+            startTrack(stepIndex(state.index, tracks.length, -1));
+          });
+
+          function syncRepeat() {
+            var label = REPEAT_LABELS[state.repeat];
+            repeatButton.setAttribute("aria-label", label);
+            repeatButton.title = label;
+            repeatButton.classList.toggle("is-on", state.repeat !== "none");
+            repeatBadge.hidden = state.repeat !== "one";
+          }
+          function syncRandom() {
+            var label = state.random ? "ランダム：オン" : "ランダム：オフ";
+            randomButton.setAttribute("aria-label", label);
+            randomButton.title = label;
+            randomButton.setAttribute("aria-pressed", state.random ? "true" : "false");
+            randomButton.classList.toggle("is-on", state.random);
+          }
+
+          repeatButton.addEventListener("click", function () {
+            state.repeat = REPEAT_CYCLE[state.repeat];
+            syncRepeat();
+          });
+
+          randomButton.addEventListener("click", function () {
+            state.random = !state.random;
+            syncRandom();
+            state.played = new Set([state.index]);
+          });
+
+          seekEl.addEventListener("input", function () {
+            var value = Number(seekEl.value);
+            if (isFinite(value)) {
+              audio.currentTime = value;
+              currentTimeEl.textContent = formatTime(value);
+            }
+          });
+
+          audio.addEventListener("play", syncPlayButton);
+          audio.addEventListener("pause", syncPlayButton);
+          audio.addEventListener("timeupdate", syncProgress);
+          audio.addEventListener("loadedmetadata", syncProgress);
+          audio.addEventListener("durationchange", syncProgress);
+          audio.addEventListener("error", function () {
+            if (state.loadedFile) setStatus("音源を読み込めませんでした");
+          });
+          audio.addEventListener("ended", function () {
+            var plan = endedPlan({
+              index: state.index,
+              count: tracks.length,
+              repeat: state.repeat,
+              random: state.random,
+              played: state.played
+            });
+            if (plan.type === "replay") {
+              audio.currentTime = 0;
+              tryPlay(audio);
+              return;
+            }
+            if (plan.type === "advance") {
+              var next = state.random ? pickRandom(plan.candidates) : plan.candidates[0];
+              if (plan.resetPlayed) state.played = new Set();
+              state.wantPlay = true;
+              startTrack(next);
+              return;
+            }
+            state.wantPlay = false;
+            syncPlayButton();
+          });
+
+          syncNow();
+          syncPlayButton();
+          syncProgress();
+          syncRepeat();
+          syncRandom();
+
+          // Warm the first track (and then the rest) as soon as
+          // the player appears, so the first press of the play
+          // button starts playback almost immediately.
+          fetchTrackBlob(tracks[0].file)
+            .then(function () { prefetchRemaining(); })
+            .catch(function () {});
+
+          return {
+            destroy: function () {
+              state.destroyed = true;
+              state.loadSeq += 1;
+              try {
+                audio.pause();
+                audio.removeAttribute("src");
+                audio.load();
+              } catch (err) {
+                // A half-initialised element must not break the page.
+              }
+              Object.keys(objectUrls).forEach(function (file) { URL.revokeObjectURL(objectUrls[file]); });
+              container.innerHTML = "";
+            }
+          };
         }
 
+        var currentPlayer = null;
         function mount() {
           var root = document.querySelector(".article-content");
           if (!root) return;
@@ -634,57 +1142,12 @@
           placeholders[0].replaceWith(container);
           placeholders.forEach(function (el) { el.remove(); });
           if (!tracks.length) return;
-          loadAPlayer().then(function (APlayer) {
-            if (!APlayer || !container.isConnected) return;
-            var theme = "#b23a1f";
-            try {
-              var value = getComputedStyle(document.documentElement)
-                .getPropertyValue("--accent")
-                .trim();
-              if (value) theme = value;
-            } catch (err) { /* keep the fallback theme */ }
-            var player = new APlayer({
-              container: container,
-              theme: theme,
-              listFolded: false,
-              customAudioType: { gas: gasAudioType },
-              audio: tracks.map(function (track) {
-                return {
-                  name: track.title,
-                  artist: "藤原史和",
-                  url: musicTrackApiUrl(track.file),
-                  type: "gas"
-                };
-              })
-            });
-            // Report a music_play event when a track actually
-            // starts, once per track — the same rule as the blog's
-            // musicPlayer: pausing and resuming the same song must
-            // not count again, while switching tracks (or the loop
-            // wrapping around to another song) reports the new
-            // one. Pages served without the GA tag (the staging
-            // build drops it) have no gtag, and then nothing is
-            // reported at all.
-            var reportedTrackFile = "";
-            player.on("play", function () {
-              if (typeof window.gtag !== "function") return;
-              var list = player.list;
-              var audio = list && list.audios ? list.audios[list.index] : null;
-              if (!audio) return;
-              var file = "";
-              try {
-                file = new URL(audio.url).searchParams.get("track") || "";
-              } catch (err) {
-                file = "";
-              }
-              if (!file || file === reportedTrackFile) return;
-              reportedTrackFile = file;
-              window.gtag("event", "music_play", {
-                track_title: audio.name || "",
-                track_file: file
-              });
-            });
-          });
+          if (currentPlayer) {
+            try { currentPlayer.destroy(); } catch (err) { /* ignore */ }
+            currentPlayer = null;
+          }
+          if (!container.isConnected) return;
+          currentPlayer = createPlayer(container, tracks);
         }
 
         if (document.readyState === "loading") {
