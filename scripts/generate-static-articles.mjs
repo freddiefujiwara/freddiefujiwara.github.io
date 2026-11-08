@@ -1029,6 +1029,9 @@ export const renderStaticArticlePage = ({ article, payload, year, latestArticleI
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet" />
     <style>${PAGE_CSS}    </style>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-W2C6FNCW86"></script>
+    <script src="/js/gtag.js"></script>
   </head>
   <body>
     ${buildNavHtml(article.navActive)}

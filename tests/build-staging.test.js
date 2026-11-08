@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { transformHtml, stagingBannerHtml, STAGING_LINKS, PROD_LINK } from '../scripts/build-staging.mjs';
+import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
+import { transformHtml, stripGaTags, buildStaging, stagingBannerHtml, STAGING_LINKS, PROD_LINK } from '../scripts/build-staging.mjs';
 
 const sample = `<!doctype html>
 <html>
@@ -49,6 +52,62 @@ describe('transformHtml', () => {
     expect(out).toContain('data-staging-nav-offset');
     expect(out).toContain('.site-nav{position:sticky}');
     expect(out).not.toContain('body{padding-top:56px}');
+  });
+});
+
+describe('stripGaTags', () => {
+  it('静的記事ページの GA タグ一式を取り除き、本文は残す', () => {
+    const page = `<!doctype html>
+<html>
+  <head>
+    <title>川口の歌</title>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-W2C6FNCW86"></script>
+    <script src="/js/gtag.js"></script>
+  </head>
+  <body><article>本文です。</article></body>
+</html>`;
+    const out = stripGaTags(page);
+    expect(out).not.toContain('googletagmanager');
+    expect(out).not.toContain('/js/gtag.js');
+    expect(out).toContain('<title>川口の歌</title>');
+    expect(out).toContain('本文です。');
+  });
+});
+
+describe('buildStaging', () => {
+  it('静的記事ページからも GA タグを取り除く', () => {
+    const work = mkdtempSync(path.join(tmpdir(), 'build-staging-'));
+    try {
+      const src = path.join(work, 'public');
+      const out = path.join(work, 'staging-dist');
+      mkdirSync(path.join(src, 'music'), { recursive: true });
+      mkdirSync(path.join(src, 'js'), { recursive: true });
+      writeFileSync(path.join(src, 'index.html'), sample);
+      writeFileSync(path.join(src, 'js', 'gtag.js'), '// gtag init');
+      writeFileSync(
+        path.join(src, 'music', 'index.html'),
+        `<!doctype html>
+<html>
+  <head>
+    <title>2026-09-22 川口の歌を、まとめました</title>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-W2C6FNCW86"></script>
+    <script src="/js/gtag.js"></script>
+  </head>
+  <body><article>曲のページです。</article></body>
+</html>`,
+      );
+      buildStaging(src, out);
+      const music = readFileSync(path.join(out, 'music', 'index.html'), 'utf8');
+      expect(music).not.toContain('googletagmanager');
+      expect(music).not.toContain('/js/gtag.js');
+      expect(music).toContain('曲のページです。');
+      const top = readFileSync(path.join(out, 'index.html'), 'utf8');
+      expect(top).not.toContain('googletagmanager');
+    } finally {
+      rmSync(work, { recursive: true, force: true });
+    }
   });
 });
 
