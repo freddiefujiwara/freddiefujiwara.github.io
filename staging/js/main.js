@@ -25,6 +25,7 @@
     var href = a.getAttribute("href") || "";
     if (href.indexOf("/blog/") >= 0) return "blog";
     if (href.indexOf("/list-of-stuff/") >= 0) return "list";
+    if (href.indexOf("/music/") >= 0) return "music";
     return null;
   }
   document.querySelectorAll(".site-nav a").forEach(function (a) {
