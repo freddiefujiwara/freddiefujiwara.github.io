@@ -30,9 +30,12 @@
 // music play count shown in the shared header) from ga-gas's public
 // music_count action when GA_GAS_EXEC_URL is set, and
 // public/sns-count.json (the combined SNS follower total shown in
-// the top page hero) from its public sns_counts action. Those
-// refreshes are best-effort: a failure keeps the previous file and
-// never fails the article generation.
+// the top page hero) from its public sns_counts action. It also
+// refreshes public/popular-articles.json (the top page's
+// よく読まれている記事 cards) from the public top_articles action,
+// joining the ranking with the blog's title list. Those refreshes
+// are best-effort: a failure keeps the previous file and never
+// fails the article generation.
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -1652,6 +1655,131 @@ export const refreshMusicCountJson = async ({
   return { refreshed: true, count: payload.count };
 };
 
+// Fetches the top-articles ranking from ga-gas's public
+// top_articles action. The endpoint URL is passed in (the caller
+// reads it from the GA_GAS_EXEC_URL environment variable): the URL
+// itself is a capability and is never written into this repository.
+export const fetchTopArticles = async (apiUrl, fetchImpl = fetch) => {
+  const separator = apiUrl.includes("?") ? "&" : "?";
+  const response = await fetchImpl(`${apiUrl}${separator}action=top_articles`, {
+    redirect: "follow",
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+  });
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status} for top_articles`);
+  }
+  const data = await response.json();
+  if (!data || data.ok !== true || !Array.isArray(data.articles)) {
+    throw new Error("Malformed top_articles response");
+  }
+  const articles = data.articles
+    .filter(
+      (entry) =>
+        entry &&
+        typeof entry.id === "string" &&
+        typeof entry.views === "number" &&
+        Number.isFinite(entry.views)
+    )
+    .map((entry) => ({ id: entry.id, views: entry.views }));
+  return {
+    days: typeof data.days === "number" ? data.days : 28,
+    articles,
+    updated_at: typeof data.updated_at === "string" ? data.updated_at : null,
+  };
+};
+
+// How many cards the top page's よく読まれている記事 section has.
+export const POPULAR_ARTICLES_LIMIT = 3;
+
+// Join a top_articles ranking ([{ id, views }], best first) with
+// the blog's title map (id -> "YYYY-MM-DD <title>", the shape the
+// blog list endpoint returns) into the cards the top page shows.
+// Ranked articles whose title is unknown are skipped — the next
+// ranked article takes their place — so the section always shows
+// articles that actually exist under the title shown. The date
+// prefix is part of the document name, not of the display title.
+export const buildPopularArticles = (
+  ranking,
+  titles,
+  limit = POPULAR_ARTICLES_LIMIT
+) => {
+  if (!Array.isArray(ranking) || !titles || typeof titles !== "object") {
+    return [];
+  }
+  const picked = [];
+  for (const entry of ranking) {
+    const raw = titles[entry.id];
+    if (typeof raw !== "string" || !raw) continue;
+    picked.push({
+      id: entry.id,
+      title: raw.replace(/^\d{4}-\d{2}-\d{2}\s+/, ""),
+      views: entry.views,
+      href: `https://freddiefujiwara.com/blog/${entry.id}`,
+    });
+    if (picked.length >= limit) break;
+  }
+  return picked;
+};
+
+// Refreshes <outDir>/popular-articles.json, the tiny file the top
+// page's cards are filled from. Best-effort like the other
+// refreshes: no endpoint, no blog titles, a failed fetch, or a
+// ranking that cannot fill every card keeps the existing file
+// exactly as it is, and the section keeps its previous cards. The
+// file is only rewritten when the picked articles changed.
+export const refreshPopularArticlesJson = async ({
+  outDir,
+  apiUrl,
+  titles,
+  fetchImpl = fetch,
+  log = console.log,
+} = {}) => {
+  if (!apiUrl) {
+    return { refreshed: false, reason: "no endpoint configured" };
+  }
+  if (!titles || typeof titles !== "object") {
+    log("popular-articles.json: kept existing (no blog titles)");
+    return { refreshed: false, reason: "no blog titles" };
+  }
+  let payload;
+  try {
+    const ranking = await fetchTopArticles(apiUrl, fetchImpl);
+    const articles = buildPopularArticles(ranking.articles, titles);
+    if (articles.length < POPULAR_ARTICLES_LIMIT) {
+      throw new Error(
+        `only ${articles.length} titled articles in the ranking`
+      );
+    }
+    payload = {
+      days: ranking.days,
+      articles,
+      updated_at: ranking.updated_at,
+    };
+  } catch (error) {
+    log(`popular-articles.json: kept existing (${error.message})`);
+    return { refreshed: false, reason: error.message };
+  }
+  const target = join(outDir, "popular-articles.json");
+  let previous = null;
+  if (existsSync(target)) {
+    try {
+      previous = JSON.parse(readFileSync(target, "utf8"));
+    } catch {
+      previous = null;
+    }
+  }
+  if (
+    previous &&
+    JSON.stringify(previous.articles) === JSON.stringify(payload.articles)
+  ) {
+    log("unchanged: popular-articles.json");
+    return { refreshed: false, reason: "articles unchanged" };
+  }
+  writeFileSync(target, JSON.stringify(payload, null, 2) + "\n");
+  log(`wrote: popular-articles.json (top: ${payload.articles[0].title})`);
+  return { refreshed: true, articles: payload.articles };
+};
+
 // The SNS accounts included in the hero's combined follower total:
 // the main and secondary Instagram accounts, Threads and YouTube.
 const SNS_COUNT_KEYS = ["instagram", "instagram_anemone", "threads", "youtube"];
@@ -1896,14 +2024,21 @@ export const generateStaticArticles = async ({
   // The hero link target: the blog's latest article id (the first id
   // in the list response). A failed list fetch must not block the
   // generation itself — the pages then link to the blog top instead.
+  // The same response's title map feeds the popular-articles
+  // refresh below.
   let latestArticleId = null;
+  let blogTitles = null;
   try {
     const list = await fetchJsonOnce(API_BASE, fetchImpl);
     if (Array.isArray(list?.ids) && list.ids.length > 0) {
       latestArticleId = list.ids[0];
     }
+    if (list?.titles && typeof list.titles === "object") {
+      blogTitles = list.titles;
+    }
   } catch {
     latestArticleId = null;
+    blogTitles = null;
   }
   const pages = [];
   for (const article of ARTICLES) {
@@ -1941,6 +2076,13 @@ export const generateStaticArticles = async ({
   await refreshSnsCountJson({
     outDir,
     apiUrl: musicCountApiUrl,
+    fetchImpl,
+    log,
+  });
+  await refreshPopularArticlesJson({
+    outDir,
+    apiUrl: musicCountApiUrl,
+    titles: blogTitles,
     fetchImpl,
     log,
   });
