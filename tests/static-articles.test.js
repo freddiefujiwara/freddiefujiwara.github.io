@@ -343,6 +343,15 @@ describe('音楽プレイヤー（music-track プレースホルダ）', () => {
     expect(MUSIC_PLAYER_SCRIPT).toContain('if (player && !player.paused)');
   });
 
+  it('再生開始を music_play イベントとして GA に送る（曲ごと1回、gtag が無ければ送らない）', () => {
+    expect(MUSIC_PLAYER_SCRIPT).toContain('player.on("play"');
+    expect(MUSIC_PLAYER_SCRIPT).toContain('typeof window.gtag !== "function"');
+    expect(MUSIC_PLAYER_SCRIPT).toContain('"music_play"');
+    expect(MUSIC_PLAYER_SCRIPT).toContain('track_title: audio.name || ""');
+    expect(MUSIC_PLAYER_SCRIPT).toContain('track_file: file');
+    expect(MUSIC_PLAYER_SCRIPT).toContain('reportedTrackFile');
+  });
+
   it('トラックのない記事にはプレイヤーのスクリプトが入らない', () => {
     const page = renderStaticArticlePage({
       article: ARTICLES[0],
