@@ -656,6 +656,9 @@ describe('sns-count.json の生成', () => {
     expect(seen).toEqual(['https://example.invalid/exec?action=sns_counts']);
     expect(payload).toEqual({
       total: 2307,
+      media_count: null,
+      views_30d: null,
+      non_follower_pct: null,
       updated_at: '2026-11-08T12:45:00.000Z',
     });
   });
@@ -754,6 +757,114 @@ describe('sns-count.json の生成', () => {
       });
       expect(result.refreshed).toBe(false);
       expect(existsSync(path.join(dir, 'sns-count.json'))).toBe(false);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('fetchSnsCounts は instagram の指標（投稿数・30日の再生回数・フォロワー以外％）を取り出す', async () => {
+    const fetchImpl = async () =>
+      okResponse({
+        ok: true,
+        action: 'sns_counts',
+        counts: { instagram: 1988, instagram_anemone: 59, threads: 252, youtube: 8 },
+        instagram: {
+          freddiefujiwara: 1988,
+          anemone_cancer: 59,
+          media_count: 2404,
+          views_30d: 823456,
+          non_follower_pct: 96.3,
+        },
+        fetched_at: 't1',
+      });
+    const payload = await fetchSnsCounts('https://example.invalid/exec', fetchImpl);
+    expect(payload).toEqual({
+      total: 2307,
+      media_count: 2404,
+      views_30d: 823456,
+      non_follower_pct: 96.3,
+      updated_at: 't1',
+    });
+  });
+
+  it('fetchSnsCounts は指標ごとに独立で、null や欠けた指標は null のままにする', async () => {
+    const fetchImpl = async () =>
+      okResponse({
+        ok: true,
+        counts: { instagram: 1988, threads: 252 },
+        instagram: { media_count: null, views_30d: 512345 },
+        fetched_at: 't1',
+      });
+    const payload = await fetchSnsCounts('https://example.invalid/exec', fetchImpl);
+    expect(payload.total).toBe(2240);
+    expect(payload.media_count).toBeNull();
+    expect(payload.views_30d).toBe(512345);
+    expect(payload.non_follower_pct).toBeNull();
+  });
+
+  it('fetchSnsCounts は counts.instagram がオブジェクトでも指標を取り出す', async () => {
+    const fetchImpl = async () =>
+      okResponse({
+        ok: true,
+        counts: { threads: 252, youtube: 8, instagram: { media_count: 2404 } },
+        fetched_at: 't1',
+      });
+    const payload = await fetchSnsCounts('https://example.invalid/exec', fetchImpl);
+    expect(payload.media_count).toBe(2404);
+    expect(payload.views_30d).toBeNull();
+  });
+
+  it('refreshSnsCountJson は取れた指標だけを JSON に含める', async () => {
+    const dir = mkdtempSync(path.join(tmpdir(), 'sns-count-'));
+    try {
+      const fetchImpl = async () =>
+        okResponse({
+          ok: true,
+          counts: { instagram: 2000, threads: 300 },
+          instagram: { media_count: 2404, views_30d: null },
+          fetched_at: 't1',
+        });
+      const result = await refreshSnsCountJson({
+        outDir: dir,
+        apiUrl: 'https://example.invalid/exec',
+        fetchImpl,
+        log: () => {},
+      });
+      expect(result.refreshed).toBe(true);
+      const file = path.join(dir, 'sns-count.json');
+      expect(JSON.parse(readFileSync(file, 'utf8'))).toEqual({
+        total: 2300,
+        media_count: 2404,
+        updated_at: 't1',
+      });
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('refreshSnsCountJson は total が同じでも指標が変われば書き直す', async () => {
+    const dir = mkdtempSync(path.join(tmpdir(), 'sns-count-'));
+    try {
+      let mediaCount = 2404;
+      const fetchImpl = async () =>
+        okResponse({
+          ok: true,
+          counts: { instagram: 2000, threads: 300 },
+          instagram: { media_count: mediaCount },
+          fetched_at: 't1',
+        });
+      const options = {
+        outDir: dir,
+        apiUrl: 'https://example.invalid/exec',
+        fetchImpl,
+        log: () => {},
+      };
+      expect((await refreshSnsCountJson(options)).refreshed).toBe(true);
+      expect((await refreshSnsCountJson(options)).refreshed).toBe(false);
+      mediaCount = 2405;
+      expect((await refreshSnsCountJson(options)).refreshed).toBe(true);
+      const file = path.join(dir, 'sns-count.json');
+      expect(JSON.parse(readFileSync(file, 'utf8')).media_count).toBe(2405);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
