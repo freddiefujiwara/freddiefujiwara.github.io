@@ -100,11 +100,18 @@
       }
       .site-nav ul a:hover { color: var(--ink); }
       .site-nav ul a.active { color: var(--accent); border-bottom-color: var(--accent); }
+      /* 「川口の歌」の累計再生回数（/js/music-count.json から流し込む。
+         取れなかった場合は空のままにして、余分な隙間も作らない） */
+      .music-play-count { color: var(--accent); font-size: 11px; font-weight: 700; margin-left: 5px; }
+      .music-play-count:empty { display: none; }
       @media (max-width: 560px) {
         .site-nav { grid-template-columns: 1fr; }
         .site-nav .brand { display: none; }
         .site-nav ul { justify-self: stretch; width: 100%; justify-content: space-between; gap: 6px; }
         .site-nav ul a { font-size: 12px; letter-spacing: 0.02em; }
+        /* スマホではサイト内セクションへのリンクを畳み、サイト共通の
+           4件（トップ / ブログ / 持ち物リスト / 川口の歌）だけを1行に出す */
+        .site-nav li.nav-section { display: none; }
       }
 
       /* ---------- hero ---------- */
@@ -344,11 +351,12 @@
       <a class="brand" href="https://freddiefujiwara.com/">藤原史和｜川口を歩くQAエンジニア</a>
       <ul>
         <li><a href="#top" data-spy="top">トップ</a></li>
-        <li><a href="#about" data-spy="about">プロフィール</a></li>
-        <li><a href="#activity" data-spy="activity">活動・発信</a></li>
-        <li><a href="#contact" data-spy="contact">情報交換</a></li>
+        <li class="nav-section"><a href="#about" data-spy="about">プロフィール</a></li>
+        <li class="nav-section"><a href="#activity" data-spy="activity">活動・発信</a></li>
+        <li class="nav-section"><a href="#contact" data-spy="contact">情報交換</a></li>
         <li><a href="/blog/">ブログ</a></li>
-        <li><a href="/list-of-stuff/">持ち物</a></li>
+        <li><a href="/list-of-stuff/">持ち物リスト</a></li>
+        <li><a href="/music/">川口の歌 ♪<span class="music-play-count"></span></a></li>
       </ul>
     </nav>
 
@@ -590,6 +598,7 @@
     <script src="/staging/js/main.js"></script>
     <script src="/staging/js/web-vitals.iife.js"></script>
     <script src="/staging/js/web-vitals-ga.js"></script>
+    <script src="/staging/js/music-count.js"></script>
   <!-- staging: ci build -->
 </body>
 </html>
