@@ -1656,8 +1656,45 @@ export const refreshMusicCountJson = async ({
 // the main and secondary Instagram accounts, Threads and YouTube.
 const SNS_COUNT_KEYS = ["instagram", "instagram_anemone", "threads", "youtube"];
 
+// The Instagram-only metrics the hero also shows: the post count,
+// the last 30 days of views, and the non-follower share of those
+// views. The GAS snapshot carries them on its `instagram` object
+// (a nested `counts.instagram` object is accepted too, in case the
+// snapshot shape shifts). They are extracted independently of the
+// follower total and of each other: a missing or non-numeric value
+// stays null, so the caller omits it from sns-count.json and the
+// hero keeps its static fallback for that one stat.
+const SNS_INSTAGRAM_METRICS = ["media_count", "views_30d", "non_follower_pct"];
+
+const extractInstagramMetrics = (data) => {
+  const metrics = { media_count: null, views_30d: null, non_follower_pct: null };
+  const candidates = [];
+  if (data.instagram && typeof data.instagram === "object") {
+    candidates.push(data.instagram);
+  }
+  if (
+    data.counts &&
+    typeof data.counts === "object" &&
+    data.counts.instagram &&
+    typeof data.counts.instagram === "object"
+  ) {
+    candidates.push(data.counts.instagram);
+  }
+  for (const key of SNS_INSTAGRAM_METRICS) {
+    for (const source of candidates) {
+      const value = source[key];
+      if (typeof value === "number" && Number.isFinite(value)) {
+        metrics[key] = value;
+        break;
+      }
+    }
+  }
+  return metrics;
+};
+
 // Fetches the latest SNS follower snapshot from ga-gas's public
-// sns_counts action and reduces it to the combined total. The GAS
+// sns_counts action and reduces it to the combined total, plus the
+// Instagram-only metrics the hero shows alongside it. The GAS
 // side returns a per-network breakdown in `counts`; networks that
 // are missing or null are left out of the sum. If the GAS side ever
 // provides a ready-made `total`, that wins. Anything else is
@@ -1705,16 +1742,20 @@ export const fetchSnsCounts = async (apiUrl, fetchImpl = fetch) => {
       : typeof data.updated_at === "string"
         ? data.updated_at
         : null;
-  return { total, updated_at: updatedAt };
+  return { total, ...extractInstagramMetrics(data), updated_at: updatedAt };
 };
 
 // Refreshes <outDir>/sns-count.json, the tiny file the top page
-// hero reads to show the combined SNS follower total. Best-effort
-// by design, exactly like refreshMusicCountJson: when no endpoint
-// is configured or the fetch fails, the existing file (if any) is
-// kept exactly as it is, and the hero keeps its static fallback
-// value. The file is only rewritten when the total changed, so
-// runs without a change produce no commit noise.
+// hero reads to show the combined SNS follower total and the
+// Instagram metrics next to it. Best-effort by design, exactly
+// like refreshMusicCountJson: when no endpoint is configured or
+// the fetch fails, the existing file (if any) is kept exactly as
+// it is, and the hero keeps its static fallback values. Only the
+// numbers that actually arrived are written: each Instagram metric
+// is independently nullable, so a metric the snapshot did not
+// provide stays out of the file and keeps its static fallback on
+// the page. The file is only rewritten when one of the numbers
+// changed, so runs without a change produce no commit noise.
 export const refreshSnsCountJson = async ({
   outDir,
   apiUrl,
@@ -1731,22 +1772,31 @@ export const refreshSnsCountJson = async ({
     log(`sns-count.json: kept existing (${error.message})`);
     return { refreshed: false, reason: error.message };
   }
-  const target = join(outDir, "sns-count.json");
-  let previousTotal = null;
-  if (existsSync(target)) {
-    try {
-      previousTotal = JSON.parse(readFileSync(target, "utf8")).total;
-    } catch {
-      previousTotal = null;
+  const values = { total: payload.total };
+  for (const key of SNS_INSTAGRAM_METRICS) {
+    if (typeof payload[key] === "number" && Number.isFinite(payload[key])) {
+      values[key] = payload[key];
     }
   }
-  if (previousTotal === payload.total) {
+  const target = join(outDir, "sns-count.json");
+  let previous = null;
+  if (existsSync(target)) {
+    try {
+      previous = JSON.parse(readFileSync(target, "utf8"));
+    } catch {
+      previous = null;
+    }
+  }
+  const numberKeys = ["total", ...SNS_INSTAGRAM_METRICS];
+  const unchanged =
+    previous !== null &&
+    numberKeys.every((key) => (previous[key] ?? null) === (values[key] ?? null));
+  if (unchanged) {
     log(`unchanged: sns-count.json (total=${payload.total})`);
-    return { refreshed: false, reason: "total unchanged" };
+    return { refreshed: false, reason: "numbers unchanged" };
   }
   const body =
-    JSON.stringify({ total: payload.total, updated_at: payload.updated_at }, null, 2) +
-    "\n";
+    JSON.stringify({ ...values, updated_at: payload.updated_at }, null, 2) + "\n";
   writeFileSync(target, body);
   log(`wrote: sns-count.json (total=${payload.total})`);
   return { refreshed: true, total: payload.total };
