@@ -328,6 +328,7 @@ noindex とし、計測タグ（gtag）は入れません。飛び先を変え�
 | https://freddiefujiwara.com/facebook | https://www.facebook.com/freddiefujiwara |
 | https://freddiefujiwara.com/x | https://x.com/freddiefujiwara |
 | https://freddiefujiwara.com/threads | https://www.threads.com/@freddiefujiwara |
+| https://freddiefujiwara.com/youtube | https://www.youtube.com/@freddiefujiwara |
 | https://freddiefujiwara.com/room | https://room.rakuten.co.jp/freddiefujiwara/items |
 | https://freddiefujiwara.com/chinese | https://freddiefujiwara.com/blog/tag/中国語 |
 

@@ -92,6 +92,7 @@ describe('活動・発信の短いURLハブ', () => {
       ['/chinese', 'https://freddiefujiwara.com/chinese'],
       ['/threads', 'https://freddiefujiwara.com/threads'],
       ['/music', 'https://freddiefujiwara.com/music'],
+      ['/youtube', 'https://freddiefujiwara.com/youtube'],
       ['/room', 'https://freddiefujiwara.com/room'],
       ['/list-of-stuff', 'https://freddiefujiwara.com/list-of-stuff/'],
       ['/map', 'https://freddiefujiwara.com/map'],
