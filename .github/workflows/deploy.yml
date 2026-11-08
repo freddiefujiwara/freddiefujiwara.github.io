@@ -25,6 +25,8 @@ jobs:
 
     - name: Generate static articles
       continue-on-error: true
+      env:
+        GA_GAS_EXEC_URL: ${{ secrets.GA_GAS_EXEC_URL }}
       run: |
         npm install
         node scripts/generate-static-articles.mjs
