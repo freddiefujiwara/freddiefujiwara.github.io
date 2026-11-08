@@ -147,15 +147,24 @@ python3 -m unittest discover -s scripts/tests -v   # チェックスクリプト
   ブログの検索窓（.nav-search）は右スロットに `justify-self: end` で置きます（ブログ固有の要素で、トップ／持ち物にはありません）。
 - ブランド文言は3サイト共通で「藤原史和｜川口を歩くQAエンジニア」。
   リンク先は https://freddiefujiwara.com/ です（トップも PR #34 で #top からルート URL に変更）。
-- リンク集合は全サイト6件（トップ / プロフィール / 活動・発信 / 情報交換 / ブログ / 持ち物）で統一です。
+- リンク集合は全サイト7件（トップ / プロフィール / 活動・発信 / 情報交換 / ブログ / 持ち物リスト / 川口の歌）で統一です。
   - 「トップ」のリンク先は、トップページ上では #top アンカー、ブログ／持ち物では https://freddiefujiwara.com/ です。
   - プロフィール / 活動・発信 / 情報交換はトップページのセクション（#about / #activity / #contact）へのリンクで、
     ブログ／持ち物では絶対 URL、トップ自身ではページ内アンカーです（スクロールスパイ連動はトップの固有差分）。
-  - ブログ / 持ち物は /blog/、/list-of-stuff/ です。
-- モバイル（max-width: 560px）ではブランドを隠し、6件を1行に収めるため、
-  リンクの font-size: 12px、letter-spacing: 0.02em、ul の gap: 6px が正規値です。
+  - ブログ / 持ち物リストは /blog/、/list-of-stuff/ です。
+  - 「川口の歌」は https://freddiefujiwara.com/music へのリンクで、ラベルは「川口の歌 ♪」。
+    その直後の `.music-play-count` スパンに、各サイトの小さなスクリプトが /music-count.json
+    （トップの静的生成が ga-gas の公開集計から作る小さな JSON）から累計再生回数を
+    「（数値）回再生」の形で流し込みます。取得できない場合は空のまま（CSS の `:empty` で
+    非表示）です。スタイルは `color: var(--accent); font-size: 11px; font-weight: 700; margin-left: 5px`
+    （ブログでは --accent の代わりに --link）。
+- モバイル（max-width: 560px）ではブランドを隠し、リンクの font-size: 12px、
+  letter-spacing: 0.02em、ul の gap: 6px が正規値です。
   このとき .site-nav は `grid-template-columns: 1fr` の1列に切り替え、ul を幅いっぱいに広げるため、
   見た目は従来どおりの均等配置のままです。
+  さらに、セクションへのリンク3件（プロフィール / 活動・発信 / 情報交換、`li.nav-section`）は
+  モバイルでは畳み、サイト共通の4件（トップ / ブログ / 持ち物リスト / 川口の歌 ♪ 回数）だけを
+  1行に出します（所有者がモックで承認した並び）。
 
 ## 4. ヒーロー帯（ブログ／持ち物）
 

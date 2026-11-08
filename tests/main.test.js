@@ -131,7 +131,7 @@ describe('ナビのクリック計測', () => {
     const calls = [];
     window.gtag = (...args) => calls.push(args);
     runMain(window);
-    for (const label of ['トップ', 'プロフィール', '活動・発信', '情報交換', 'ブログ', '持ち物']) {
+    for (const label of ['トップ', 'プロフィール', '活動・発信', '情報交換', 'ブログ', '持ち物リスト', '川口の歌 ♪']) {
       clickNavLink(window, document, label);
     }
     expect(calls).toEqual([
@@ -141,6 +141,7 @@ describe('ナビのクリック計測', () => {
       ['event', 'nav_click', { nav_item: 'contact' }],
       ['event', 'nav_click', { nav_item: 'blog' }],
       ['event', 'nav_click', { nav_item: 'list' }],
+      ['event', 'nav_click', { nav_item: 'music' }],
     ]);
   });
 

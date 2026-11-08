@@ -19,6 +19,7 @@ const sample = `<!doctype html>
     <script src="/js/main.js"></script>
     <script src="/js/web-vitals.iife.js"></script>
     <script src="/js/web-vitals-ga.js"></script>
+    <script src="/js/music-count.js"></script>
   </body>
 </html>`;
 
@@ -36,6 +37,10 @@ describe('transformHtml', () => {
     expect(out).toContain('src="/staging/js/web-vitals-ga.js"');
     expect(out).toContain('href="/staging/favicon.ico"');
     expect(out).toContain('href="/staging/apple-touch-icon.png"');
+  });
+
+  it('再生回数スクリプトは GA ではないので残し、パスだけ付け替える', () => {
+    expect(out).toContain('src="/staging/js/music-count.js"');
   });
 
   it('他ページへのリンクは本番のままにする', () => {

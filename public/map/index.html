@@ -95,11 +95,14 @@
       }
       .site-nav ul a:hover { color: var(--ink); }
       .site-nav ul a.active { color: var(--accent); border-bottom-color: var(--accent); }
+      .music-play-count { color: var(--accent); font-size: 11px; font-weight: 700; margin-left: 5px; }
+      .music-play-count:empty { display: none; }
       @media (max-width: 560px) {
         .site-nav { grid-template-columns: 1fr; }
         .site-nav .brand { display: none; }
         .site-nav ul { justify-self: stretch; width: 100%; justify-content: space-between; gap: 6px; }
         .site-nav ul a { font-size: 12px; letter-spacing: 0.02em; }
+        .site-nav li.nav-section { display: none; }
       }
 
       /* ---------- hero (the blog's band) ---------- */
@@ -244,52 +247,247 @@
         margin-top: 2px;
       }
 
-      /* ---------- music player (APlayer, themed like the blog) ---------- */
-      article .music-player .aplayer {
-        color: var(--ink);
+      /* ---------- music player (hand-rolled, styled like the blog) ---------- */
+      article .music-player {
+        margin: 16px 0;
         background: var(--surface);
         border: 1px solid var(--line);
         border-radius: 12px;
-        box-shadow: 0 1px 3px rgba(34, 29, 22, 0.08);
-        font-family: inherit;
+        padding: 16px 18px;
       }
-      article .music-player .aplayer.aplayer-withlist .aplayer-info {
-        border-bottom: 1px solid var(--line);
-      }
-      article .music-player .aplayer .aplayer-info .aplayer-music .aplayer-title {
-        color: var(--ink);
+
+      article .music-player .mp-now {
         font-size: 15px;
         font-weight: 700;
+        margin: 0 0 12px;
       }
-      article .music-player .aplayer .aplayer-list ol li {
+
+      article .music-player .mp-controls,
+      article .music-player .mp-toggles {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      article .music-player .mp-toggles {
+        justify-content: flex-end;
+        gap: 2px;
+        margin-top: 2px;
+      }
+
+      article .music-player .mp-controls {
+        margin-bottom: 12px;
+        justify-content: center;
+      }
+
+      article .music-player .mp-button {
+        touch-action: manipulation;
+        font: inherit;
         font-size: 14px;
-      }
-      article .music-player .aplayer .aplayer-list ol li .aplayer-list-title {
         color: var(--ink);
-        font-weight: 500;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 6px 16px;
+        cursor: pointer;
       }
-      article .music-player .aplayer .aplayer-list ol li .aplayer-list-index {
-        color: var(--ink-2);
-      }
-      article .music-player .aplayer .aplayer-info .aplayer-music .aplayer-author,
-      article .music-player .aplayer .aplayer-list ol li .aplayer-list-author {
-        color: var(--ink-2);
-      }
-      article .music-player .aplayer .aplayer-info .aplayer-controller .aplayer-time {
-        color: var(--ink-3);
-      }
-      article .music-player .aplayer .aplayer-list ol li {
-        border-top: 1px solid var(--line);
-      }
-      article .music-player .aplayer .aplayer-list ol li:hover,
-      article .music-player .aplayer .aplayer-list ol li.aplayer-list-light {
+
+      article .music-player .mp-button:hover {
         background: var(--accent-soft);
       }
-      article .music-player .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar {
+
+      /* The transport buttons are circles carrying drawn SVG glyphs.
+         The play button is the player's reason to exist (its press
+         count is the top KPI), so it stands a size above the rest and
+         wears the primary color. */
+      article .music-player .mp-prev,
+      article .music-player .mp-next,
+      article .music-player .mp-play {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        padding: 0;
+      }
+
+      article .music-player .mp-prev,
+      article .music-player .mp-next {
+        width: 44px;
+        height: 44px;
+        color: var(--ink);
+      }
+
+      article .music-player .mp-prev svg,
+      article .music-player .mp-next svg {
+        width: 20px;
+        height: 20px;
+        fill: currentColor;
+      }
+
+      article .music-player .mp-play {
+        width: 58px;
+        height: 58px;
+        font-size: 20px;
+        color: var(--surface);
+        background: var(--accent);
+        border-color: var(--accent);
+      }
+
+      article .music-player .mp-play svg {
+        width: 26px;
+        height: 26px;
+        fill: currentColor;
+      }
+
+      article .music-player .mp-play:hover {
+        background: var(--accent);
+      }
+
+      /* The mode switches stay quiet on purpose: small borderless
+         icons in a muted tone, full-strength only while active. The
+         primary color belongs to the play button alone. */
+      article .music-player .mp-repeat,
+      article .music-player .mp-random {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        padding: 0;
+        color: var(--ink-3);
+        background: transparent;
+        border: none;
+        border-radius: 50%;
+      }
+
+      article .music-player .mp-repeat:hover,
+      article .music-player .mp-random:hover {
+        background: var(--accent-soft);
+      }
+
+      article .music-player .mp-repeat svg,
+      article .music-player .mp-random svg {
+        width: 18px;
+        height: 18px;
+        fill: currentColor;
+      }
+
+      article .music-player .mp-repeat.is-on,
+      article .music-player .mp-random.is-on {
+        color: var(--ink);
+      }
+
+      article .music-player .mp-badge {
+        position: absolute;
+        top: 1px;
+        right: 0;
+        font-size: 9px;
+        font-weight: 700;
+        line-height: 1;
+      }
+
+      article .music-player .mp-progress {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      article .music-player .mp-time {
+        font-size: 12px;
+        color: var(--ink-3);
+        min-width: 32px;
+      }
+
+      article .music-player .mp-time.mp-total {
+        text-align: right;
+      }
+
+      article .music-player .mp-seek {
+        flex: 1;
+        -webkit-appearance: none;
+        appearance: none;
+        height: 4px;
+        border-radius: 2px;
+        background: var(--line);
+        outline: none;
+        cursor: pointer;
+      }
+
+      article .music-player .mp-seek::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: var(--accent);
+        border: none;
+      }
+
+      article .music-player .mp-seek::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: var(--accent);
+        border: none;
+      }
+
+      article .music-player .mp-seek::-moz-range-track {
+        height: 4px;
+        border-radius: 2px;
         background: var(--line);
       }
-      article .music-player .aplayer .aplayer-info .aplayer-controller .aplayer-bar-wrap .aplayer-bar .aplayer-loaded {
-        background: var(--ink-3);
+
+      article .music-player .mp-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      article .music-player .mp-item {
+        border-top: 1px solid var(--line);
+      }
+
+      article .music-player .mp-track {
+        display: flex;
+        gap: 10px;
+        width: 100%;
+        font: inherit;
+        font-size: 14px;
+        text-align: left;
+        color: var(--ink);
+        background: none;
+        border: none;
+        padding: 9px 6px;
+        cursor: pointer;
+      }
+
+      article .music-player .mp-track:hover {
+        background: var(--accent-soft);
+      }
+
+      article .music-player .mp-track.is-active {
+        background: var(--accent-soft);
+        font-weight: 700;
+      }
+
+      article .music-player .mp-track-index {
+        color: var(--ink-2);
+      }
+
+      article .music-player .mp-status {
+        font-size: 13px;
+        color: var(--ink-2);
+        margin: 10px 0 0;
+      }
+
+      article .music-player .mp-status:empty {
+        display: none;
+      }
+
+      article .music-player audio {
+        display: none;
       }
 
       /* ---------- footer (shared site chrome) ---------- */
@@ -300,21 +498,25 @@
       .foot-links a .arr { font-size: 11px; color: var(--ink-3); }
       footer .copy { font-size: 0.85rem; color: var(--ink-2); margin: 0; }
     </style>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-W2C6FNCW86"></script>
+    <script src="/js/gtag.js"></script>
   </head>
   <body>
     <nav class="site-nav">
       <a class="brand" href="https://freddiefujiwara.com/">藤原史和｜川口を歩くQAエンジニア</a>
       <ul>
         <li><a href="https://freddiefujiwara.com/">トップ</a></li>
-        <li><a href="https://freddiefujiwara.com/#about">プロフィール</a></li>
-        <li><a href="https://freddiefujiwara.com/#activity">活動・発信</a></li>
-        <li><a href="https://freddiefujiwara.com/#contact">情報交換</a></li>
+        <li class="nav-section"><a href="https://freddiefujiwara.com/#about">プロフィール</a></li>
+        <li class="nav-section"><a href="https://freddiefujiwara.com/#activity">活動・発信</a></li>
+        <li class="nav-section"><a href="https://freddiefujiwara.com/#contact">情報交換</a></li>
         <li><a href="/blog/">ブログ</a></li>
-        <li><a href="https://freddiefujiwara.com/list-of-stuff/">持ち物</a></li>
+        <li><a href="https://freddiefujiwara.com/list-of-stuff/">持ち物リスト</a></li>
+        <li><a href="https://freddiefujiwara.com/music">川口の歌 ♪<span class="music-play-count"></span></a></li>
       </ul>
     </nav>
     <header class="hero">
-      <a class="hero-inner hero-link" href="https://freddiefujiwara.com/blog/1egcvG9FvC232mYN--ZYr7nH65uVPDT5QgUlNhAGAm-w">
+      <a class="hero-inner hero-link" href="https://freddiefujiwara.com/blog/1rb1BZG19mzzSQ9qK8thIl_LpGySGJgi7K2ZoKLzCB7U">
         <p class="hero-place">KAWAGUCHI — BLOG</p>
         <h1><span class="h1-name">藤原史和</span><span class="h1-sep" aria-hidden="true">｜</span><span class="h1-role">川口を歩くQAエンジニア</span></h1>
       </a>
@@ -329,8 +531,8 @@
           <div class="article-body">
 <p>📍川口のリールを、地図にまとめました</p>
 <p>これまでInstagramで紹介してきた川口のお店を、Googleマイマップに全部ピン留めしました。</p>
-<p>🍜 飲食店 26軒</p>
-<p>💈 理容・サロン 4軒</p>
+<p>🍜 飲食店 29軒</p>
+<p>💈 理容・サロン 5軒</p>
 <p>🧘 リラクゼーション 3軒</p>
 <p>ピンをタップすると、そのお店のリールと一言メモが見られます。</p>
 <p>全部、川口在住の私が実際に歩いて行って、食べて、体験したお店だけです。</p>
@@ -341,6 +543,9 @@
     <p class="toc-heading">目次</p>
     <ul class="toc-list">
       <li class="toc-item"><a href="#h-dd97fdcb">飲食店</a></li>
+      <li class="toc-item toc-item-sub"><a href="#h-a2e1115f">マンディル（南鳩ヶ谷）</a></li>
+      <li class="toc-item toc-item-sub"><a href="#h-1c73fdd5">月のうさぎ（前川）</a></li>
+      <li class="toc-item toc-item-sub"><a href="#h-fae1b844">カフェ気まま（安行領根岸）</a></li>
       <li class="toc-item toc-item-sub"><a href="#h-21403752">ToiToiToi apartment（安行領根岸）</a></li>
       <li class="toc-item toc-item-sub"><a href="#h-3286eda7">琉菊（栄町）</a></li>
       <li class="toc-item toc-item-sub"><a href="#h-51cd8501">ラホンバンマーラータン 西川口店（並木）</a></li>
@@ -368,6 +573,7 @@
       <li class="toc-item toc-item-sub"><a href="#h-ccb0f865">ロコピコ珈琲（川口）</a></li>
       <li class="toc-item toc-item-sub"><a href="#h-046ce9ee">1110 CAFE（領家）</a></li>
       <li class="toc-item"><a href="#h-01ae72d0">理容・サロン</a></li>
+      <li class="toc-item toc-item-sub"><a href="#h-74ee9813">Barber&#39;s Green（幸町）</a></li>
       <li class="toc-item toc-item-sub"><a href="#h-4b0e20a8">理容cut-A 南鳩ヶ谷店（南鳩ヶ谷）</a></li>
       <li class="toc-item toc-item-sub"><a href="#h-b8bdb49e">ニュー川口理容室（中青木）</a></li>
       <li class="toc-item toc-item-sub"><a href="#h-dd64fde1">Cut One（西川口）</a></li>
@@ -379,6 +585,18 @@
     </ul>
   </nav>
 <h2 id="h-dd97fdcb">飲食店</h2>
+<h3 id="h-a2e1115f">マンディル（南鳩ヶ谷）</h3>
+<p>南鳩ヶ谷の本格インド料理店。丸いチーズナンは持ち上げるたびにチーズがどこまでも伸びます。チーズナンランチセット（税込1,353円）でカレーは9種類から選べ、ほうれん草チキンがおすすめ。お座敷もあり、ランチは11:00〜15:00です。</p>
+<p><a href="https://www.instagram.com/reel/DfeZoBhzS2Y/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
+<p><a class="link-card" href="https://retty.me/area/PRE11/ARE52/SUB5201/100000865343/" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://og-image.retty.me/restaurant/100000865343/" alt=""><span class="link-card-body"><span class="link-card-title">マンディル - Retty（レッティ）</span><span class="link-card-description">こちらは『マンディルのご予約（川口/インド料理）』のお店ページです。実名でのオススメが7件集まっています。Rettyで食が好きなグルメな人たちからお店を探そう！</span><span class="link-card-domain">retty.me</span></span></a></p>
+<h3 id="h-1c73fdd5">月のうさぎ（前川）</h3>
+<p>イオンモール川口前川1階に2026年11月6日にオープンした、埼玉県初出店の浅草今川焼き専門店。北海道十勝産の小豆と創業75年の製餡技術が売りで、極上つぶあんと濃厚カスタードが各248円。オープン直後は約30分待ちの行列でした。</p>
+<p><a href="https://www.instagram.com/reel/DfeEZP4T7Ex/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
+<p><a class="link-card" href="https://www.google.com/maps/search/?api=1&amp;query=%E6%9C%88%E3%81%AE%E3%81%86%E3%81%95%E3%81%8E+%E3%82%A4%E3%82%AA%E3%83%B3%E3%83%A2%E3%83%BC%E3%83%AB%E5%B7%9D%E5%8F%A3%E5%89%8D%E5%B7%9D" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://maps.google.com/maps/api/staticmap?center=37.0625%2C-95.677068&amp;zoom=4&amp;size=900x900&amp;language=en&amp;sensor=false&amp;key=AIzaSyBoYjeRtfVI0Jd8Q_9mnflo9i4sOYpShB0&amp;signature=bhDRZQvDkRDlhzWj6J7pTMYyH5k" alt=""><span class="link-card-body"><span class="link-card-title">Google Maps</span><span class="link-card-description">Find local businesses, view maps and get driving directions in Google Maps.</span><span class="link-card-domain">www.google.com</span></span></a></p>
+<h3 id="h-fae1b844">カフェ気まま（安行領根岸）</h3>
+<p>安行領根岸の住宅街にある相談処カフェ。元看護師の店主さんが営み、靴を脱いで上がる店内は、常連さんのお喋りで温かい雰囲気です。モーニング（8:00〜10:30）は、混ぜごはんのおにぎりと小鉢、お味噌汁、ホットコーヒー付きで850円でした。</p>
+<p><a href="https://www.instagram.com/reel/DfdlAcwzQ_H/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
+<p><a class="link-card" href="https://maps.app.goo.gl/rdCRD5L3ML8mHEKp7" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://maps.google.com/maps/api/staticmap?center=36.5626%2C136.362305&amp;zoom=5&amp;size=900x900&amp;language=ja&amp;sensor=false&amp;key=AIzaSyBoYjeRtfVI0Jd8Q_9mnflo9i4sOYpShB0&amp;signature=Xnw2vdQjF6W9i0SDMBHNmeiaOeA" alt=""><span class="link-card-body"><span class="link-card-title">Google マップ</span><span class="link-card-description">Google マップで地図を検索。乗換案内、路線図、ドライブルート、ストリートビューも。見やすい地図でお店やサービス、地域の情報を検索できます。世界地図も日本語で、旅のプランにも便利。</span><span class="link-card-domain">maps.app.goo.gl</span></span></a></p>
 <h3 id="h-21403752">ToiToiToi apartment（安行領根岸）</h3>
 <p>安行領根岸のシェアショップで味わう、沖縄料理研究家・宮澤かおるさんの琉球料理ランチ。黒米ごはんにイナムドゥチ、ミヌダル、クーブイリチー、田芋の唐揚げなど、琉球宮廷料理の流れをくむ御膳がワンドリンク付き1,990円でした。全部美味しかったです。</p>
 <p><a href="https://www.instagram.com/reel/Dfb1jt0ztWM/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
@@ -485,6 +703,10 @@
 <p><a href="https://www.instagram.com/reel/DcXrWm_z-aA/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
 <p><a class="link-card" href="https://retty.me/area/PRE11/ARE52/SUB5201/100001541023/" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://og-image.retty.me/restaurant/100001541023/" alt=""><span class="link-card-body"><span class="link-card-title">1110CAFE/BAKERY - Retty（レッティ）</span><span class="link-card-description">[カフェ好き人気店☆] こちらは『1110CAFE/BAKERY（川口/カフェ）』のお店ページです。実名でのオススメが15件集まっています。Rettyで食が好きなグルメな人たちからお店を探そう！</span><span class="link-card-domain">retty.me</span></span></a></p>
 <h2 id="h-01ae72d0">理容・サロン</h2>
+<h3 id="h-74ee9813">Barber&#39;s Green（幸町）</h3>
+<p>幸町の理容室。2026年にオープンしたばかりの新しいお店で、顔剃りの泡はミキサーを使わず手で立て、石鹸は川口市製、椅子も電動ではないなど、アナログな道具へのこだわりがあります。店内は隅々まで清潔感があり、丸刈り（シャンプー・シェーブ付き）は3,000円でした。</p>
+<p><a href="https://www.instagram.com/reel/DfeWs_nTTlN/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
+<p><a class="link-card" href="https://beauty.hotpepper.jp/slnH000795895/" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://imgbp.hotp.jp/CSP/IMG_SRC/29/19/B254632919/B254632919.jpg?impolicy=HPB_policy_default&amp;w=119&amp;h=89" alt=""><span class="link-card-body"><span class="link-card-title">バーバーズ グリーン 川口(Barber&apos;s Green)｜ホットペッパービューティー</span><span class="link-card-description">【ホットペッパービューティー】バーバーズ グリーン 川口(Barber&apos;s Green)のサロン情報。お得なクーポン、ブログ、口コミ、住所、電話番号など知りたい情報満載です。ホットペッパービューティーの２４時間いつでもOKなネット予約を活用しよう！</span><span class="link-card-domain">beauty.hotpepper.jp</span></span></a></p>
 <h3 id="h-4b0e20a8">理容cut-A 南鳩ヶ谷店（南鳩ヶ谷）</h3>
 <p>南鳩ヶ谷の理容室。朝9時の開店に合わせて行ったら、もう行列で番号札は10番でした。「総合（顔剃り・シャンプー込み）」は2,200円で、バリカンは最短0.8mm。顔剃りもシャンプーも丁寧でした。年中無休、受付は9:00〜18:30です。</p>
 <p><a href="https://www.instagram.com/reel/De5oMP6z5xs/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
@@ -569,5 +791,6 @@
         });
       })();
     </script>
+    <script src="/js/music-count.js"></script>
   </body>
 </html>

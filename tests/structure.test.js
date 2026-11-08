@@ -25,8 +25,15 @@ describe('ページ構造の不変条件', () => {
       ['活動・発信', '#activity', 'activity'],
       ['情報交換', '#contact', 'contact'],
       ['ブログ', '/blog/', null],
-      ['持ち物', '/list-of-stuff/', null],
+      ['持ち物リスト', '/list-of-stuff/', null],
+      ['川口の歌 ♪', '/music/', null],
     ]);
+  });
+
+  it('川口の歌の項目に再生回数の受け皿（.music-play-count）がある', () => {
+    const span = document.querySelector('.site-nav a[href="/music/"] .music-play-count');
+    expect(span).not.toBeNull();
+    expect(span.textContent).toBe('');
   });
 
   it('フッターのリンクは15件で、先頭がサイト内リンク4件', () => {
@@ -69,7 +76,7 @@ describe('ページ構造の不変条件', () => {
     const local = [...document.querySelectorAll('script[src]')]
       .map((s) => s.getAttribute('src'))
       .filter((src) => src.startsWith('/js/'));
-    expect(local).toEqual(['/js/gtag.js', '/js/main.js', '/js/web-vitals.iife.js', '/js/web-vitals-ga.js']);
+    expect(local).toEqual(['/js/gtag.js', '/js/main.js', '/js/web-vitals.iife.js', '/js/web-vitals-ga.js', '/js/music-count.js']);
     for (const src of local) {
       expect(existsSync(path.join(root, 'public', src)), src).toBe(true);
     }
