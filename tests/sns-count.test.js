@@ -159,3 +159,111 @@ describe('sns-count.js（Instagram の指標）', () => {
     expect(text(window, '.sns-non-follower-pct')).toBe('96.3');
   });
 });
+
+describe('sns-count.js（見出しの集計対象と全体の時点注記）', () => {
+  const staticLabel = 'SNS延べフォロワー数';
+  const staticNote = '数字は2026年11月1日時点';
+  const noteHtml =
+    '<!doctype html><html><head></head><body>' +
+    '<div class="num"><span class="sns-follower-total">2,307</span><small>人</small></div>' +
+    '<div class="label sns-total-label">' + staticLabel + '</div>' +
+    '<p class="stats-note sns-stats-date">' + staticNote + '</p>' +
+    '</body></html>';
+
+  function setupNote(fetchImpl) {
+    const dom = new JSDOM(noteHtml, {
+      url: 'https://freddiefujiwara.com/',
+      runScripts: 'outside-only',
+    });
+    const { window } = dom;
+    if (fetchImpl) {
+      window.fetch = fetchImpl;
+    }
+    window.eval(snsCountJs);
+    return window;
+  }
+
+  const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
+  const label = (window) =>
+    window.document.querySelector('.sns-total-label').textContent;
+  const note = (window) =>
+    window.document.querySelector('.sns-stats-date').textContent;
+
+  it('見出しは内訳に数値のあるネットワーク名を列挙した形になる', async () => {
+    const window = setupNote(async () => ({
+      ok: true,
+      json: async () => ({
+        total: 2000,
+        followers_breakdown: { instagram: 1991, youtube: 9, threads: null },
+        updated_at: '2026-11-08T19:25:52.088Z',
+      }),
+    }));
+    await flush();
+    expect(label(window)).toBe('SNS（Instagram、YouTube）延べフォロワー数');
+  });
+
+  it('Threads に数値が入れば見出しに自動で加わる', async () => {
+    const window = setupNote(async () => ({
+      ok: true,
+      json: async () => ({
+        total: 2252,
+        followers_breakdown: { instagram: 1991, youtube: 9, threads: 252 },
+        updated_at: '2026-11-08T19:25:52.088Z',
+      }),
+    }));
+    await flush();
+    expect(label(window)).toBe(
+      'SNS（Instagram、YouTube、Threads）延べフォロワー数',
+    );
+  });
+
+  it('時点の注記は updated_at を日本時間の日付に差し替える', async () => {
+    const window = setupNote(async () => ({
+      ok: true,
+      json: async () => ({
+        total: 2000,
+        followers_breakdown: { instagram: 1991, youtube: 9, threads: null },
+        updated_at: '2026-11-08T19:25:52.088Z',
+      }),
+    }));
+    await flush();
+    // 19:25 UTC は日本時間では翌日 11月9日 4:25。
+    expect(note(window)).toBe('数字は2026年11月9日時点');
+  });
+
+  it('内訳が無い JSON では見出しは静的なままで、時点だけ差し替わる', async () => {
+    const window = setupNote(async () => ({
+      ok: true,
+      json: async () => ({ total: 2500, updated_at: '2026-11-08T19:25:52.088Z' }),
+    }));
+    await flush();
+    expect(label(window)).toBe(staticLabel);
+    expect(note(window)).toBe('数字は2026年11月9日時点');
+  });
+
+  it('内訳が全て null なら見出しは静的なまま', async () => {
+    const window = setupNote(async () => ({
+      ok: true,
+      json: async () => ({
+        total: 2500,
+        followers_breakdown: { instagram: null, youtube: null, threads: null },
+        updated_at: '2026-11-08T19:25:52.088Z',
+      }),
+    }));
+    await flush();
+    expect(label(window)).toBe(staticLabel);
+  });
+
+  it('updated_at が無い JSON では時点の注記は静的なまま', async () => {
+    const window = setupNote(async () => ({
+      ok: true,
+      json: async () => ({
+        total: 2000,
+        followers_breakdown: { instagram: 1991, youtube: 9, threads: null },
+      }),
+    }));
+    await flush();
+    expect(label(window)).toBe('SNS（Instagram、YouTube）延べフォロワー数');
+    expect(note(window)).toBe(staticNote);
+  });
+});

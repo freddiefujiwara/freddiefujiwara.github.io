@@ -1,11 +1,14 @@
 // ヒーローの数字（SNS延べフォロワー数と、Instagram の再生回数・
 // フォロワー以外％・投稿数）を最新値に差し替えるための小さな
-// スクリプト。数値は静的生成のタイミングで ga-gas の公開集計から
-// 作られる /sns-count.json を読むだけ（ページ表示のたびに GAS を
-// 叩かないので、表示は遅くならない）。ファイルが無い・壊れている・
-// 取得に失敗した場合は、HTML に書かれた静的な初期値のままにする。
-// 項目ごとに独立して差し替えるので、JSON に無い項目や数値でない
-// 項目は、その数字だけ静的な初期値のまま残る。
+// スクリプト。あわせて、フォロワー数の見出しには集計に含まれて
+// いるネットワーク名を、数字ブロックの下の注記には数字全体の
+// 時点を差し替える。数値は静的生成のタイミングで ga-gas の
+// 公開集計から作られる /sns-count.json を読むだけ（ページ表示の
+// たびに GAS を叩かないので、表示は遅くならない）。ファイルが
+// 無い・壊れている・取得に失敗した場合は、HTML に書かれた
+// 静的な初期値のままにする。項目ごとに独立して差し替えるので、
+// JSON に無い項目や数値でない項目は、その数字だけ静的な初期値
+// のまま残る。
 // この JSON はアクセス解析ではないため、ステージングでも読み込む。
 (function () {
   var totalEls = document.querySelectorAll(".sns-follower-total");
@@ -13,11 +16,15 @@
   var viewsUnitEls = document.querySelectorAll(".sns-views-30d-unit");
   var pctEls = document.querySelectorAll(".sns-non-follower-pct");
   var mediaEls = document.querySelectorAll(".sns-media-count");
+  var totalLabelEls = document.querySelectorAll(".sns-total-label");
+  var dateEls = document.querySelectorAll(".sns-stats-date");
   if (
     !totalEls.length &&
     !viewsEls.length &&
     !pctEls.length &&
-    !mediaEls.length
+    !mediaEls.length &&
+    !totalLabelEls.length &&
+    !dateEls.length
   ) {
     return;
   }
@@ -25,6 +32,24 @@
 
   var isNumber = function (value) {
     return typeof value === "number" && isFinite(value);
+  };
+
+  // updated_at（ISO文字列）を日本時間の日付「2026年11月9日」に
+  // 整える。読めない値なら null を返し、注記は静的なままにする。
+  var formatJstDate = function (value) {
+    if (typeof value !== "string") return null;
+    var date = new Date(value);
+    if (isNaN(date.getTime())) return null;
+    try {
+      return new Intl.DateTimeFormat("ja-JP", {
+        timeZone: "Asia/Tokyo",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }).format(date);
+    } catch (e) {
+      return null;
+    }
   };
 
   window
@@ -74,6 +99,41 @@
         mediaEls.forEach(function (el) {
           el.textContent = mediaText;
         });
+      }
+
+      // フォロワー数の見出しは、合計に含まれている（＝内訳に
+      // 数値が入っている）ネットワーク名を列挙した形にする。
+      // 内訳が無い・全て数値でない JSON では見出しは静的なまま。
+      var breakdown = data.followers_breakdown;
+      if (totalLabelEls.length && breakdown && typeof breakdown === "object") {
+        var networks = [
+          ["instagram", "Instagram"],
+          ["youtube", "YouTube"],
+          ["threads", "Threads"],
+        ];
+        var names = [];
+        networks.forEach(function (pair) {
+          if (isNumber(breakdown[pair[0]])) {
+            names.push(pair[1]);
+          }
+        });
+        if (names.length) {
+          var labelText = "SNS（" + names.join("、") + "）延べフォロワー数";
+          totalLabelEls.forEach(function (el) {
+            el.textContent = labelText;
+          });
+        }
+      }
+
+      // 数字全体の時点の注記。updated_at が読めれば日本時間の
+      // 日付に差し替え、無ければ静的な初期値のまま。
+      if (dateEls.length) {
+        var dateText = formatJstDate(data.updated_at);
+        if (dateText) {
+          dateEls.forEach(function (el) {
+            el.textContent = "数字は" + dateText + "時点";
+          });
+        }
       }
     })
     .catch(function () {
