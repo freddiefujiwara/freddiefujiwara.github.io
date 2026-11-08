@@ -88,11 +88,11 @@ describe('活動・発信の短いURLハブ', () => {
     );
     expect(branches).toEqual([
       ['/instagram', 'https://freddiefujiwara.com/instagram'],
-      ['/blog', 'https://freddiefujiwara.com/blog/'],
-      ['/chinese', 'https://freddiefujiwara.com/chinese'],
-      ['/threads', 'https://freddiefujiwara.com/threads'],
-      ['/music', 'https://freddiefujiwara.com/music'],
       ['/youtube', 'https://freddiefujiwara.com/youtube'],
+      ['/blog', 'https://freddiefujiwara.com/blog/'],
+      ['/music', 'https://freddiefujiwara.com/music'],
+      ['/threads', 'https://freddiefujiwara.com/threads'],
+      ['/chinese', 'https://freddiefujiwara.com/chinese'],
       ['/room', 'https://freddiefujiwara.com/room'],
       ['/list-of-stuff', 'https://freddiefujiwara.com/list-of-stuff/'],
       ['/map', 'https://freddiefujiwara.com/map'],
