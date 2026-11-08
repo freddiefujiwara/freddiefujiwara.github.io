@@ -68,6 +68,23 @@ describe('タイトルはブログと完全一致（無加工）', () => {
   });
 });
 
+describe('Google Analytics タグ', () => {
+  it('本番の静的ページにはトップと同じ GA タグが head に入る', () => {
+    const page = renderStaticArticlePage({
+      article: ARTICLES[0],
+      payload: { title: 'タイトル', markdown: '本文です。', tags: [] },
+      year: 2026,
+    });
+    expect(page).toContain('<!-- Google tag (gtag.js) -->');
+    expect(page).toContain(
+      '<script async src="https://www.googletagmanager.com/gtag/js?id=G-W2C6FNCW86"></script>',
+    );
+    expect(page).toContain('<script src="/js/gtag.js"></script>');
+    // head の中（</head> より前）に置かれていること
+    expect(page.indexOf('googletagmanager')).toBeLessThan(page.indexOf('</head>'));
+  });
+});
+
 describe('renderMarkdown の見出し id', () => {
   it('見出しに FNV-1a ハッシュの id が付く', () => {
     const html = renderMarkdown('## 飲食店\n\n本文');
