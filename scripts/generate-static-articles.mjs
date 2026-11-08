@@ -927,7 +927,7 @@ export const MUSIC_PLAYER_SCRIPT = `
                 .trim();
               if (value) theme = value;
             } catch (err) { /* keep the fallback theme */ }
-            new APlayer({
+            var player = new APlayer({
               container: container,
               theme: theme,
               listFolded: false,
@@ -940,6 +940,33 @@ export const MUSIC_PLAYER_SCRIPT = `
                   type: "gas"
                 };
               })
+            });
+            // Report a music_play event when a track actually
+            // starts, once per track — the same rule as the blog's
+            // musicPlayer: pausing and resuming the same song must
+            // not count again, while switching tracks (or the loop
+            // wrapping around to another song) reports the new
+            // one. Pages served without the GA tag (the staging
+            // build drops it) have no gtag, and then nothing is
+            // reported at all.
+            var reportedTrackFile = "";
+            player.on("play", function () {
+              if (typeof window.gtag !== "function") return;
+              var list = player.list;
+              var audio = list && list.audios ? list.audios[list.index] : null;
+              if (!audio) return;
+              var file = "";
+              try {
+                file = new URL(audio.url).searchParams.get("track") || "";
+              } catch (err) {
+                file = "";
+              }
+              if (!file || file === reportedTrackFile) return;
+              reportedTrackFile = file;
+              window.gtag("event", "music_play", {
+                track_title: audio.name || "",
+                track_file: file
+              });
             });
           });
         }
