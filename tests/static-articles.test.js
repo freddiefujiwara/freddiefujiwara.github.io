@@ -1,5 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { existsSync, readFileSync } from 'node:fs';
+import {
+  existsSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
+import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { JSDOM } from 'jsdom';
@@ -10,8 +17,10 @@ import {
   buildTocHtml,
   delimitBareUrls,
   extractTocFromHtml,
+  fetchMusicCount,
   hashHeadingText,
   normalizeTagList,
+  refreshMusicCountJson,
   renderArticleBody,
   renderMarkdown,
   MUSIC_PLAYER_SCRIPT,
@@ -412,7 +421,7 @@ describe('renderStaticArticlePage', () => {
     expect(page).not.toContain('location.replace');
   });
 
-  it('共通クローム（ナビ6件とフッター）を含む', () => {
+  it('共通クローム（ナビ7件とフッター）を含む', () => {
     const { document } = new JSDOM(page).window;
     const navHrefs = [...document.querySelectorAll('.site-nav ul a')].map(
       (a) => a.getAttribute('href'),
@@ -424,7 +433,14 @@ describe('renderStaticArticlePage', () => {
       'https://freddiefujiwara.com/#contact',
       '/blog/',
       'https://freddiefujiwara.com/list-of-stuff/',
+      'https://freddiefujiwara.com/music',
     ]);
+    const musicLink = document.querySelector(
+      '.site-nav a[href="https://freddiefujiwara.com/music"]',
+    );
+    expect(musicLink.textContent).toContain('川口の歌 ♪');
+    expect(musicLink.querySelector('.music-play-count')).not.toBeNull();
+    expect(page).toContain('<script src="/js/music-count.js"></script>');
     expect(document.querySelectorAll('footer .foot-links a')).toHaveLength(15);
     expect(document.querySelector('article h1')?.textContent).toBe(
       '2026-10-27 川口のリールを、地図にまとめました',
@@ -516,5 +532,97 @@ describe('生成済みの静的ページ', () => {
       '2025-12-27 死ぬまでにやりたいことリスト',
     );
     expect(document.title).toBe('2025-12-27 死ぬまでにやりたいことリスト');
+  });
+});
+
+describe('music-count.json の生成', () => {
+  const okResponse = (body) => ({
+    ok: true,
+    status: 200,
+    json: async () => body,
+  });
+
+  it('fetchMusicCount は action=music_count を叩いて count を返す', async () => {
+    const seen = [];
+    const fetchImpl = async (url) => {
+      seen.push(url);
+      return okResponse({ ok: true, count: 85, updated_at: '2026-11-08T00:00:00.000Z' });
+    };
+    const payload = await fetchMusicCount('https://example.invalid/exec', fetchImpl);
+    expect(seen).toEqual(['https://example.invalid/exec?action=music_count']);
+    expect(payload).toEqual({ count: 85, updated_at: '2026-11-08T00:00:00.000Z' });
+  });
+
+  it('fetchMusicCount は形の違う応答をエラーにする', async () => {
+    const fetchImpl = async () => okResponse({ ok: true, count: '85' });
+    await expect(
+      fetchMusicCount('https://example.invalid/exec', fetchImpl),
+    ).rejects.toThrow('Malformed');
+  });
+
+  it('refreshMusicCountJson は count が変わったときだけ書き直す', async () => {
+    const dir = mkdtempSync(path.join(tmpdir(), 'music-count-'));
+    try {
+      const fetchImpl = async () =>
+        okResponse({ ok: true, count: 90, updated_at: 't1' });
+      const first = await refreshMusicCountJson({
+        outDir: dir,
+        apiUrl: 'https://example.invalid/exec',
+        fetchImpl,
+        log: () => {},
+      });
+      expect(first.refreshed).toBe(true);
+      const file = path.join(dir, 'music-count.json');
+      expect(JSON.parse(readFileSync(file, 'utf8'))).toEqual({
+        count: 90,
+        updated_at: 't1',
+      });
+      const second = await refreshMusicCountJson({
+        outDir: dir,
+        apiUrl: 'https://example.invalid/exec',
+        fetchImpl,
+        log: () => {},
+      });
+      expect(second.refreshed).toBe(false);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('refreshMusicCountJson は取得失敗時に既存ファイルを保持する', async () => {
+    const dir = mkdtempSync(path.join(tmpdir(), 'music-count-'));
+    try {
+      const file = path.join(dir, 'music-count.json');
+      writeFileSync(file, '{"count": 42, "updated_at": "t0"}\n');
+      const fetchImpl = async () => ({ ok: false, status: 500, json: async () => ({}) });
+      const result = await refreshMusicCountJson({
+        outDir: dir,
+        apiUrl: 'https://example.invalid/exec',
+        fetchImpl,
+        log: () => {},
+      });
+      expect(result.refreshed).toBe(false);
+      expect(readFileSync(file, 'utf8')).toBe('{"count": 42, "updated_at": "t0"}\n');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('refreshMusicCountJson はエンドポイント未設定なら何もしない', async () => {
+    const dir = mkdtempSync(path.join(tmpdir(), 'music-count-'));
+    try {
+      const result = await refreshMusicCountJson({
+        outDir: dir,
+        apiUrl: '',
+        fetchImpl: async () => {
+          throw new Error('must not be called');
+        },
+        log: () => {},
+      });
+      expect(result.refreshed).toBe(false);
+      expect(existsSync(path.join(dir, 'music-count.json'))).toBe(false);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
   });
 });

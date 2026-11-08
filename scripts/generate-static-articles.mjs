@@ -25,6 +25,12 @@
 // embedded in the output. If any article cannot be fetched, nothing
 // is written and the script exits non-zero, so a transient API
 // failure never publishes a half-updated set of pages.
+//
+// The run also refreshes public/music-count.json (the cumulative
+// music play count shown in the shared header) from ga-gas's public
+// music_count action when GA_GAS_EXEC_URL is set. That refresh is
+// best-effort: a failure keeps the previous file and never fails
+// the article generation.
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -57,7 +63,7 @@ export const ARTICLES = [
     slug: "music",
     docId: "1V7cXplHKbsT48EhLarl-SPHfDV-lSEafEId2OMgExkg",
     heroLabel: "KAWAGUCHI — MUSIC",
-    navActive: null,
+    navActive: "music",
   },
 ];
 
@@ -380,20 +386,30 @@ ${items}
     </ul>`;
 };
 
+// The shared site nav. The three "nav-section" items point at
+// sections of the top page; on narrow screens they are folded away
+// (see PAGE_CSS) so the four cross-site items — トップ / ブログ /
+// 持ち物リスト / 川口の歌 — stay on one line, as in the approved
+// mobile layout. The music item carries the .music-play-count span
+// that /js/music-count.js fills from /music-count.json.
 const NAV_ITEMS = [
-  ["top", "トップ", "https://freddiefujiwara.com/"],
-  ["about", "プロフィール", "https://freddiefujiwara.com/#about"],
-  ["activity", "活動・発信", "https://freddiefujiwara.com/#activity"],
-  ["contact", "情報交換", "https://freddiefujiwara.com/#contact"],
-  ["blog", "ブログ", "/blog/"],
-  ["list", "持ち物", "https://freddiefujiwara.com/list-of-stuff/"],
+  ["top", "トップ", "https://freddiefujiwara.com/", ""],
+  ["about", "プロフィール", "https://freddiefujiwara.com/#about", "nav-section"],
+  ["activity", "活動・発信", "https://freddiefujiwara.com/#activity", "nav-section"],
+  ["contact", "情報交換", "https://freddiefujiwara.com/#contact", "nav-section"],
+  ["blog", "ブログ", "/blog/", ""],
+  ["list", "持ち物リスト", "https://freddiefujiwara.com/list-of-stuff/", ""],
+  ["music", "川口の歌 ♪", "https://freddiefujiwara.com/music", ""],
 ];
 
 const buildNavHtml = (navActive) => {
-  const items = NAV_ITEMS.map(([key, label, href]) => {
+  const items = NAV_ITEMS.map(([key, label, href, liClass]) => {
     const active =
       key === navActive ? ' class="active" aria-current="page"' : "";
-    return `        <li><a href="${href}"${active}>${label}</a></li>`;
+    const liAttr = liClass ? ` class="${liClass}"` : "";
+    const count =
+      key === "music" ? '<span class="music-play-count"></span>' : "";
+    return `        <li${liAttr}><a href="${href}"${active}>${label}${count}</a></li>`;
   }).join("\n");
   return `<nav class="site-nav">
       <a class="brand" href="https://freddiefujiwara.com/">藤原史和｜川口を歩くQAエンジニア</a>
@@ -517,11 +533,14 @@ const PAGE_CSS = `
       }
       .site-nav ul a:hover { color: var(--ink); }
       .site-nav ul a.active { color: var(--accent); border-bottom-color: var(--accent); }
+      .music-play-count { color: var(--accent); font-size: 11px; font-weight: 700; margin-left: 5px; }
+      .music-play-count:empty { display: none; }
       @media (max-width: 560px) {
         .site-nav { grid-template-columns: 1fr; }
         .site-nav .brand { display: none; }
         .site-nav ul { justify-self: stretch; width: 100%; justify-content: space-between; gap: 6px; }
         .site-nav ul a { font-size: 12px; letter-spacing: 0.02em; }
+        .site-nav li.nav-section { display: none; }
       }
 
       /* ---------- hero (the blog's band) ---------- */
@@ -1514,7 +1533,8 @@ ${bodyHtml}          </div>
       </div>
     </main>
     ${buildFooterHtml(year)}
-${FALLBACK_SCRIPT}${musicScript}  </body>
+${FALLBACK_SCRIPT}${musicScript}    <script src="/js/music-count.js"></script>
+  </body>
 </html>
 `;
 };
@@ -1559,6 +1579,77 @@ export const fetchArticle = async (docId, fetchImpl = fetch) => {
   throw lastError;
 };
 
+// Fetches the cumulative music play count from ga-gas's public
+// music_count action. The endpoint URL is passed in (the caller
+// reads it from the GA_GAS_EXEC_URL environment variable): the URL
+// itself is a capability and is never written into this repository.
+export const fetchMusicCount = async (apiUrl, fetchImpl = fetch) => {
+  const separator = apiUrl.includes("?") ? "&" : "?";
+  const response = await fetchImpl(`${apiUrl}${separator}action=music_count`, {
+    redirect: "follow",
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+  });
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status} for music_count`);
+  }
+  const data = await response.json();
+  if (
+    !data ||
+    data.ok !== true ||
+    typeof data.count !== "number" ||
+    !Number.isFinite(data.count)
+  ) {
+    throw new Error("Malformed music_count response");
+  }
+  return {
+    count: data.count,
+    updated_at: typeof data.updated_at === "string" ? data.updated_at : null,
+  };
+};
+
+// Refreshes <outDir>/music-count.json, the tiny file the shared
+// header reads to show the play count. Best-effort by design: when
+// no endpoint is configured or the fetch fails, the existing file
+// (if any) is kept exactly as it is, and the header simply shows
+// no count. The file is only rewritten when the count changed,
+// so runs without a change produce no commit noise.
+export const refreshMusicCountJson = async ({
+  outDir,
+  apiUrl,
+  fetchImpl = fetch,
+  log = console.log,
+} = {}) => {
+  if (!apiUrl) {
+    return { refreshed: false, reason: "no endpoint configured" };
+  }
+  let payload;
+  try {
+    payload = await fetchMusicCount(apiUrl, fetchImpl);
+  } catch (error) {
+    log(`music-count.json: kept existing (${error.message})`);
+    return { refreshed: false, reason: error.message };
+  }
+  const target = join(outDir, "music-count.json");
+  let previousCount = null;
+  if (existsSync(target)) {
+    try {
+      previousCount = JSON.parse(readFileSync(target, "utf8")).count;
+    } catch {
+      previousCount = null;
+    }
+  }
+  if (previousCount === payload.count) {
+    log(`unchanged: music-count.json (count=${payload.count})`);
+    return { refreshed: false, reason: "count unchanged" };
+  }
+  const body =
+    JSON.stringify({ count: payload.count, updated_at: payload.updated_at }, null, 2) +
+    "\n";
+  writeFileSync(target, body);
+  log(`wrote: music-count.json (count=${payload.count})`);
+  return { refreshed: true, count: payload.count };
+};
+
 // Fetches every article first, then writes the pages whose content
 // actually changed. Returns one result per article:
 // { slug, changed, bytes }.
@@ -1567,6 +1658,7 @@ export const generateStaticArticles = async ({
   fetchImpl = fetch,
   year = new Date().getFullYear(),
   log = console.log,
+  musicCountApiUrl = process.env.GA_GAS_EXEC_URL || "",
 } = {}) => {
   // The hero link target: the blog's latest article id (the first id
   // in the list response). A failed list fetch must not block the
@@ -1594,7 +1686,7 @@ export const generateStaticArticles = async ({
       html: renderStaticArticlePage({ article, payload, year, latestArticleId }),
     });
   }
-  return pages.map(({ article, html }) => {
+  const results = pages.map(({ article, html }) => {
     const dir = join(outDir, article.slug);
     const target = join(dir, "index.html");
     const previous = existsSync(target) ? readFileSync(target, "utf8") : null;
@@ -1607,6 +1699,13 @@ export const generateStaticArticles = async ({
     log(`wrote: ${article.slug}/index.html (${Buffer.byteLength(html)} bytes)`);
     return { slug: article.slug, changed: true, bytes: Buffer.byteLength(html) };
   });
+  await refreshMusicCountJson({
+    outDir,
+    apiUrl: musicCountApiUrl,
+    fetchImpl,
+    log,
+  });
+  return results;
 };
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

@@ -75,6 +75,9 @@ export function transformHtml(html) {
   out = out.replace('src="/js/main.js"', 'src="/staging/js/main.js"');
   out = out.replace('src="/js/web-vitals.iife.js"', 'src="/staging/js/web-vitals.iife.js"');
   out = out.replace('src="/js/web-vitals-ga.js"', 'src="/staging/js/web-vitals-ga.js"');
+  // The play-count script is not analytics, so it stays on staging;
+  // it reads the production /music-count.json by absolute path.
+  out = out.replace('src="/js/music-count.js"', 'src="/staging/js/music-count.js"');
   for (const file of ["favicon.ico", "favicon-16.png", "favicon-32.png", "apple-touch-icon.png"]) {
     out = out.replace(`href="/${file}"`, `href="/staging/${file}"`);
   }
