@@ -292,30 +292,6 @@
         background: var(--ink-3);
       }
 
-      /* The labelled random-playback toggle above the player (the
-         built-in order icon is an unlabelled glyph most readers miss). */
-      article .music-player .music-controls {
-        display: flex;
-        justify-content: flex-end;
-        margin-bottom: 8px;
-      }
-      article .music-player .music-order-toggle {
-        font: inherit;
-        font-size: 13px;
-        color: var(--ink-2);
-        background: var(--surface);
-        border: 1px solid var(--line);
-        border-radius: 999px;
-        padding: 4px 12px;
-        cursor: pointer;
-      }
-      article .music-player .music-order-toggle.is-random {
-        color: var(--surface);
-        background: var(--accent);
-        border-color: var(--accent);
-        font-weight: 700;
-      }
-
       /* ---------- footer (shared site chrome) ---------- */
       footer { margin-top: 56px; border-top: 1px solid var(--line); padding: 24px 0 46px; }
       .foot-links { display: flex; flex-wrap: wrap; gap: 10px 22px; margin-bottom: 22px; }
@@ -631,43 +607,6 @@
           return loadPromise;
         }
 
-        // A labelled random-playback toggle above the player.
-        // APlayer ships its own order icon in the control bar, but
-        // it is a small unlabelled glyph most readers never find,
-        // so the same setting gets a text button here. The button
-        // defers to the built-in icon when it exists (that handler
-        // flips the order and swaps its own glyph), and the label
-        // re-reads player.options.order after every change,
-        // whichever control was used.
-        function attachOrderToggle(wrapper, player) {
-          if (!wrapper || !player || !player.options) return null;
-          var bar = document.createElement("div");
-          bar.className = "music-controls";
-          var button = document.createElement("button");
-          button.type = "button";
-          button.className = "music-order-toggle";
-          function sync() {
-            var random = player.options.order === "random";
-            button.textContent = random ? "ランダム再生：オン" : "ランダム再生：オフ";
-            button.setAttribute("aria-pressed", random ? "true" : "false");
-            button.classList.toggle("is-random", random);
-          }
-          var icon = wrapper.querySelector(".aplayer-icon-order");
-          button.addEventListener("click", function () {
-            if (icon) {
-              icon.click();
-            } else {
-              player.options.order = player.options.order === "random" ? "list" : "random";
-            }
-            sync();
-          });
-          if (icon) icon.addEventListener("click", function () { setTimeout(sync, 0); });
-          bar.appendChild(button);
-          wrapper.insertBefore(bar, wrapper.firstChild);
-          sync();
-          return button;
-        }
-
         function mount() {
           var root = document.querySelector(".article-content");
           if (!root) return;
@@ -694,11 +633,10 @@
                 .trim();
               if (value) theme = value;
             } catch (err) { /* keep the fallback theme */ }
-            var player = new APlayer({
+            new APlayer({
               container: container,
               theme: theme,
               listFolded: false,
-              order: "list",
               customAudioType: { gas: gasAudioType },
               audio: tracks.map(function (track) {
                 return {
@@ -709,7 +647,6 @@
                 };
               })
             });
-            if (tracks.length > 1) attachOrderToggle(container, player);
           });
         }
 
