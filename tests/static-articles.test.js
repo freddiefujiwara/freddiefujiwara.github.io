@@ -17,11 +17,14 @@ import {
   buildTocHtml,
   delimitBareUrls,
   extractTocFromHtml,
+  buildPopularArticles,
   fetchMusicCount,
   fetchSnsCounts,
+  fetchTopArticles,
   hashHeadingText,
   normalizeTagList,
   refreshMusicCountJson,
+  refreshPopularArticlesJson,
   refreshSnsCountJson,
   renderArticleBody,
   renderMarkdown,
@@ -623,6 +626,192 @@ describe('music-count.json の生成', () => {
       });
       expect(result.refreshed).toBe(false);
       expect(existsSync(path.join(dir, 'music-count.json'))).toBe(false);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});
+
+describe('popular-articles.json の生成', () => {
+  const okResponse = (body) => ({
+    ok: true,
+    status: 200,
+    json: async () => body,
+  });
+
+  const TITLES = {
+    idA: '2026-11-08 記事Aのタイトル',
+    idB: '2026-11-07 記事Bのタイトル',
+    idC: '2026-11-06 記事Cのタイトル',
+    idD: '2026-11-05 記事Dのタイトル',
+  };
+  const rankingResponse = (articles) =>
+    okResponse({ ok: true, days: 28, articles, updated_at: 't1' });
+
+  it('fetchTopArticles は action=top_articles を叩いてランキングを返す', async () => {
+    const seen = [];
+    const fetchImpl = async (url) => {
+      seen.push(url);
+      return rankingResponse([
+        { id: 'idA', views: 300 },
+        { id: 'idB', views: '200' },
+      ]);
+    };
+    const payload = await fetchTopArticles('https://example.invalid/exec', fetchImpl);
+    expect(seen).toEqual(['https://example.invalid/exec?action=top_articles']);
+    // views が数値でない行は落とす
+    expect(payload).toEqual({
+      days: 28,
+      articles: [{ id: 'idA', views: 300 }],
+      updated_at: 't1',
+    });
+  });
+
+  it('fetchTopArticles は形の違う応答をエラーにする', async () => {
+    const fetchImpl = async () => okResponse({ ok: true, articles: 'x' });
+    await expect(
+      fetchTopArticles('https://example.invalid/exec', fetchImpl),
+    ).rejects.toThrow('Malformed');
+  });
+
+  it('buildPopularArticles は順位順にタイトルを引き、日付を外す', () => {
+    const picked = buildPopularArticles(
+      [
+        { id: 'idB', views: 200 },
+        { id: 'idA', views: 100 },
+        { id: 'idC', views: 50 },
+        { id: 'idD', views: 10 },
+      ],
+      TITLES,
+    );
+    expect(picked).toEqual([
+      {
+        id: 'idB',
+        title: '記事Bのタイトル',
+        views: 200,
+        href: 'https://freddiefujiwara.com/blog/idB',
+      },
+      {
+        id: 'idA',
+        title: '記事Aのタイトル',
+        views: 100,
+        href: 'https://freddiefujiwara.com/blog/idA',
+      },
+      {
+        id: 'idC',
+        title: '記事Cのタイトル',
+        views: 50,
+        href: 'https://freddiefujiwara.com/blog/idC',
+      },
+    ]);
+  });
+
+  it('buildPopularArticles はタイトルの無い記事を飛ばして次を繰り上げる', () => {
+    const picked = buildPopularArticles(
+      [
+        { id: 'unknown', views: 999 },
+        { id: 'idA', views: 100 },
+        { id: 'idC', views: 50 },
+        { id: 'idD', views: 10 },
+      ],
+      TITLES,
+    );
+    expect(picked.map((a) => a.id)).toEqual(['idA', 'idC', 'idD']);
+  });
+
+  it('refreshPopularArticlesJson はカードが変わったときだけ書き直す', async () => {
+    const dir = mkdtempSync(path.join(tmpdir(), 'popular-'));
+    try {
+      const fetchImpl = async () =>
+        rankingResponse([
+          { id: 'idA', views: 300 },
+          { id: 'idB', views: 200 },
+          { id: 'idC', views: 100 },
+        ]);
+      const first = await refreshPopularArticlesJson({
+        outDir: dir,
+        apiUrl: 'https://example.invalid/exec',
+        titles: TITLES,
+        fetchImpl,
+        log: () => {},
+      });
+      expect(first.refreshed).toBe(true);
+      const file = path.join(dir, 'popular-articles.json');
+      const written = JSON.parse(readFileSync(file, 'utf8'));
+      expect(written.days).toBe(28);
+      expect(written.articles.map((a) => a.id)).toEqual(['idA', 'idB', 'idC']);
+      expect(written.articles[0].title).toBe('記事Aのタイトル');
+      const second = await refreshPopularArticlesJson({
+        outDir: dir,
+        apiUrl: 'https://example.invalid/exec',
+        titles: TITLES,
+        fetchImpl,
+        log: () => {},
+      });
+      expect(second.refreshed).toBe(false);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('refreshPopularArticlesJson は取得失敗時に既存ファイルを保持する', async () => {
+    const dir = mkdtempSync(path.join(tmpdir(), 'popular-'));
+    try {
+      const file = path.join(dir, 'popular-articles.json');
+      writeFileSync(file, '{"days": 28, "articles": [], "updated_at": "t0"}\n');
+      const fetchImpl = async () => ({ ok: false, status: 500, json: async () => ({}) });
+      const result = await refreshPopularArticlesJson({
+        outDir: dir,
+        apiUrl: 'https://example.invalid/exec',
+        titles: TITLES,
+        fetchImpl,
+        log: () => {},
+      });
+      expect(result.refreshed).toBe(false);
+      expect(readFileSync(file, 'utf8')).toBe(
+        '{"days": 28, "articles": [], "updated_at": "t0"}\n',
+      );
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('refreshPopularArticlesJson は3枚そろわないランキングでは書き換えない', async () => {
+    const dir = mkdtempSync(path.join(tmpdir(), 'popular-'));
+    try {
+      const fetchImpl = async () =>
+        rankingResponse([
+          { id: 'idA', views: 300 },
+          { id: 'idB', views: 200 },
+        ]);
+      const result = await refreshPopularArticlesJson({
+        outDir: dir,
+        apiUrl: 'https://example.invalid/exec',
+        titles: TITLES,
+        fetchImpl,
+        log: () => {},
+      });
+      expect(result.refreshed).toBe(false);
+      expect(existsSync(path.join(dir, 'popular-articles.json'))).toBe(false);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('refreshPopularArticlesJson はエンドポイント未設定なら何もしない', async () => {
+    const dir = mkdtempSync(path.join(tmpdir(), 'popular-'));
+    try {
+      const result = await refreshPopularArticlesJson({
+        outDir: dir,
+        apiUrl: '',
+        titles: TITLES,
+        fetchImpl: async () => {
+          throw new Error('must not be called');
+        },
+        log: () => {},
+      });
+      expect(result.refreshed).toBe(false);
+      expect(existsSync(path.join(dir, 'popular-articles.json'))).toBe(false);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

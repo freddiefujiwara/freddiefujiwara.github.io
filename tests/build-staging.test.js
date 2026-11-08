@@ -21,6 +21,7 @@ const sample = `<!doctype html>
     <script src="/js/web-vitals-ga.js"></script>
     <script src="/js/music-count.js"></script>
     <script src="/js/sns-count.js"></script>
+    <script src="/js/popular-articles.js"></script>
   </body>
 </html>`;
 
@@ -46,6 +47,10 @@ describe('transformHtml', () => {
 
   it('フォロワー数スクリプトも GA ではないので残し、パスだけ付け替える', () => {
     expect(out).toContain('src="/staging/js/sns-count.js"');
+  });
+
+  it('人気記事スクリプトも GA ではないので残し、パスだけ付け替える', () => {
+    expect(out).toContain('src="/staging/js/popular-articles.js"');
   });
 
   it('他ページへのリンクは本番のままにする', () => {
