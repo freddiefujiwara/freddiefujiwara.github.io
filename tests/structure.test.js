@@ -76,10 +76,21 @@ describe('ページ構造の不変条件', () => {
     const local = [...document.querySelectorAll('script[src]')]
       .map((s) => s.getAttribute('src'))
       .filter((src) => src.startsWith('/js/'));
-    expect(local).toEqual(['/js/gtag.js', '/js/main.js', '/js/web-vitals.iife.js', '/js/web-vitals-ga.js', '/js/music-count.js']);
+    expect(local).toEqual(['/js/gtag.js', '/js/main.js', '/js/web-vitals.iife.js', '/js/web-vitals-ga.js', '/js/music-count.js', '/js/sns-count.js']);
     for (const src of local) {
       expect(existsSync(path.join(root, 'public', src)), src).toBe(true);
     }
+  });
+
+  it('ヒーローの最初の数字は SNS延べフォロワー数で、差し替え先と静的な初期値を持つ', () => {
+    const first = document.querySelector('.stats .stat');
+    expect(first.querySelector('.label').textContent.trim()).toBe(
+      'SNS延べフォロワー数',
+    );
+    const total = first.querySelector('.sns-follower-total');
+    expect(total).not.toBeNull();
+    expect(total.textContent).toBe('2,307');
+    expect(first.querySelector('.num small').textContent).toBe('人');
   });
 });
 

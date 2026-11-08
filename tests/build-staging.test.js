@@ -20,6 +20,7 @@ const sample = `<!doctype html>
     <script src="/js/web-vitals.iife.js"></script>
     <script src="/js/web-vitals-ga.js"></script>
     <script src="/js/music-count.js"></script>
+    <script src="/js/sns-count.js"></script>
   </body>
 </html>`;
 
@@ -41,6 +42,10 @@ describe('transformHtml', () => {
 
   it('再生回数スクリプトは GA ではないので残し、パスだけ付け替える', () => {
     expect(out).toContain('src="/staging/js/music-count.js"');
+  });
+
+  it('フォロワー数スクリプトも GA ではないので残し、パスだけ付け替える', () => {
+    expect(out).toContain('src="/staging/js/sns-count.js"');
   });
 
   it('他ページへのリンクは本番のままにする', () => {
