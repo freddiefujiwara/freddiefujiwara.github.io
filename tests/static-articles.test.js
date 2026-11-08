@@ -349,33 +349,32 @@ describe('音楽プレイヤー（music-track プレースホルダ）', () => {
       year: 2026,
     });
     expect(page).toContain('class="music-track"');
-    expect(page).toContain('APlayer.min.js');
+    expect(page).toContain('mp-play');
     expect(page).toContain('music-gas request failed');
     expect(page).toContain(MUSIC_PLAYER_SCRIPT.trim().slice(0, 40));
   });
 
-  it('再開判定は fetch 完了時点の player.paused で行う（ブログ側の修正と同一）', () => {
-    expect(MUSIC_PLAYER_SCRIPT).not.toContain('shouldResume');
-    expect(MUSIC_PLAYER_SCRIPT).toContain('prefetchRemainingTracks(player)');
-    expect(MUSIC_PLAYER_SCRIPT).toContain('if (player && !player.paused)');
+  it('自作プレイヤーである（APlayer を読み込まない、ブログ側の実装と同一）', () => {
+    expect(MUSIC_PLAYER_SCRIPT).not.toContain('APlayer');
+    expect(MUSIC_PLAYER_SCRIPT).toContain('function createPlayer(container, tracks)');
+    expect(MUSIC_PLAYER_SCRIPT).toContain('function endedPlan(plan)');
+    expect(MUSIC_PLAYER_SCRIPT).toContain('prefetchRemaining()');
   });
 
-  it('再生開始を music_play イベントとして GA に送る（曲ごと1回、gtag が無ければ送らない）', () => {
-    expect(MUSIC_PLAYER_SCRIPT).toContain('player.on("play"');
+  it('再生ボタンと曲リストの押下を music_play イベントとして GA に送る（gtag が無ければ送らない）', () => {
+    expect(MUSIC_PLAYER_SCRIPT).toContain('trackMusicPlay("button")');
+    expect(MUSIC_PLAYER_SCRIPT).toContain('trackMusicPlay("list")');
     expect(MUSIC_PLAYER_SCRIPT).toContain('typeof window.gtag !== "function"');
     expect(MUSIC_PLAYER_SCRIPT).toContain('"music_play"');
-    expect(MUSIC_PLAYER_SCRIPT).toContain('track_title: audio.name || ""');
-    expect(MUSIC_PLAYER_SCRIPT).toContain('track_file: file');
-    expect(MUSIC_PLAYER_SCRIPT).toContain('reportedTrackFile');
+    expect(MUSIC_PLAYER_SCRIPT).toContain('method: method');
   });
-
   it('トラックのない記事にはプレイヤーのスクリプトが入らない', () => {
     const page = renderStaticArticlePage({
       article: ARTICLES[0],
       payload: { title: 'タイトル', markdown: '本文です。', tags: [] },
       year: 2026,
     });
-    expect(page).not.toContain('APlayer.min.js');
+    expect(page).not.toContain('createPlayer');
   });
 });
 
