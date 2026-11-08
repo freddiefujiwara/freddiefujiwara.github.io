@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="color-scheme" content="light dark" />
     <meta name="description" content="川口の道を走ったり歩いたりした映像に、Sunoで作ったオリジナル曲を合わせる「SunoリリックVlog」。歌詞に合わせて映像とテロップを切っていくシリーズです。" />
-    <meta property="og:title" content="2026-09-22 川口の歌を、まとめました" />
+    <meta property="og:title" content="2026-09-22 川口のSunoリリックVlogを、まとめました" />
     <meta property="og:description" content="川口の道を走ったり歩いたりした映像に、Sunoで作ったオリジナル曲を合わせる「SunoリリックVlog」。歌詞に合わせて映像とテロップを切っていくシリーズです。" />
     <meta property="og:url" content="https://freddiefujiwara.com/music" />
     <meta property="og:type" content="article" />
@@ -20,7 +20,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <title>2026-09-22 川口の歌を、まとめました</title>
+    <title>2026-09-22 川口のSunoリリックVlogを、まとめました</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet" />
@@ -322,7 +322,7 @@
     <main>
       <div class="wrap">
         <article class="article-content">
-          <h1>2026-09-22 川口の歌を、まとめました</h1>
+          <h1>2026-09-22 川口のSunoリリックVlogを、まとめました</h1>
           <ul class="tag-chips">
       <li class="tag-chip-item"><a class="tag-chip" href="https://freddiefujiwara.com/blog/tag/%E9%9F%B3%E6%A5%BD">音楽</a></li>
       <li class="tag-chip-item"><a class="tag-chip" href="https://freddiefujiwara.com/blog/tag/%E5%B7%9D%E5%8F%A3">川口</a></li>
@@ -633,7 +633,7 @@
                 .trim();
               if (value) theme = value;
             } catch (err) { /* keep the fallback theme */ }
-            var player = new APlayer({
+            new APlayer({
               container: container,
               theme: theme,
               listFolded: false,
@@ -646,33 +646,6 @@
                   type: "gas"
                 };
               })
-            });
-            // Report a music_play event when a track actually
-            // starts, once per track — the same rule as the blog's
-            // musicPlayer: pausing and resuming the same song must
-            // not count again, while switching tracks (or the loop
-            // wrapping around to another song) reports the new
-            // one. Pages served without the GA tag (the staging
-            // build drops it) have no gtag, and then nothing is
-            // reported at all.
-            var reportedTrackFile = "";
-            player.on("play", function () {
-              if (typeof window.gtag !== "function") return;
-              var list = player.list;
-              var audio = list && list.audios ? list.audios[list.index] : null;
-              if (!audio) return;
-              var file = "";
-              try {
-                file = new URL(audio.url).searchParams.get("track") || "";
-              } catch (err) {
-                file = "";
-              }
-              if (!file || file === reportedTrackFile) return;
-              reportedTrackFile = file;
-              window.gtag("event", "music_play", {
-                track_title: audio.name || "",
-                track_file: file
-              });
             });
           });
         }
