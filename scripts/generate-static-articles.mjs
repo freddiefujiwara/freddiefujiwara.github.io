@@ -28,9 +28,11 @@
 //
 // The run also refreshes public/music-count.json (the cumulative
 // music play count shown in the shared header) from ga-gas's public
-// music_count action when GA_GAS_EXEC_URL is set. That refresh is
-// best-effort: a failure keeps the previous file and never fails
-// the article generation.
+// music_count action when GA_GAS_EXEC_URL is set, and
+// public/sns-count.json (the combined SNS follower total shown in
+// the top page hero) from its public sns_counts action. Those
+// refreshes are best-effort: a failure keeps the previous file and
+// never fails the article generation.
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -1650,6 +1652,106 @@ export const refreshMusicCountJson = async ({
   return { refreshed: true, count: payload.count };
 };
 
+// The SNS accounts included in the hero's combined follower total:
+// the main and secondary Instagram accounts, Threads and YouTube.
+const SNS_COUNT_KEYS = ["instagram", "instagram_anemone", "threads", "youtube"];
+
+// Fetches the latest SNS follower snapshot from ga-gas's public
+// sns_counts action and reduces it to the combined total. The GAS
+// side returns a per-network breakdown in `counts`; networks that
+// are missing or null are left out of the sum. If the GAS side ever
+// provides a ready-made `total`, that wins. Anything else is
+// rejected as malformed so a spec drift can never publish a wrong
+// (or partial but presented as complete) number. The endpoint URL
+// is passed in (the caller reads it from the GA_GAS_EXEC_URL
+// environment variable): the URL itself is a capability and is
+// never written into this repository.
+export const fetchSnsCounts = async (apiUrl, fetchImpl = fetch) => {
+  const separator = apiUrl.includes("?") ? "&" : "?";
+  const response = await fetchImpl(`${apiUrl}${separator}action=sns_counts`, {
+    redirect: "follow",
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+  });
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status} for sns_counts`);
+  }
+  const data = await response.json();
+  if (!data || data.ok !== true) {
+    throw new Error("Malformed sns_counts response");
+  }
+  let total = null;
+  if (typeof data.total === "number" && Number.isFinite(data.total)) {
+    total = data.total;
+  } else if (data.counts && typeof data.counts === "object") {
+    let sum = 0;
+    let seen = false;
+    for (const key of SNS_COUNT_KEYS) {
+      const value = data.counts[key];
+      if (typeof value === "number" && Number.isFinite(value)) {
+        sum += value;
+        seen = true;
+      }
+    }
+    if (seen) {
+      total = sum;
+    }
+  }
+  if (total === null) {
+    throw new Error("Malformed sns_counts response");
+  }
+  const updatedAt =
+    typeof data.fetched_at === "string"
+      ? data.fetched_at
+      : typeof data.updated_at === "string"
+        ? data.updated_at
+        : null;
+  return { total, updated_at: updatedAt };
+};
+
+// Refreshes <outDir>/sns-count.json, the tiny file the top page
+// hero reads to show the combined SNS follower total. Best-effort
+// by design, exactly like refreshMusicCountJson: when no endpoint
+// is configured or the fetch fails, the existing file (if any) is
+// kept exactly as it is, and the hero keeps its static fallback
+// value. The file is only rewritten when the total changed, so
+// runs without a change produce no commit noise.
+export const refreshSnsCountJson = async ({
+  outDir,
+  apiUrl,
+  fetchImpl = fetch,
+  log = console.log,
+} = {}) => {
+  if (!apiUrl) {
+    return { refreshed: false, reason: "no endpoint configured" };
+  }
+  let payload;
+  try {
+    payload = await fetchSnsCounts(apiUrl, fetchImpl);
+  } catch (error) {
+    log(`sns-count.json: kept existing (${error.message})`);
+    return { refreshed: false, reason: error.message };
+  }
+  const target = join(outDir, "sns-count.json");
+  let previousTotal = null;
+  if (existsSync(target)) {
+    try {
+      previousTotal = JSON.parse(readFileSync(target, "utf8")).total;
+    } catch {
+      previousTotal = null;
+    }
+  }
+  if (previousTotal === payload.total) {
+    log(`unchanged: sns-count.json (total=${payload.total})`);
+    return { refreshed: false, reason: "total unchanged" };
+  }
+  const body =
+    JSON.stringify({ total: payload.total, updated_at: payload.updated_at }, null, 2) +
+    "\n";
+  writeFileSync(target, body);
+  log(`wrote: sns-count.json (total=${payload.total})`);
+  return { refreshed: true, total: payload.total };
+};
+
 // Fetches every article first, then writes the pages whose content
 // actually changed. Returns one result per article:
 // { slug, changed, bytes }.
@@ -1700,6 +1802,12 @@ export const generateStaticArticles = async ({
     return { slug: article.slug, changed: true, bytes: Buffer.byteLength(html) };
   });
   await refreshMusicCountJson({
+    outDir,
+    apiUrl: musicCountApiUrl,
+    fetchImpl,
+    log,
+  });
+  await refreshSnsCountJson({
     outDir,
     apiUrl: musicCountApiUrl,
     fetchImpl,

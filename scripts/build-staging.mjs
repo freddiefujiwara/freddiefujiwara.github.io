@@ -78,6 +78,9 @@ export function transformHtml(html) {
   // The play-count script is not analytics, so it stays on staging;
   // it reads the production /music-count.json by absolute path.
   out = out.replace('src="/js/music-count.js"', 'src="/staging/js/music-count.js"');
+  // Same for the SNS follower-total script: not analytics, stays on
+  // staging and reads the production /sns-count.json by absolute path.
+  out = out.replace('src="/js/sns-count.js"', 'src="/staging/js/sns-count.js"');
   for (const file of ["favicon.ico", "favicon-16.png", "favicon-32.png", "apple-touch-icon.png"]) {
     out = out.replace(`href="/${file}"`, `href="/staging/${file}"`);
   }

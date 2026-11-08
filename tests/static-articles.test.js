@@ -18,9 +18,11 @@ import {
   delimitBareUrls,
   extractTocFromHtml,
   fetchMusicCount,
+  fetchSnsCounts,
   hashHeadingText,
   normalizeTagList,
   refreshMusicCountJson,
+  refreshSnsCountJson,
   renderArticleBody,
   renderMarkdown,
   MUSIC_PLAYER_SCRIPT,
@@ -621,6 +623,137 @@ describe('music-count.json の生成', () => {
       });
       expect(result.refreshed).toBe(false);
       expect(existsSync(path.join(dir, 'music-count.json'))).toBe(false);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});
+
+describe('sns-count.json の生成', () => {
+  const okResponse = (body) => ({
+    ok: true,
+    status: 200,
+    json: async () => body,
+  });
+
+  it('fetchSnsCounts は action=sns_counts を叩いて内訳を合算する', async () => {
+    const seen = [];
+    const fetchImpl = async (url) => {
+      seen.push(url);
+      return okResponse({
+        ok: true,
+        action: 'sns_counts',
+        counts: {
+          instagram: 1988,
+          instagram_anemone: 59,
+          threads: 252,
+          youtube: 8,
+        },
+        fetched_at: '2026-11-08T12:45:00.000Z',
+      });
+    };
+    const payload = await fetchSnsCounts('https://example.invalid/exec', fetchImpl);
+    expect(seen).toEqual(['https://example.invalid/exec?action=sns_counts']);
+    expect(payload).toEqual({
+      total: 2307,
+      updated_at: '2026-11-08T12:45:00.000Z',
+    });
+  });
+
+  it('fetchSnsCounts は null や欠けた項目を合計から除く', async () => {
+    const fetchImpl = async () =>
+      okResponse({
+        ok: true,
+        counts: { instagram: 1988, instagram_anemone: null, threads: 252 },
+        fetched_at: 't1',
+      });
+    const payload = await fetchSnsCounts('https://example.invalid/exec', fetchImpl);
+    expect(payload.total).toBe(2240);
+  });
+
+  it('fetchSnsCounts は GAS 側の total があればそれを優先する', async () => {
+    const fetchImpl = async () =>
+      okResponse({ ok: true, total: 3000, counts: { instagram: 1 }, fetched_at: 't1' });
+    const payload = await fetchSnsCounts('https://example.invalid/exec', fetchImpl);
+    expect(payload.total).toBe(3000);
+  });
+
+  it('fetchSnsCounts は形の違う応答をエラーにする', async () => {
+    const fetchImpl = async () => okResponse({ ok: true, counts: {} });
+    await expect(
+      fetchSnsCounts('https://example.invalid/exec', fetchImpl),
+    ).rejects.toThrow('Malformed');
+    const notOk = async () => okResponse({ ok: false, counts: { instagram: 1 } });
+    await expect(
+      fetchSnsCounts('https://example.invalid/exec', notOk),
+    ).rejects.toThrow('Malformed');
+  });
+
+  it('refreshSnsCountJson は total が変わったときだけ書き直す', async () => {
+    const dir = mkdtempSync(path.join(tmpdir(), 'sns-count-'));
+    try {
+      const fetchImpl = async () =>
+        okResponse({
+          ok: true,
+          counts: { instagram: 2000, threads: 300 },
+          fetched_at: 't1',
+        });
+      const first = await refreshSnsCountJson({
+        outDir: dir,
+        apiUrl: 'https://example.invalid/exec',
+        fetchImpl,
+        log: () => {},
+      });
+      expect(first.refreshed).toBe(true);
+      const file = path.join(dir, 'sns-count.json');
+      expect(JSON.parse(readFileSync(file, 'utf8'))).toEqual({
+        total: 2300,
+        updated_at: 't1',
+      });
+      const second = await refreshSnsCountJson({
+        outDir: dir,
+        apiUrl: 'https://example.invalid/exec',
+        fetchImpl,
+        log: () => {},
+      });
+      expect(second.refreshed).toBe(false);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('refreshSnsCountJson は取得失敗時に既存ファイルを保持する', async () => {
+    const dir = mkdtempSync(path.join(tmpdir(), 'sns-count-'));
+    try {
+      const file = path.join(dir, 'sns-count.json');
+      writeFileSync(file, '{"total": 2307, "updated_at": "t0"}\n');
+      const fetchImpl = async () => ({ ok: false, status: 500, json: async () => ({}) });
+      const result = await refreshSnsCountJson({
+        outDir: dir,
+        apiUrl: 'https://example.invalid/exec',
+        fetchImpl,
+        log: () => {},
+      });
+      expect(result.refreshed).toBe(false);
+      expect(readFileSync(file, 'utf8')).toBe('{"total": 2307, "updated_at": "t0"}\n');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('refreshSnsCountJson はエンドポイント未設定なら何もしない', async () => {
+    const dir = mkdtempSync(path.join(tmpdir(), 'sns-count-'));
+    try {
+      const result = await refreshSnsCountJson({
+        outDir: dir,
+        apiUrl: '',
+        fetchImpl: async () => {
+          throw new Error('must not be called');
+        },
+        log: () => {},
+      });
+      expect(result.refreshed).toBe(false);
+      expect(existsSync(path.join(dir, 'sns-count.json'))).toBe(false);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
