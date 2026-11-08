@@ -337,6 +337,13 @@ describe('音楽プレイヤー（music-track プレースホルダ）', () => {
     expect(page).toContain(MUSIC_PLAYER_SCRIPT.trim().slice(0, 40));
   });
 
+  it('ランダム再生の文字ボタンをプレイヤーに付ける（ブログ側の実装と同一）', () => {
+    expect(MUSIC_PLAYER_SCRIPT).toContain('attachOrderToggle(container, player)');
+    expect(MUSIC_PLAYER_SCRIPT).toContain('ランダム再生：オン');
+    expect(MUSIC_PLAYER_SCRIPT).toContain('ランダム再生：オフ');
+    expect(MUSIC_PLAYER_SCRIPT).toContain('.aplayer-icon-order');
+  });
+
   it('再開判定は fetch 完了時点の player.paused で行う（ブログ側の修正と同一）', () => {
     expect(MUSIC_PLAYER_SCRIPT).not.toContain('shouldResume');
     expect(MUSIC_PLAYER_SCRIPT).toContain('prefetchRemainingTracks(player)');
