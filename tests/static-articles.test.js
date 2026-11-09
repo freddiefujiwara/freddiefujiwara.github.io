@@ -883,6 +883,37 @@ describe('sns-count.json の生成', () => {
     });
   });
 
+  it('fetchSnsCounts はフラットな応答の Threads フォロワー数も合計と内訳に入れる', async () => {
+    // Fixture: the live action=sns_counts response observed on
+    // 2026-11-09 08:46 JST, after Threads follower collection
+    // started returning a number.
+    const fetchImpl = async () =>
+      okResponse({
+        ok: true,
+        action: 'sns_counts',
+        collected_at: '2026-11-08T23:46:47.185Z',
+        youtube: { subscribers: 10 },
+        instagram: {
+          freddiefujiwara: 1998,
+          anemone_cancer: null,
+          media_count: 2420,
+          views_30d: 580289,
+          non_follower_pct: 94.5,
+          insights_error: null,
+        },
+        threads: { followers: 252 },
+      });
+    const payload = await fetchSnsCounts('https://example.invalid/exec', fetchImpl);
+    expect(payload).toEqual({
+      total: 2260,
+      media_count: 2420,
+      views_30d: 580289,
+      non_follower_pct: 94.5,
+      followers_breakdown: { instagram: 1998, youtube: 10, threads: 252 },
+      updated_at: '2026-11-08T23:46:47.185Z',
+    });
+  });
+
   it('fetchSnsCounts は null や欠けた項目を合計から除く', async () => {
     const fetchImpl = async () =>
       okResponse({
