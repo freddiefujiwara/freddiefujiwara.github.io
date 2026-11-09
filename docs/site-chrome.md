@@ -154,7 +154,7 @@ python3 -m unittest discover -s scripts/tests -v   # チェックスクリプト
   - ブログ / 持ち物リストは /blog/、/list-of-stuff/ です。
   - 「川口の歌」は https://freddiefujiwara.com/music へのリンクで、ラベルは「川口の歌 ♪」。
     その直後の `.music-play-count` スパンに、各サイトの小さなスクリプトが /music-count.json
-    （トップの静的生成が ga-gas の公開集計から作る小さな JSON）から累計再生回数を
+    （トップの静的生成が social-gas の公開集計から作る小さな JSON）から累計再生回数を
     「（数値）回再生」の形で流し込みます。取得できない場合は空のまま（CSS の `:empty` で
     非表示）です。スタイルは `color: var(--accent); font-size: 11px; font-weight: 700; margin-left: 5px`
     （ブログでは --accent の代わりに --link）。
