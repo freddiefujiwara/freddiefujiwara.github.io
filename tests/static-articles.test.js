@@ -372,7 +372,11 @@ describe('音楽プレイヤー（music-track プレースホルダ）', () => {
     expect(MUSIC_PLAYER_SCRIPT).not.toContain('APlayer');
     expect(MUSIC_PLAYER_SCRIPT).toContain('function createPlayer(container, tracks)');
     expect(MUSIC_PLAYER_SCRIPT).toContain('function endedPlan(plan)');
-    expect(MUSIC_PLAYER_SCRIPT).toContain('prefetchRemaining()');
+    // 先読みはブログ側と同じ軽い形：表示時は1曲目だけを温め、
+    // 残りは再生開始後に背景で、タップされた曲を最優先にする。
+    expect(MUSIC_PLAYER_SCRIPT).toContain('function startBackgroundPrefetch()');
+    expect(MUSIC_PLAYER_SCRIPT).toContain('priorityPromise = request');
+    expect(MUSIC_PLAYER_SCRIPT).not.toContain('prefetchRemaining');
   });
 
   it('再生ボタンと曲リストの押下を music_play イベントとして GA に送る（gtag が無ければ送らない）', () => {
