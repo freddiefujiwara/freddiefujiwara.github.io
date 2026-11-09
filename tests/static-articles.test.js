@@ -82,6 +82,37 @@ describe('タイトルはブログと完全一致（無加工）', () => {
   });
 });
 
+describe('冒頭のエピソード（intro）', () => {
+  it('持ち物リストのページでは本文の先頭にエピソードが入る', () => {
+    const stuff = ARTICLES.find((a) => a.slug === 'list-of-stuff');
+    const page = renderStaticArticlePage({
+      article: stuff,
+      payload: { title: '2021-02-16 持ち物リスト', markdown: '## 見出し\n\n本文です。', tags: [] },
+      year: 2026,
+    });
+    const { document } = new JSDOM(page).window;
+    const body = document.querySelector('.article-body');
+    const paragraphs = [...body.querySelectorAll(':scope > p')].map((p) => p.textContent);
+    expect(paragraphs.slice(0, 3)).toEqual(stuff.intro);
+    // エピソードは最初の見出しより前にある
+    expect(body.textContent.indexOf(stuff.intro[0])).toBeLessThan(
+      body.textContent.indexOf('見出し'),
+    );
+  });
+
+  it('intro のないページにはエピソードは入らない', () => {
+    const stuff = ARTICLES.find((a) => a.slug === 'list-of-stuff');
+    const page = renderStaticArticlePage({
+      article: ARTICLES[0],
+      payload: { title: 'タイトル', markdown: '本文です。', tags: [] },
+      year: 2026,
+    });
+    for (const line of stuff.intro) {
+      expect(page).not.toContain(line);
+    }
+  });
+});
+
 describe('Google Analytics タグ', () => {
   it('本番の静的ページにはトップと同じ GA タグが head に入る', () => {
     const page = renderStaticArticlePage({
