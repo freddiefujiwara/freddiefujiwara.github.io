@@ -940,19 +940,34 @@
           }
           function setStatus(text) { statusEl.textContent = text; }
 
-          // Once one track is in, quietly fetch the rest of the
-          // playlist in the background, one at a time. Most
-          // switches then find their bytes already in the session
-          // cache, which also keeps iOS from treating a
-          // long-delayed programmatic play() as unsolicited
-          // autoplay.
-          var prefetchStarted = false;
-          function prefetchRemaining() {
-            if (prefetchStarted) return;
-            prefetchStarted = true;
-            tracks.reduce(function (chain, track) {
-              return chain.then(function () { return fetchTrackBlob(track.file); }).catch(function () {});
-            }, Promise.resolve());
+          // Loading stays light on purpose. At mount only the
+          // first track is warmed, so opening the page never pulls
+          // the whole playlist (about 11 MB of audio, more again
+          // as base64 text) over the wire, while the first press
+          // can still start almost at once. The remaining tracks
+          // are fetched in the background, one at a time, once
+          // playback has actually started. A track the reader taps
+          // is always served first: its request starts immediately
+          // and the background chain waits for it before moving on.
+          var backgroundStarted = false;
+          var priorityPromise = null;
+          function startBackgroundPrefetch() {
+            if (backgroundStarted) return;
+            backgroundStarted = true;
+            var chain = Promise.resolve();
+            tracks.forEach(function (track) {
+              chain = chain.then(function () {
+                if (state.destroyed) return;
+                var wait = priorityPromise
+                  ? priorityPromise.catch(function () {})
+                  : Promise.resolve();
+                return wait.then(function () {
+                  if (state.destroyed) return;
+                  return fetchTrackBlob(track.file);
+                }).catch(function () {});
+              });
+            });
+            return chain;
           }
 
           function startTrack(i, options) {
@@ -975,13 +990,18 @@
             state.loading = true;
             syncPlayButton();
             setStatus("");
+            var request = fetchTrackBlob(file);
+            priorityPromise = request;
+            var clearPriority = function () {
+              if (priorityPromise === request) priorityPromise = null;
+            };
+            request.then(clearPriority, clearPriority);
             objectUrlFor(file)
               .then(function (url) {
                 if (state.destroyed || seq !== state.loadSeq) return;
                 state.loading = false;
                 state.loadedFile = file;
                 audio.src = url;
-                prefetchRemaining();
                 if (state.wantPlay) tryPlay(audio);
                 syncPlayButton();
                 syncProgress();
@@ -1066,7 +1086,10 @@
             }
           });
 
-          audio.addEventListener("play", syncPlayButton);
+          audio.addEventListener("play", function () {
+            syncPlayButton();
+            startBackgroundPrefetch();
+          });
           audio.addEventListener("pause", syncPlayButton);
           audio.addEventListener("timeupdate", syncProgress);
           audio.addEventListener("loadedmetadata", syncProgress);
@@ -1104,12 +1127,11 @@
           syncRepeat();
           syncRandom();
 
-          // Warm the first track (and then the rest) as soon as
-          // the player appears, so the first press of the play
-          // button starts playback almost immediately.
-          fetchTrackBlob(tracks[0].file)
-            .then(function () { prefetchRemaining(); })
-            .catch(function () {});
+          // Warm only the first track as soon as the player
+          // appears, so the first press of the play button starts
+          // playback almost immediately. The rest wait until
+          // playback has actually started (see the play listener).
+          fetchTrackBlob(tracks[0].file).catch(function () {});
 
           return {
             destroy: function () {
