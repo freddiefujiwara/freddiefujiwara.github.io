@@ -16,12 +16,14 @@ import {
   buildTagChipsHtml,
   buildTocHtml,
   delimitBareUrls,
+  expandAnchorMarkers,
   extractTocFromHtml,
   buildPopularArticles,
   fetchMusicCount,
   fetchSnsCounts,
   fetchTopArticles,
   hashHeadingText,
+  hashItemText,
   normalizeTagList,
   refreshMusicCountJson,
   refreshPopularArticlesJson,
@@ -142,6 +144,39 @@ describe('renderMarkdown の見出し id', () => {
     expect(html).toContain(`<h2 id="${base}">店</h2>`);
     expect(html).toContain(`<h2 id="${base}-2">店</h2>`);
     expect(html).toContain(`<h2 id="${base}-3">店</h2>`);
+  });
+});
+
+describe('renderMarkdown のアンカーマーカー', () => {
+  it('[[アンカーリンク]]の直前の太字タイトルに id が付き、マーカーはリンク行になる', () => {
+    const html = renderMarkdown(
+      '![イラスト](https://example.com/a.jpg)\n\n**沖縄に長期滞在したい**\n\n目標：50歳台\n\n[[アンカーリンク]]\n\nメモです。',
+    );
+    const id = hashItemText('沖縄に長期滞在したい');
+    expect(html).toContain(`<p id="${id}"><strong>沖縄に長期滞在したい</strong></p>`);
+    const link = `<p class="item-link"><a href="#${id}">この項目へのリンク</a></p>`;
+    expect(html).toContain(link);
+    expect(html.indexOf('<p>目標：50歳台</p>')).toBeLessThan(html.indexOf(link));
+    expect(html.indexOf(link)).toBeLessThan(html.indexOf('<p>メモです。</p>'));
+    expect(html).not.toContain('アンカーリンク');
+  });
+
+  it('マーカーがなければ、画像＋太字の項目にも id は付かない', () => {
+    const html = renderMarkdown('![イラスト](https://example.com/a.jpg)\n\n**タイトル**');
+    expect(html).not.toContain('id="item-');
+    expect(html).not.toContain('item-link');
+  });
+
+  it('タイトルがない場所のマーカーは静かに消える', () => {
+    const html = renderMarkdown('導入文です。\n\n[[アンカーリンク]]\n\n本文です。');
+    expect(html).not.toContain('item-link');
+    expect(html).not.toContain('アンカーリンク');
+    expect(html).toContain('<p>本文です。</p>');
+  });
+
+  it('expandAnchorMarkers はマーカーなしの入力をそのまま返す', () => {
+    const md = '## 見出し\n\n**太字**\n\n本文です。';
+    expect(expandAnchorMarkers(md)).toBe(md);
   });
 });
 
