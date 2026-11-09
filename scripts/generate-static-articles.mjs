@@ -1712,7 +1712,7 @@ export const buildPopularArticles = (
     if (typeof raw !== "string" || !raw) continue;
     picked.push({
       id: entry.id,
-      title: raw.replace(/^\d{4}-\d{2}-\d{2}\s+/, ""),
+      title: raw.replace(/^\d{4}-\d{2}-\d{2}\s*/, ""),
       views: entry.views,
       href: `https://freddiefujiwara.com/blog/${entry.id}`,
     });

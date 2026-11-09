@@ -706,6 +706,18 @@ describe('popular-articles.json の生成', () => {
     ]);
   });
 
+  it('buildPopularArticles は日付の直後に空白が無いタイトルでも日付を外す', () => {
+    const picked = buildPopularArticles(
+      [
+        { id: 'idE', views: 400 },
+        { id: 'idA', views: 100 },
+        { id: 'idB', views: 50 },
+      ],
+      { ...TITLES, idE: '2026-11-02【招待コード有】記事Eのタイトル' },
+    );
+    expect(picked[0].title).toBe('【招待コード有】記事Eのタイトル');
+  });
+
   it('buildPopularArticles はタイトルの無い記事を飛ばして次を繰り上げる', () => {
     const picked = buildPopularArticles(
       [
