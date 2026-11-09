@@ -952,6 +952,7 @@ describe('sns-count.json の生成', () => {
           instagram_anemone: 59,
           threads: 252,
           youtube: 8,
+          x: 1834,
         },
         fetched_at: '2026-11-08T12:45:00.000Z',
       });
@@ -959,7 +960,7 @@ describe('sns-count.json の生成', () => {
     const payload = await fetchSnsCounts('https://example.invalid/exec', fetchImpl);
     expect(seen).toEqual(['https://example.invalid/exec?action=sns_counts']);
     expect(payload).toEqual({
-      total: 2307,
+      total: 4141,
       media_count: null,
       views_30d: null,
       non_follower_pct: null,

@@ -2004,7 +2004,7 @@ export const refreshPopularArticlesJson = async ({
 
 // The SNS accounts included in the hero's combined follower total:
 // the main and secondary Instagram accounts, Threads and YouTube.
-const SNS_COUNT_KEYS = ["instagram", "instagram_anemone", "threads", "youtube"];
+const SNS_COUNT_KEYS = ["instagram", "instagram_anemone", "threads", "youtube", "x"];
 
 // The Instagram-only metrics the hero also shows: the post count,
 // the last 30 days of views, and the non-follower share of those

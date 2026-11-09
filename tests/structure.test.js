@@ -90,7 +90,7 @@ describe('ページ構造の不変条件', () => {
     expect(first.querySelector('.sns-total-label')).not.toBeNull();
     const total = first.querySelector('.sns-follower-total');
     expect(total).not.toBeNull();
-    expect(total.textContent).toBe('2,307');
+    expect(total.textContent).toBe('4,109');
     expect(first.querySelector('.num small').textContent).toBe('人');
   });
 
