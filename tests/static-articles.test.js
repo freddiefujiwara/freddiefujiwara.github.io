@@ -344,6 +344,19 @@ describe('ヒーローはブログと同じく最新記事へのリンク', () =
 });
 
 describe('歌詞の箱（ブログの wrapLyricsBlocks と同じ変換）', () => {
+  it('「[[歌詞]]」マーカーでも箱に変換する', () => {
+    const out = wrapLyricsBlocks(['[[歌詞]]', '', 'あさのひかり'].join('\n'));
+    expect(out).toContain('<div class="lyrics"><p class="lyrics-label">歌詞</p>');
+    expect(out).toContain('<p class="lyrics-line">あさのひかり</p></div>');
+    expect(out).not.toContain('[[歌詞]]');
+  });
+
+  it('歌詞行のない「[[歌詞]]」は太字ラベルとして出す', () => {
+    const out = wrapLyricsBlocks(['[[歌詞]]', '', '紹介文です。'].join('\n'));
+    expect(out).toContain('**歌詞**');
+    expect(out).not.toContain('[[歌詞]]');
+  });
+
   it('「**歌詞**」と歌詞行を箱に変換する（パート見出し付き）', () => {
     const md = [
       '紹介文です。',

@@ -168,6 +168,10 @@ export const delimitBareUrls = (markdown) =>
 // (Ported from the blog's src/services/markdown.js so the static
 // pages render lyrics exactly like the blog does.)
 const LYRICS_LABEL = "**歌詞**";
+// The bracket marker is the canonical lyrics label now that the
+// markers are unified in Japanese; the bold label stays accepted
+// while existing articles are migrated.
+const LYRICS_LABELS = new Set([LYRICS_LABEL, "[[歌詞]]", "［［歌詞］］"]);
 const LYRICS_PART_PATTERN = /^\[[^\]]*\]$/;
 
 const escapeHtmlText = (text) => String(text)
@@ -190,7 +194,7 @@ export const wrapLyricsBlocks = (markdown) => {
   const out = [];
   let i = 0;
   while (i < blocks.length) {
-    if (blocks[i].trim() !== LYRICS_LABEL) {
+    if (!LYRICS_LABELS.has(blocks[i].trim())) {
       out.push(blocks[i]);
       i += 1;
       continue;
@@ -202,7 +206,9 @@ export const wrapLyricsBlocks = (markdown) => {
       j += 1;
     }
     if (!lines.length) {
-      out.push(blocks[i]);
+      // A bracket marker with no lyric lines under it must not leak
+      // into the article as literal text: show the bold label.
+      out.push(blocks[i].trim() === LYRICS_LABEL ? blocks[i] : LYRICS_LABEL);
       i += 1;
       continue;
     }
