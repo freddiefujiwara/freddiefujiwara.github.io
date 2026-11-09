@@ -408,6 +408,21 @@ describe('音楽プレイヤー（music-track プレースホルダ）', () => {
     expect(MUSIC_PLAYER_SCRIPT).toContain('function startBackgroundPrefetch()');
     expect(MUSIC_PLAYER_SCRIPT).toContain('priorityPromise = request');
     expect(MUSIC_PLAYER_SCRIPT).not.toContain('prefetchRemaining');
+    // 初回再生の iOS 対策もブログ側と同一：取得済み Blob を同期的に
+    // 参照し、タップのハンドラ内で src を付けて鳴らす。1曲目は
+    // 温めた時点で src まで入れておく。
+    expect(MUSIC_PLAYER_SCRIPT).toContain('function cachedBlob(file)');
+    expect(MUSIC_PLAYER_SCRIPT).toContain('function objectUrlForSync(file)');
+    expect(MUSIC_PLAYER_SCRIPT).toContain('var syncUrl = objectUrlForSync(file)');
+  });
+
+  it('待ち時間（music_ready / music_latency）を GA に送る', () => {
+    expect(MUSIC_PLAYER_SCRIPT).toContain('function trackMusicReady(ms)');
+    expect(MUSIC_PLAYER_SCRIPT).toContain('function trackMusicLatency(ms, method)');
+    expect(MUSIC_PLAYER_SCRIPT).toContain('"music_ready"');
+    expect(MUSIC_PLAYER_SCRIPT).toContain('"music_latency"');
+    expect(MUSIC_PLAYER_SCRIPT).toContain('notePlayIntent("list")');
+    expect(MUSIC_PLAYER_SCRIPT).toContain('notePlayIntent("auto")');
   });
 
   it('再生ボタンと曲リストの押下を music_play イベントとして GA に送る（gtag が無ければ送らない）', () => {
