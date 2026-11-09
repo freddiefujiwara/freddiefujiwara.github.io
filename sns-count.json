@@ -1,12 +1,13 @@
 {
-  "total": 2273,
+  "total": 2275,
   "media_count": 2420,
-  "views_30d": 549132,
-  "non_follower_pct": 94.2,
+  "views_30d": 549498,
+  "non_follower_pct": 94.1,
   "followers_breakdown": {
-    "instagram": 2011,
+    "instagram": 2013,
     "youtube": 10,
-    "threads": 252
+    "threads": 252,
+    "x": null
   },
-  "updated_at": "2026-11-09T18:19:47.334Z"
+  "updated_at": "2026-11-09T21:19:57.190Z"
 }
