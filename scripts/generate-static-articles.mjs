@@ -167,7 +167,7 @@ export const delimitBareUrls = (markdown) =>
     .join("");
 
 // Lyrics blocks: an article can present a song's lyrics as a boxed
-// sheet by putting a paragraph that is only "**歌詞**" followed by
+// sheet by putting a paragraph that is only "[[歌詞]]" followed by
 // one paragraph per lyric line. The block is rewritten here — before
 // parsing — into a raw HTML box, because Markdown itself has no
 // grouping for it. The lines are consumed until the block can no
@@ -179,11 +179,12 @@ export const delimitBareUrls = (markdown) =>
 // become muted part headings inside the box.
 // (Ported from the blog's src/services/markdown.js so the static
 // pages render lyrics exactly like the blog does.)
+// Shown in place of a [[歌詞]] marker that has no lyric lines under
+// it, so the marker never leaks into the article as literal text.
+// (The bold paragraph itself is NOT a label: the markers were
+// unified in 2026-11 and the articles migrated to [[歌詞]].)
 const LYRICS_LABEL = "**歌詞**";
-// The bracket marker is the canonical lyrics label now that the
-// markers are unified in Japanese; the bold label stays accepted
-// while existing articles are migrated.
-const LYRICS_LABELS = new Set([LYRICS_LABEL, "[[歌詞]]", "［［歌詞］］"]);
+const LYRICS_LABELS = new Set(["[[歌詞]]", "［［歌詞］］"]);
 const LYRICS_PART_PATTERN = /^\[[^\]]*\]$/;
 
 const escapeHtmlText = (text) => String(text)
@@ -220,7 +221,7 @@ export const wrapLyricsBlocks = (markdown) => {
     if (!lines.length) {
       // A bracket marker with no lyric lines under it must not leak
       // into the article as literal text: show the bold label.
-      out.push(blocks[i].trim() === LYRICS_LABEL ? blocks[i] : LYRICS_LABEL);
+      out.push(LYRICS_LABEL);
       i += 1;
       continue;
     }
@@ -1067,7 +1068,7 @@ export const MUSIC_PLAYER_SCRIPT = `
       (function () {
         // Hand-rolled music player, ported from the blog's
         // src/services/musicPlayer.js. blog-gas turns a document
-        // paragraph [[music|title|file.mp3]] into a placeholder
+        // paragraph [[音楽|title|file.mp3]] into a placeholder
         // div; this script collects the article's placeholders
         // into a single playlist player at the first placeholder's
         // place. The MP3s live in Google Drive, whose direct links

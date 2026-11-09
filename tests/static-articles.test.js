@@ -392,11 +392,11 @@ describe('歌詞の箱（ブログの wrapLyricsBlocks と同じ変換）', () =
     expect(out).not.toContain('[[歌詞]]');
   });
 
-  it('「**歌詞**」と歌詞行を箱に変換する（パート見出し付き）', () => {
+  it('「[[歌詞]]」と歌詞行を箱に変換する（パート見出し付き）', () => {
     const md = [
       '紹介文です。',
       '',
-      '**歌詞**',
+      '[[歌詞]]',
       '',
       '[Intro]',
       '',
@@ -416,8 +416,13 @@ describe('歌詞の箱（ブログの wrapLyricsBlocks と同じ変換）', () =
     expect(out.indexOf('締めの文章です。')).toBeGreaterThan(out.indexOf('</div>'));
   });
 
-  it('歌詞行が続かないラベルは変換しない', () => {
-    const md = '**歌詞**\n\nこれは歌詞ではない長い説明の段落です、という文章。';
+  it('歌詞行が続かないマーカーは変換しない', () => {
+    const md = '[[歌詞]]\n\nこれは歌詞ではない長い説明の段落です、という文章。';
+    expect(wrapLyricsBlocks(md)).toBe('**歌詞**\n\nこれは歌詞ではない長い説明の段落です、という文章。');
+  });
+
+  it('太字の「歌詞」段落はラベルとして扱わない', () => {
+    const md = '**歌詞**\n\nあさのひかり';
     expect(wrapLyricsBlocks(md)).toBe(md);
   });
 });
