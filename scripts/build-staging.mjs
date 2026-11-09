@@ -30,7 +30,7 @@ export const STAGING_LINKS = [
   ["アラーム", "/alarm/staging/"],
   ["健康", "/health/staging/"],
   ["資産", "/asset/staging/"],
-  ["GA", "/ga/staging/"],
+  ["GA", "/social/staging/"],
   ["バケットリスト", "/bucket-list-admin/staging/"],
 ];
 

@@ -35,7 +35,7 @@ describe('記事IDパスの判定', () => {
   });
 
   it('アプリや通常のパスには一致しない', () => {
-    for (const p of ['/', '/blog/', '/ga/', '/list-of-stuff/', '/staging/', '/js/main.js', '/blog/1ugO7JmY8cmxQ34E9sPLrYArHHw03ZySj-PvGG5FQX-U']) {
+    for (const p of ['/', '/blog/', '/social/', '/list-of-stuff/', '/staging/', '/js/main.js', '/blog/1ugO7JmY8cmxQ34E9sPLrYArHHw03ZySj-PvGG5FQX-U']) {
       expect(ARTICLE_PATH.test(p), p).toBe(false);
     }
   });
