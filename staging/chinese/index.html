@@ -4,14 +4,104 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex">
-    <meta http-equiv="refresh" content="0; url=https://freddiefujiwara.com/blog/tag/中国語">
     <link rel="canonical" href="https://freddiefujiwara.com/blog/tag/中国語">
     <title>中国語｜藤原史和</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        background: #fbfaf7;
+        color: #221d16;
+        font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+      }
+      .card {
+        width: 100%;
+        max-width: 420px;
+        padding: 32px 28px;
+        text-align: center;
+        background: #ffffff;
+        border: 1px solid #e3ddd0;
+        border-radius: 16px;
+        box-shadow: 0 18px 40px rgba(34, 29, 22, 0.14);
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: 22px;
+      }
+      .sub {
+        margin: 0 0 24px;
+        color: #5d5546;
+        font-size: 14px;
+        line-height: 1.7;
+      }
+      .go {
+        display: block;
+        padding: 14px 20px;
+        border-radius: 999px;
+        background: #b23a1f;
+        color: #ffffff;
+        font-size: 16px;
+        font-weight: 700;
+        text-decoration: none;
+      }
+      .home {
+        display: inline-block;
+        margin-top: 20px;
+        color: inherit;
+        font-size: 14px;
+      }
+      @media (prefers-color-scheme: dark) {
+        body {
+          background: #17140f;
+          color: #f3efe6;
+        }
+        .card {
+          background: #221e17;
+          border-color: #3a352a;
+        }
+        .sub {
+          color: #b6ad9c;
+        }
+      }
+    </style>
     <script>
-      window.location.replace("https://freddiefujiwara.com/blog/tag/中国語");
+      // 初回だけ自動で転送する。アプリが開いてブラウザに戻ってきた
+      // とき（ページキャッシュからの復帰や、同じタブでの再読み込み）
+      // は転送を繰り返さず、この案内ページを表示する。
+      (function () {
+        var dest = "https://freddiefujiwara.com/blog/tag/中国語";
+        var key = "short-url-go:" + location.pathname;
+        var done = false;
+        try {
+          done = sessionStorage.getItem(key) === "1";
+        } catch (e) {}
+        window.addEventListener("pageshow", function (event) {
+          if (event.persisted || done) return;
+          done = true;
+          try {
+            sessionStorage.setItem(key, "1");
+          } catch (e) {}
+          window.location.replace(dest);
+        });
+      })();
     </script>
   </head>
   <body>
-    <p><a href="https://freddiefujiwara.com/blog/tag/中国語">ブログの中国語タグページへ移動します</a></p>
+    <main class="card">
+      <h1>中国語の記事一覧</h1>
+      <p class="sub">ブログの中国語タグページへ移動します。アプリから戻ってきた場合は、下のボタンから開き直せます。</p>
+      <a class="go" href="https://freddiefujiwara.com/blog/tag/中国語">中国語の記事一覧を開く</a>
+      <a class="home" href="https://freddiefujiwara.com/">トップページへ戻る</a>
+    </main>
   </body>
 </html>
