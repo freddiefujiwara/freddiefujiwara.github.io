@@ -63,6 +63,14 @@ export const ARTICLES = [
     docId: "1tn5P1vB1jnKHSay_FC2AEtNxH0gQZ3_jffRnHuz4YpM",
     heroLabel: "KAWAGUCHI — LIST OF STUFF",
     navActive: "list",
+    // Opening paragraphs shown only on this static page, ahead of the
+    // generated article body (the owner's episode, 2026-11-09). The
+    // blog article itself is generated from the sheet and stays as is.
+    intro: [
+      "子どもが生まれる前、少し整理しようと、部屋いっぱいにあった本を電子書籍にしました。そしたらほぼ一部屋分のスペースが生まれて、その快感が忘れられず、ミニマリストを目指すようになりました。",
+      "持ち物の記録は、基本的には楽天ROOMで付けています。ミニマリストを目指してから、なくし物が本当になくなりました。",
+      "歯ブラシから冷蔵庫まで、私の持ち物はすべてここに記載しています。",
+    ],
   },
   {
     slug: "music",
@@ -1479,6 +1487,11 @@ export const renderStaticArticlePage = ({ article, payload, year, latestArticleI
   const pageUrl = `${SITE_ORIGIN}/${article.slug}`;
   const ogImage = `${SITE_ORIGIN}/blog/ogp/${article.docId}.png`;
   const chips = buildTagChipsHtml(payload.tags);
+  // Optional per-page opening paragraphs (see ARTICLES.intro), placed
+  // at the very top of the article body, before the generated content.
+  const introHtml = Array.isArray(article.intro)
+    ? article.intro.map((line) => `<p>${escapeHtml(line)}</p>`).join("\n") + "\n"
+    : "";
   // The blog's hero band is a link to the latest article (App.vue:
   // router-link to `/${ids[0]}`), and the blog top shows that same
   // article, so the static pages link their hero the same way. When
@@ -1533,7 +1546,7 @@ export const renderStaticArticlePage = ({ article, payload, year, latestArticleI
         <article class="article-content">
           <h1>${escapeHtml(title)}</h1>
 ${chips ? `          ${chips}\n` : ""}          <div class="article-body">
-${bodyHtml}          </div>
+${introHtml}${bodyHtml}          </div>
         </article>
       </div>
     </main>
