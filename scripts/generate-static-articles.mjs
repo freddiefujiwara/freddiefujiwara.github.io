@@ -1068,7 +1068,7 @@ export const MUSIC_PLAYER_SCRIPT = `
       (function () {
         // Hand-rolled music player, ported from the blog's
         // src/services/musicPlayer.js. blog-gas turns a document
-        // paragraph [[music|title|file.mp3]] into a placeholder
+        // paragraph [[音楽|title|file.mp3]] into a placeholder
         // div; this script collects the article's placeholders
         // into a single playlist player at the first placeholder's
         // place. The MP3s live in Google Drive, whose direct links
