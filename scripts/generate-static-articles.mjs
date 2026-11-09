@@ -1020,7 +1020,14 @@ export const MUSIC_PLAYER_SCRIPT = `
           return new Blob(parts, { type: mime || "audio/mpeg" });
         }
 
+        // Fetched track blobs are kept for the session: switching
+        // back to a track that already played never asks music-gas
+        // again. The resolved blobs are remembered separately,
+        // because iOS Safari only honours play() calls made
+        // synchronously inside the tap handler — a cached track
+        // must be attachable without waiting for a promise tick.
         var blobCache = {};
+        var blobValues = {};
         function fetchTrackBlob(file) {
           if (blobCache[file]) return blobCache[file];
           var promise = (async function () {
@@ -1031,11 +1038,19 @@ export const MUSIC_PLAYER_SCRIPT = `
             if (!payload || !payload.ok) {
               throw new Error((payload && payload.error) || "music-gas request failed");
             }
-            return decodeBase64ToBlob(payload.data, payload.mime);
+            var blob = decodeBase64ToBlob(payload.data, payload.mime);
+            blobValues[file] = blob;
+            return blob;
           })();
           blobCache[file] = promise;
           promise.catch(function () { delete blobCache[file]; });
           return promise;
+        }
+
+        // The already-fetched blob for a file, or undefined while
+        // its fetch has not landed yet.
+        function cachedBlob(file) {
+          return blobValues[file];
         }
 
         function formatTime(seconds) {
@@ -1121,6 +1136,35 @@ export const MUSIC_PLAYER_SCRIPT = `
           window.gtag("event", "music_play", { method: method });
         }
 
+        // How long the reader waits, in milliseconds, so the
+        // values can be registered as custom metrics in GA4 and
+        // read as averages. music_ready fires once per player,
+        // when the first track has been fetched and cached;
+        // ready_ms is measured from page load, so it is the time
+        // until a press would start playback almost at once.
+        // music_latency fires when playback actually starts after
+        // a start intent (button / list / auto advance);
+        // latency_ms runs from the intent to the audio element's
+        // 'playing' event. Same suppression rules as music_play.
+        function sendTiming(eventName, paramName, ms, extra) {
+          if (location.pathname.indexOf("/staging/") !== -1) return;
+          if (typeof window.gtag !== "function") return;
+          var value = Math.round(Number(ms));
+          if (!isFinite(value) || value < 0) return;
+          var params = {};
+          params[paramName] = value;
+          if (extra) {
+            for (var key in extra) params[key] = extra[key];
+          }
+          window.gtag("event", eventName, params);
+        }
+        function trackMusicReady(ms) {
+          sendTiming("music_ready", "ready_ms", ms);
+        }
+        function trackMusicLatency(ms, method) {
+          sendTiming("music_latency", "latency_ms", ms, { method: method });
+        }
+
         function createPlayer(container, tracks) {
           var audio = new Audio();
           audio.preload = "auto";
@@ -1132,6 +1176,8 @@ export const MUSIC_PLAYER_SCRIPT = `
             played: new Set(),
             history: [],
             wantPlay: false,
+            pressStartedAt: null,
+            pressMethod: "",
             loadedFile: "",
             loading: false,
             loadSeq: 0,
@@ -1146,6 +1192,16 @@ export const MUSIC_PLAYER_SCRIPT = `
               objectUrls[file] = url;
               return url;
             });
+          }
+          // The same, synchronously, when the blob is already in:
+          // returns null while the track still needs the network.
+          function objectUrlForSync(file) {
+            if (objectUrls[file]) return objectUrls[file];
+            var blob = cachedBlob(file);
+            if (!blob) return null;
+            var url = URL.createObjectURL(blob);
+            objectUrls[file] = url;
+            return url;
           }
 
           function el(tag, className, text) {
@@ -1211,6 +1267,7 @@ export const MUSIC_PLAYER_SCRIPT = `
             button.addEventListener("click", function () {
               state.wantPlay = true;
               trackMusicPlay("list");
+              notePlayIntent("list");
               startTrack(i);
             });
             item.appendChild(button);
@@ -1299,6 +1356,20 @@ export const MUSIC_PLAYER_SCRIPT = `
               syncPlayButton();
               return;
             }
+            // A cached track is attached and started
+            // synchronously, still inside the tap handler's call
+            // stack: iOS Safari refuses a play() that only happens
+            // after a promise resolves, which is why the first
+            // press used to fail there.
+            var syncUrl = objectUrlForSync(file);
+            if (syncUrl) {
+              state.loadedFile = file;
+              audio.src = syncUrl;
+              if (state.wantPlay) tryPlay(audio);
+              syncPlayButton();
+              syncProgress();
+              return;
+            }
             state.loading = true;
             syncPlayButton();
             setStatus("");
@@ -1321,9 +1392,19 @@ export const MUSIC_PLAYER_SCRIPT = `
               .catch(function () {
                 if (state.destroyed || seq !== state.loadSeq) return;
                 state.loading = false;
+                state.pressStartedAt = null;
                 setStatus("音源を読み込めませんでした");
                 syncPlayButton();
               });
+          }
+
+          // A start intent (play button, list tap, next/prev,
+          // automatic advance) stamps the clock; when the element
+          // then reports 'playing', the gap is the wait the reader
+          // actually felt.
+          function notePlayIntent(method) {
+            state.pressStartedAt = performance.now();
+            state.pressMethod = method;
           }
 
           playButton.addEventListener("click", function () {
@@ -1334,6 +1415,7 @@ export const MUSIC_PLAYER_SCRIPT = `
             }
             state.wantPlay = true;
             trackMusicPlay("button");
+            notePlayIntent("button");
             if (state.loadedFile === tracks[state.index].file && audio.src) {
               tryPlay(audio);
             } else {
@@ -1342,6 +1424,7 @@ export const MUSIC_PLAYER_SCRIPT = `
           });
 
           nextButton.addEventListener("click", function () {
+            notePlayIntent("button");
             if (state.random && tracks.length > 1) {
               var others = tracks.map(function (_, i) { return i; }).filter(function (i) { return i !== state.index; });
               startTrack(pickRandom(others));
@@ -1351,6 +1434,7 @@ export const MUSIC_PLAYER_SCRIPT = `
           });
 
           prevButton.addEventListener("click", function () {
+            notePlayIntent("button");
             if (state.random) {
               var history = state.history;
               for (var k = history.length - 2; k >= 0; k -= 1) {
@@ -1402,6 +1486,11 @@ export const MUSIC_PLAYER_SCRIPT = `
             syncPlayButton();
             startBackgroundPrefetch();
           });
+          audio.addEventListener("playing", function () {
+            if (state.pressStartedAt == null) return;
+            trackMusicLatency(performance.now() - state.pressStartedAt, state.pressMethod || "button");
+            state.pressStartedAt = null;
+          });
           audio.addEventListener("pause", syncPlayButton);
           audio.addEventListener("timeupdate", syncProgress);
           audio.addEventListener("loadedmetadata", syncProgress);
@@ -1418,11 +1507,13 @@ export const MUSIC_PLAYER_SCRIPT = `
               played: state.played
             });
             if (plan.type === "replay") {
+              notePlayIntent("auto");
               audio.currentTime = 0;
               tryPlay(audio);
               return;
             }
             if (plan.type === "advance") {
+              notePlayIntent("auto");
               var next = state.random ? pickRandom(plan.candidates) : plan.candidates[0];
               if (plan.resetPlayed) state.played = new Set();
               state.wantPlay = true;
@@ -1443,7 +1534,26 @@ export const MUSIC_PLAYER_SCRIPT = `
           // appears, so the first press of the play button starts
           // playback almost immediately. The rest wait until
           // playback has actually started (see the play listener).
-          fetchTrackBlob(tracks[0].file).catch(function () {});
+          fetchTrackBlob(tracks[0].file)
+            .then(function () {
+              // performance.now() counts from page load, so this
+              // is the reader's full wait until the first press
+              // could play.
+              trackMusicReady(performance.now());
+              // Attach the warmed track right away, so the first
+              // press is a plain play() on a loaded element — the
+              // one form iOS Safari always honours. Skipped once
+              // the reader (or an earlier load) has moved on to
+              // another track.
+              if (state.destroyed || state.loadedFile !== "" || state.loadSeq !== 0) return;
+              var url = objectUrlForSync(tracks[0].file);
+              if (url) {
+                state.loadedFile = tracks[0].file;
+                audio.src = url;
+                syncProgress();
+              }
+            })
+            .catch(function () {});
 
           return {
             destroy: function () {
