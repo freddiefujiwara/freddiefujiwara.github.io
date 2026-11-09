@@ -107,6 +107,18 @@ export const hashHeadingText = (text) => {
   return `h-${(hash >>> 0).toString(16).padStart(8, "0")}`;
 };
 
+// Anchored entries (see expandAnchorMarkers) receive an anchor id
+// hashed from their title text, so one entry can be shared with a
+// fragment URL: /blog/<articleId>#item-xxxxxxxx
+export const hashItemText = (text) => {
+  let hash = 0x811c9dc5;
+  for (let i = 0; i < text.length; i += 1) {
+    hash ^= text.charCodeAt(i);
+    hash = Math.imul(hash, 0x01000193);
+  }
+  return `item-${(hash >>> 0).toString(16).padStart(8, "0")}`;
+};
+
 // Link targets inside an article: destinations under /blog keep the
 // reader circulating within the blog, so they stay in the same tab.
 // Everything else (other apps on this site, external sites) opens in
@@ -215,6 +227,61 @@ export const wrapLyricsBlocks = (markdown) => {
   return out.join("\n\n");
 };
 
+// An author can make an entry shareable by putting a paragraph that
+// contains only "[[アンカーリンク]]" after the entry (the full-width
+// bracket variant is accepted too, like the [[目次]] marker). The
+// marker binds to the most recent bold-only paragraph above it —
+// the entry's title: the title is rewritten with an anchor id
+// (hashed from its text, see hashItemText) and the marker itself is
+// replaced by a small "この項目へのリンク" line pointing at it, so
+// a reader can pick up the entry's fragment URL from the page. A
+// heading or a successful binding clears the candidate title, and a
+// marker with no title above it is dropped silently. Ids are unique
+// within one article: repeated titles gain "-2", "-3", ... suffixes.
+const ANCHOR_MARKER_PATTERN = /^(?:\[\[アンカーリンク\]\]|［［アンカーリンク］］)$/;
+const BOLD_ONLY_PATTERN = /^\*\*([^*]+)\*\*$/;
+
+export const expandAnchorMarkers = (markdown) => {
+  const blocks = String(markdown ?? "").split(/\n{2,}/);
+  const seen = new Map();
+  const out = [];
+  let candidateIndex = -1;
+  let candidateTitle = "";
+  blocks.forEach((block) => {
+    const trimmed = block.trim();
+    if (trimmed.startsWith("#")) {
+      candidateIndex = -1;
+      candidateTitle = "";
+      out.push(block);
+      return;
+    }
+    const bold = trimmed.match(BOLD_ONLY_PATTERN);
+    if (bold) {
+      candidateIndex = out.length;
+      candidateTitle = bold[1].trim();
+      out.push(block);
+      return;
+    }
+    if (ANCHOR_MARKER_PATTERN.test(trimmed)) {
+      if (candidateIndex < 0) {
+        out.push("");
+        return;
+      }
+      const count = (seen.get(candidateTitle) ?? 0) + 1;
+      seen.set(candidateTitle, count);
+      const base = hashItemText(candidateTitle);
+      const id = count === 1 ? base : `${base}-${count}`;
+      out[candidateIndex] = `<p id="${id}"><strong>${escapeHtmlText(candidateTitle)}</strong></p>`;
+      candidateIndex = -1;
+      candidateTitle = "";
+      out.push(`<p class="item-link"><a href="#${id}">この項目へのリンク</a></p>`);
+      return;
+    }
+    out.push(block);
+  });
+  return out.join("\n\n");
+};
+
 // Renders an article's markdown to HTML. Headings receive the
 // hashed id of their text; the second and later headings with the
 // same text gain a "-2", "-3", ... suffix so ids stay unique.
@@ -243,7 +310,7 @@ export const renderMarkdown = (markdown) => {
     const id = count === 1 ? base : `${base}-${count}`;
     return `<h${level} id="${id}">${text}</h${level}>\n`;
   };
-  return marked.parse(wrapLyricsBlocks(delimitBareUrls(markdown ?? "")), { renderer });
+  return marked.parse(expandAnchorMarkers(wrapLyricsBlocks(delimitBareUrls(markdown ?? ""))), { renderer });
 };
 
 // Builds an article's table of contents from its rendered HTML.
@@ -628,6 +695,9 @@ const PAGE_CSS = `
       article th, article td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; }
       article th { background: var(--surface); }
       .article-content h2, .article-content h3 { scroll-margin-top: 72px; }
+      .article-content p[id^="item-"] { scroll-margin-top: 72px; }
+      article .item-link { font-size: 0.8rem; }
+      article .item-link a { color: var(--ink-3); }
 
       /* OGP link cards, emitted by blog-gas for standalone link paragraphs */
       article a.link-card {
