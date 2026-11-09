@@ -85,7 +85,7 @@ describe('ページ構造の不変条件', () => {
   it('ヒーローの最初の数字は集計対象を添えた延べフォロワー数で、差し替え先と静的な初期値を持つ', () => {
     const first = document.querySelector('.stats .stat');
     expect(first.querySelector('.label').textContent.trim()).toBe(
-      'SNS（Instagram、YouTube、Threads）延べフォロワー数',
+      'SNS（Instagram、YouTube、Threads、X）延べフォロワー数',
     );
     expect(first.querySelector('.sns-total-label')).not.toBeNull();
     const total = first.querySelector('.sns-follower-total');

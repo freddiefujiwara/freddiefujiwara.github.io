@@ -2068,6 +2068,10 @@ const extractFollowersBreakdown = (data) => {
       data.threads && typeof data.threads === "object"
         ? number(data.threads.followers)
         : null,
+    x:
+      data.x && typeof data.x === "object"
+        ? number(data.x.followers)
+        : null,
   };
   return Object.values(breakdown).some((value) => value !== null)
     ? breakdown
@@ -2079,8 +2083,8 @@ const extractFollowersBreakdown = (data) => {
 // Instagram-only metrics the hero shows alongside it. The GAS
 // side returns a flat response with one object per network
 // (youtube.subscribers, instagram.freddiefujiwara /
-// instagram.anemone_cancer, threads.followers); networks that are
-// missing or null are left out of the sum. A ready-made `total`
+// instagram.anemone_cancer, threads.followers, x.followers);
+// networks that are missing or null are left out of the sum. A ready-made `total`
 // wins when present, and the older flat `counts` map is still
 // accepted for backward compatibility. Anything else is rejected
 // as malformed so a spec drift can never publish a wrong (or
@@ -2131,6 +2135,9 @@ export const fetchSnsCounts = async (apiUrl, fetchImpl = fetch) => {
       }
       if (data.youtube && typeof data.youtube === "object") {
         add(data.youtube.subscribers);
+      }
+      if (data.x && typeof data.x === "object") {
+        add(data.x.followers);
       }
     }
     if (seen) {
