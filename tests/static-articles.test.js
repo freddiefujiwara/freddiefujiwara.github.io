@@ -993,7 +993,7 @@ describe('sns-count.json の生成', () => {
       media_count: 2420,
       views_30d: 576645,
       non_follower_pct: 94.5,
-      followers_breakdown: { instagram: 1991, youtube: 9, threads: null },
+      followers_breakdown: { instagram: 1991, youtube: 9, threads: null, x: null },
       updated_at: '2026-11-08T19:25:52.088Z',
     });
   });
@@ -1024,8 +1024,36 @@ describe('sns-count.json の生成', () => {
       media_count: 2420,
       views_30d: 580289,
       non_follower_pct: 94.5,
-      followers_breakdown: { instagram: 1998, youtube: 10, threads: 252 },
+      followers_breakdown: { instagram: 1998, youtube: 10, threads: 252, x: null },
       updated_at: '2026-11-08T23:46:47.185Z',
+    });
+  });
+
+  it('fetchSnsCounts はフラットな応答の X フォロワー数も合計と内訳に入れる', async () => {
+    const fetchImpl = async () =>
+      okResponse({
+        ok: true,
+        action: 'sns_counts',
+        collected_at: '2026-11-10T00:00:00.000Z',
+        youtube: { subscribers: 10 },
+        instagram: {
+          freddiefujiwara: 2000,
+          anemone_cancer: null,
+          media_count: 2420,
+          views_30d: 580289,
+          non_follower_pct: 94.5,
+          insights_error: null,
+        },
+        threads: { followers: 252 },
+        x: { followers: 321 },
+      });
+    const payload = await fetchSnsCounts('https://example.invalid/exec', fetchImpl);
+    expect(payload.total).toBe(2000 + 10 + 252 + 321);
+    expect(payload.followers_breakdown).toEqual({
+      instagram: 2000,
+      youtube: 10,
+      threads: 252,
+      x: 321,
     });
   });
 
@@ -1149,7 +1177,7 @@ describe('sns-count.json の生成', () => {
       media_count: 2404,
       views_30d: 823456,
       non_follower_pct: 96.3,
-      followers_breakdown: { instagram: 1988, youtube: null, threads: null },
+      followers_breakdown: { instagram: 1988, youtube: null, threads: null, x: null },
       updated_at: 't1',
     });
   });
@@ -1261,7 +1289,7 @@ describe('sns-count.json の生成', () => {
       // 59人は合計には入るが内訳には含めない）。
       expect(JSON.parse(readFileSync(file, 'utf8'))).toEqual({
         total: 2059,
-        followers_breakdown: { instagram: 1991, youtube: 9, threads: null },
+        followers_breakdown: { instagram: 1991, youtube: 9, threads: null, x: null },
         updated_at: '2026-11-08T19:25:52.088Z',
       });
     } finally {

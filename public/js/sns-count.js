@@ -110,6 +110,7 @@
           ["instagram", "Instagram"],
           ["youtube", "YouTube"],
           ["threads", "Threads"],
+          ["x", "X"],
         ];
         var names = [];
         networks.forEach(function (pair) {
