@@ -28,6 +28,7 @@ jobs:
       env:
         GA_GAS_EXEC_URL: ${{ secrets.GA_GAS_EXEC_URL }}
         ZE_OGP_CACHE_URL: ${{ secrets.ZE_OGP_CACHE_URL }}
+        STATIC_OGP_WAIT_MS: "0"
       run: |
         npm install
         node scripts/generate-static-articles.mjs
