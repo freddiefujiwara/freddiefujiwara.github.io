@@ -1838,7 +1838,11 @@ const FETCH_TIMEOUT_MS = 300_000;
 // affected articles. 12 minutes covers the batch interval (10 min)
 // plus the backend's 10-minute caches with margin.
 export const OGP_REFETCH_WAIT_MS = 720_000;
-export const ZE_OGP_CACHE_URL = "https://a.ze.gs/ogp-cache.json";
+
+// The home server's ogp-cache.json URL is passed in by the caller
+// (read from the ZE_OGP_CACHE_URL environment variable, a GitHub
+// Secret in CI): the home server's host name is never written into
+// this repository, the same rule as GA_GAS_EXEC_URL below.
 
 const fetchJsonOnce = async (url, fetchImpl) => {
   const response = await fetchImpl(url, {
@@ -1890,8 +1894,8 @@ export const findUncardedUrls = (markdown) => {
 
 // The home server's published fetch results ({ entries: { url:
 // { status, ... } } }); status "ok" carries title/image/description.
-export const fetchZeOgpEntries = async (fetchImpl = fetch) => {
-  const payload = await fetchJsonOnce(ZE_OGP_CACHE_URL, fetchImpl);
+export const fetchZeOgpEntries = async (cacheUrl, fetchImpl = fetch) => {
+  const payload = await fetchJsonOnce(cacheUrl, fetchImpl);
   if (!payload || typeof payload.entries !== "object" || payload.entries === null) {
     throw new Error("Malformed ogp-cache.json");
   }
@@ -1921,14 +1925,19 @@ export const refetchUncardedArticles = async ({
   log = console.log,
   waitMs = OGP_REFETCH_WAIT_MS,
   sleepImpl = (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
+  zeOgpCacheUrl = "",
 } = {}) => {
   if (!waitMs || waitMs <= 0) return items;
   const uncardedByIndex = items.map((item) => findUncardedUrls(item.payload.markdown));
   const allUncarded = [...new Set(uncardedByIndex.flat())];
   if (!allUncarded.length) return items;
+  if (!zeOgpCacheUrl) {
+    log("ogp refetch: skipped (ZE_OGP_CACHE_URL is not configured)");
+    return items;
+  }
   let zeEntries;
   try {
-    zeEntries = await fetchZeOgpEntries(fetchImpl);
+    zeEntries = await fetchZeOgpEntries(zeOgpCacheUrl, fetchImpl);
   } catch (error) {
     log(`ogp refetch: skipped (ze cache unreadable: ${error.message})`);
     return items;
@@ -2406,6 +2415,7 @@ export const generateStaticArticles = async ({
   musicCountApiUrl = process.env.GA_GAS_EXEC_URL || "",
   ogpWaitMs = OGP_REFETCH_WAIT_MS,
   sleepImpl = (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
+  zeOgpCacheUrl = process.env.ZE_OGP_CACHE_URL || "",
 } = {}) => {
   // The hero link target: the blog's latest article id (the first id
   // in the list response). A failed list fetch must not block the
@@ -2447,6 +2457,7 @@ export const generateStaticArticles = async ({
     log,
     waitMs: ogpWaitMs,
     sleepImpl,
+    zeOgpCacheUrl,
   });
   const pages = items.map(({ article, payload }) => ({
     article,
