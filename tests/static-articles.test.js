@@ -12,6 +12,7 @@ import { fileURLToPath } from 'node:url';
 import { JSDOM } from 'jsdom';
 import {
   ARTICLES,
+  addItemLinks,
   buildDescription,
   buildTagChipsHtml,
   buildTocHtml,
@@ -112,6 +113,77 @@ describe('冒頭のエピソード（intro）', () => {
     for (const line of stuff.intro) {
       expect(page).not.toContain(line);
     }
+  });
+});
+
+describe('商品へのリンク（itemLinkLabel）', () => {
+  it('addItemLinks は1項目だけの番号リストに id とリンク行を付ける', () => {
+    const html = '<ol>\n<li>シャープ</li>\n</ol>\n<p>カード</p>';
+    const out = addItemLinks(html, 'この商品へのリンク');
+    const id = hashItemText('シャープ');
+    expect(out).toContain(`<li id="${id}">シャープ</li>`);
+    expect(out).toContain(
+      `<p class="item-link"><a href="#${id}">この商品へのリンク</a></p>`,
+    );
+    // リンク行はタイトル直後、カードより前
+    expect(out.indexOf('item-link')).toBeLessThan(out.indexOf('カード'));
+  });
+
+  it('addItemLinks は start 属性を保持する', () => {
+    const html = '<ol start="2">\n<li>バッファロー</li>\n</ol>';
+    const out = addItemLinks(html, 'この商品へのリンク');
+    expect(out).toContain('<ol start="2">');
+    expect(out).toContain(`<li id="${hashItemText('バッファロー')}">`);
+  });
+
+  it('addItemLinks は同じタイトルが繰り返されると -2, -3 を付ける', () => {
+    const html =
+      '<ol>\n<li>ダイソー</li>\n</ol>\n<ol start="2">\n<li>ダイソー</li>\n</ol>';
+    const out = addItemLinks(html, 'この商品へのリンク');
+    const base = hashItemText('ダイソー');
+    expect(out).toContain(`<li id="${base}">`);
+    expect(out).toContain(`<li id="${base}-2">`);
+  });
+
+  it('addItemLinks は複数項目を持つリストには付けない', () => {
+    const html = '<ol>\n<li>ひとつ</li>\n<li>ふたつ</li>\n</ol>';
+    expect(addItemLinks(html, 'この商品へのリンク')).toBe(html);
+  });
+
+  it('持ち物リストのページでは各商品にリンクが付き、説明文には混ざらない', () => {
+    const stuff = ARTICLES.find((a) => a.slug === 'list-of-stuff');
+    const page = renderStaticArticlePage({
+      article: stuff,
+      payload: {
+        title: '2021-02-16 持ち物リスト',
+        markdown:
+          '## 【電】家電にまつわる物\n\n1. シャープ\n\nhttps://example.com/item\n\nコメントです。',
+        tags: [],
+      },
+      year: 2026,
+    });
+    const id = hashItemText('シャープ');
+    expect(page).toContain(`<li id="${id}">シャープ</li>`);
+    expect(page).toContain(
+      `<p class="item-link"><a href="#${id}">この商品へのリンク</a></p>`,
+    );
+    const description =
+      page.match(/<meta name="description" content="([^"]*)"/)?.[1] ?? '';
+    expect(description).not.toContain('この商品へのリンク');
+  });
+
+  it('itemLinkLabel のないページには商品リンクは付かない', () => {
+    const page = renderStaticArticlePage({
+      article: ARTICLES[0],
+      payload: {
+        title: 'タイトル',
+        markdown: '1. シャープ\n\nコメントです。',
+        tags: [],
+      },
+      year: 2026,
+    });
+    expect(page).not.toContain('<p class="item-link">');
+    expect(page).not.toContain('<li id="item-');
   });
 });
 

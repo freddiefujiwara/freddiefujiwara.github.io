@@ -71,6 +71,10 @@ export const ARTICLES = [
       "持ち物の記録は、基本的には楽天ROOMで付けています。ミニマリストを目指してから、なくし物が本当になくなりました。",
       "歯ブラシから冷蔵庫まで、私の持ち物はすべてここに記載しています。",
     ],
+    // Every item on this page gets a shareable anchor plus a small
+    // link line under its title (see addItemLinks), like the bucket
+    // list's [[アンカーリンク]] entries but applied automatically.
+    itemLinkLabel: "この商品へのリンク",
   },
   {
     slug: "music",
@@ -287,6 +291,51 @@ export const expandAnchorMarkers = (markdown) => {
     out.push(block);
   });
   return out.join("\n\n");
+};
+
+// The generated possessions article lists every item as a one-item
+// numbered list (its title), followed by the item's link card and
+// comment. Pages whose ARTICLES entry sets itemLinkLabel receive the
+// same shareable anchors the bucket list's [[アンカーリンク]]
+// markers produce, but automatically for every item: the <li> gains
+// an id hashed from the item's title text (see hashItemText) and a
+// small link line follows the title block, so a reader can pick up
+// the item's fragment URL from the page. Ids are unique within one
+// page: repeated titles gain "-2", "-3", ... suffixes, mirroring
+// expandAnchorMarkers. Lists holding more than one item are left
+// alone — only the one-title-per-list shape counts as an item.
+const ITEM_TITLE_PATTERN = /<ol( start="\d+")?>\n<li>([\s\S]*?)<\/li>\n<\/ol>/g;
+
+const unescapeHtmlText = (text) =>
+  text
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&amp;/g, "&");
+
+export const addItemLinks = (html, label) => {
+  const seen = new Map();
+  return String(html ?? "").replace(
+    ITEM_TITLE_PATTERN,
+    (match, start, inner) => {
+      // A list holding several items also matches this shape (the
+      // inner span then crosses </li><li> boundaries); those are not
+      // item titles, so leave them untouched.
+      if (/<\/?li[\s>]/i.test(inner)) {
+        return match;
+      }
+      const title = unescapeHtmlText(inner.replace(/<[^>]*>/g, "")).trim();
+      if (!title) {
+        return match;
+      }
+      const count = (seen.get(title) ?? 0) + 1;
+      seen.set(title, count);
+      const base = hashItemText(title);
+      const id = count === 1 ? base : `${base}-${count}`;
+      return `<ol${start ?? ""}>\n<li id="${id}">${inner}</li>\n</ol>\n<p class="item-link"><a href="#${id}">${escapeHtmlText(label)}</a></p>`;
+    },
+  );
 };
 
 // Renders an article's markdown to HTML. Headings receive the
@@ -1691,8 +1740,14 @@ export const renderStaticArticlePage = ({ article, payload, year, latestArticleI
   // blog's article page carries the payload title (leading date
   // included, no decoration) in its <title>, og:title and h1 alike.
   const title = String(payload.title ?? "");
-  const bodyHtml = renderArticleBody(payload.markdown);
-  const description = buildDescription(bodyHtml);
+  const renderedBody = renderArticleBody(payload.markdown);
+  // Pages with itemLinkLabel (the possessions list) get a shareable
+  // anchor on every item; the meta description is built from the
+  // plain body so the link labels stay out of it.
+  const bodyHtml = article.itemLinkLabel
+    ? addItemLinks(renderedBody, article.itemLinkLabel)
+    : renderedBody;
+  const description = buildDescription(renderedBody);
   const pageUrl = `${SITE_ORIGIN}/${article.slug}`;
   const ogImage = `${SITE_ORIGIN}/blog/ogp/${article.docId}.png`;
   const chips = buildTagChipsHtml(payload.tags);
