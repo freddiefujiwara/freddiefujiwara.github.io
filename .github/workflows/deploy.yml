@@ -27,6 +27,7 @@ jobs:
       continue-on-error: true
       env:
         GA_GAS_EXEC_URL: ${{ secrets.GA_GAS_EXEC_URL }}
+        ZE_OGP_CACHE_URL: ${{ secrets.ZE_OGP_CACHE_URL }}
       run: |
         npm install
         node scripts/generate-static-articles.mjs
