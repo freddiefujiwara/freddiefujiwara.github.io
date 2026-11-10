@@ -300,6 +300,22 @@ describe('renderMarkdown のリンク', () => {
     expect(html).toContain('class="link-card-image"');
     expect(html).toContain('<span class="link-card-title">商品</span>');
   });
+
+  it('グレーアウト指定カード（is-grayout）はグレーアウト用の CSS がページに含まれる', () => {
+    const card =
+      '<a class="link-card is-grayout" href="https://example.jp/sub" target="_blank" rel="noopener noreferrer">' +
+      '<img class="link-card-image" src="https://example.jp/i.jpg" alt="">' +
+      '<span class="link-card-body"><span class="link-card-title">サービス</span>' +
+      '<span class="link-card-domain">example.jp</span></span></a>';
+    const page = renderStaticArticlePage({
+      article: ARTICLES.find((a) => a.slug === 'list-of-stuff'),
+      payload: { title: '持ち物リスト', markdown: `本文\n\n${card}` },
+      siteLastModified: '2026-11-11',
+    });
+    expect(page).toContain('class="link-card is-grayout"');
+    expect(page).toContain('article a.link-card.is-grayout { opacity: .55; }');
+    expect(page).toContain('article a.link-card.is-grayout .link-card-image { filter: grayscale(1); }');
+  });
 });
 
 describe('目次', () => {
