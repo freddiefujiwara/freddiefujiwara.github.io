@@ -764,9 +764,9 @@ const PAGE_CSS = `
         overflow-wrap: normal; line-height: 1.5;
       }
       article a.link-card:hover { border-color: var(--accent); color: inherit; }
-      /* cancelled entries (blog-gas adds .is-cancelled) are grayed out */
-      article a.link-card.is-cancelled { opacity: .55; }
-      article a.link-card.is-cancelled .link-card-image { filter: grayscale(1); }
+      /* cards flagged .is-grayout by blog-gas are grayed out */
+      article a.link-card.is-grayout { opacity: .55; }
+      article a.link-card.is-grayout .link-card-image { filter: grayscale(1); }
       article .link-card-image { width: 112px; height: 112px; object-fit: cover; border-radius: 8px; flex-shrink: 0; }
       article .link-card-body { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
       article .link-card-title {
