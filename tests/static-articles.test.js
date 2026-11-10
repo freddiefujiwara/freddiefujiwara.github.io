@@ -23,6 +23,12 @@ import {
   fetchMusicCount,
   fetchSnsCounts,
   fetchTopArticles,
+  fetchZeOgpEntries,
+  findUncardedUrls,
+  refetchUncardedArticles,
+  waitWorthyUncardedUrls,
+  OGP_REFETCH_WAIT_MS,
+  ZE_OGP_CACHE_URL,
   hashHeadingText,
   hashItemText,
   normalizeTagList,
@@ -1424,5 +1430,174 @@ describe('sns-count.json の生成', () => {
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
+  });
+});
+
+describe('リンクカードの2回取り（OGP再取得）', () => {
+  const okResponse = (body) => ({
+    ok: true,
+    status: 200,
+    json: async () => body,
+  });
+  const SHOP_URL = 'https://tabelog.com/saitama/A1101/A110101/11000180/';
+  const cardedMarkdown = [
+    '本文です',
+    '',
+    `<a class="link-card" href="${SHOP_URL}"><span class="link-card-title">食堂 多万里</span></a>`,
+  ].join('\n');
+  const uncardedMarkdown = ['本文です', '', SHOP_URL].join('\n');
+  const item = (slug, docId, markdown) => ({
+    article: { slug, docId },
+    payload: { title: `Title ${slug}`, markdown },
+  });
+
+  it('findUncardedUrls は単独行のURLだけを拾い、カード化済みや文中のURLは拾わない', () => {
+    const markdown = [
+      '本文です',
+      '',
+      SHOP_URL,
+      '',
+      `<a class="link-card" href="https://example.com/carded">card</a>`,
+      '',
+      '[ラベル](https://example.com/labeled) と文中の https://example.com/inline です',
+      '',
+      `  ${SHOP_URL}  `,
+    ].join('\n');
+    expect(findUncardedUrls(markdown)).toEqual([SHOP_URL]);
+    expect(findUncardedUrls(cardedMarkdown)).toEqual([]);
+    expect(findUncardedUrls('')).toEqual([]);
+  });
+
+  it('fetchZeOgpEntries は entries を返し、形が違う応答はエラーにする', async () => {
+    const seen = [];
+    const fetchImpl = async (url) => {
+      seen.push(url);
+      return okResponse({ version: 1, entries: { [SHOP_URL]: { status: 'ok' } } });
+    };
+    const entries = await fetchZeOgpEntries(fetchImpl);
+    expect(seen).toEqual([ZE_OGP_CACHE_URL]);
+    expect(entries[SHOP_URL].status).toBe('ok');
+    await expect(
+      fetchZeOgpEntries(async () => okResponse({ version: 1 })),
+    ).rejects.toThrow('Malformed');
+  });
+
+  it('waitWorthyUncardedUrls は未試行と取得済みだけを待つ価値ありとする', () => {
+    const entries = {
+      'https://example.com/ok': { status: 'ok' },
+      'https://example.com/err': { status: 'error' },
+      'https://example.com/none': { status: 'no_ogp' },
+    };
+    expect(
+      waitWorthyUncardedUrls(
+        [
+          'https://example.com/unknown',
+          'https://example.com/ok',
+          'https://example.com/err',
+          'https://example.com/none',
+        ],
+        entries,
+      ),
+    ).toEqual(['https://example.com/unknown', 'https://example.com/ok']);
+  });
+
+  it('refetchUncardedArticles は待ってから対象記事だけを取り直す', async () => {
+    const items = [item('map', 'doc-map', uncardedMarkdown), item('music', 'doc-music', cardedMarkdown)];
+    const fetchImpl = async (url) => {
+      if (url === ZE_OGP_CACHE_URL) return okResponse({ version: 1, entries: {} });
+      if (url.includes('id=doc-map')) {
+        return okResponse({ title: 'Title map', markdown: cardedMarkdown });
+      }
+      throw new Error(`unexpected fetch: ${url}`);
+    };
+    const sleeps = [];
+    const updated = await refetchUncardedArticles({
+      items,
+      fetchImpl,
+      log: () => {},
+      waitMs: 1234,
+      sleepImpl: async (ms) => { sleeps.push(ms); },
+    });
+    expect(sleeps).toEqual([1234]);
+    expect(updated[0].payload.markdown).toBe(cardedMarkdown);
+    expect(updated[1]).toBe(items[1]);
+  });
+
+  it('refetchUncardedArticles は ze が取得済みでも取り直す（取込待ちの解消）', async () => {
+    const items = [item('map', 'doc-map', uncardedMarkdown)];
+    const fetchImpl = async (url) => {
+      if (url === ZE_OGP_CACHE_URL) {
+        return okResponse({ version: 1, entries: { [SHOP_URL]: { status: 'ok', title: '食堂 多万里' } } });
+      }
+      return okResponse({ title: 'Title map', markdown: cardedMarkdown });
+    };
+    const updated = await refetchUncardedArticles({
+      items,
+      fetchImpl,
+      log: () => {},
+      waitMs: 10,
+      sleepImpl: async () => {},
+    });
+    expect(updated[0].payload.markdown).toBe(cardedMarkdown);
+  });
+
+  it('refetchUncardedArticles は ze が失敗済みのURLだけなら待たない', async () => {
+    const items = [item('map', 'doc-map', uncardedMarkdown)];
+    const fetchImpl = async (url) => {
+      if (url === ZE_OGP_CACHE_URL) {
+        return okResponse({ version: 1, entries: { [SHOP_URL]: { status: 'error', error: 'http_403' } } });
+      }
+      throw new Error('must not refetch');
+    };
+    const sleeps = [];
+    const updated = await refetchUncardedArticles({
+      items,
+      fetchImpl,
+      log: () => {},
+      waitMs: 10,
+      sleepImpl: async (ms) => { sleeps.push(ms); },
+    });
+    expect(sleeps).toEqual([]);
+    expect(updated).toBe(items);
+  });
+
+  it('refetchUncardedArticles は未カードURLが無い・zeキャッシュが読めない・waitMs=0 なら何もしない', async () => {
+    const cardedItems = [item('music', 'doc-music', cardedMarkdown)];
+    const noFetch = async () => { throw new Error('must not be called'); };
+    expect(
+      await refetchUncardedArticles({ items: cardedItems, fetchImpl: noFetch, log: () => {}, sleepImpl: noFetch }),
+    ).toBe(cardedItems);
+
+    const items = [item('map', 'doc-map', uncardedMarkdown)];
+    const brokenZe = async () => ({ ok: false, status: 500, json: async () => ({}) });
+    expect(
+      await refetchUncardedArticles({ items, fetchImpl: brokenZe, log: () => {}, sleepImpl: noFetch }),
+    ).toBe(items);
+    expect(
+      await refetchUncardedArticles({ items, fetchImpl: noFetch, log: () => {}, waitMs: 0, sleepImpl: noFetch }),
+    ).toBe(items);
+  });
+
+  it('refetchUncardedArticles は取り直しに失敗したら1回目を保持する', async () => {
+    const items = [item('map', 'doc-map', uncardedMarkdown)];
+    let articleFetches = 0;
+    const fetchImpl = async (url) => {
+      if (url === ZE_OGP_CACHE_URL) return okResponse({ version: 1, entries: {} });
+      articleFetches += 1;
+      return { ok: false, status: 500, json: async () => ({}) };
+    };
+    const updated = await refetchUncardedArticles({
+      items,
+      fetchImpl,
+      log: () => {},
+      waitMs: 10,
+      sleepImpl: async () => {},
+    });
+    expect(articleFetches).toBe(2); // fetchArticle retries once
+    expect(updated[0].payload.markdown).toBe(uncardedMarkdown);
+  });
+
+  it('OGP_REFETCH_WAIT_MS はバッチ間隔とキャッシュTTLより長い', () => {
+    expect(OGP_REFETCH_WAIT_MS).toBeGreaterThan(600_000);
   });
 });
