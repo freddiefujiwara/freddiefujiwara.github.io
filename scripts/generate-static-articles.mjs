@@ -1827,6 +1827,19 @@ ${FALLBACK_SCRIPT}${musicScript}    <script src="/js/music-count.js"></script>
 
 const FETCH_TIMEOUT_MS = 300_000;
 
+// Link cards for sites the blog backend cannot fetch directly
+// (e.g. tabelog) are resolved asynchronously by the home server:
+// the first conversion only *requests* the fetch, a batch on the
+// server fetches within 10 minutes, and a later conversion imports
+// the result and produces the card. A static page generated inside
+// that window would bake in the plain link until the next
+// regeneration (6 hours later), so when a fetched article still
+// contains uncarded URLs, generation waits once and refetches the
+// affected articles. 12 minutes covers the batch interval (10 min)
+// plus the backend's 10-minute caches with margin.
+export const OGP_REFETCH_WAIT_MS = 720_000;
+export const ZE_OGP_CACHE_URL = "https://a.ze.gs/ogp-cache.json";
+
 const fetchJsonOnce = async (url, fetchImpl) => {
   const response = await fetchImpl(url, {
     redirect: "follow",
@@ -1859,6 +1872,93 @@ export const fetchArticle = async (docId, fetchImpl = fetch) => {
     }
   }
   throw lastError;
+};
+
+// URLs that blog-gas could not turn into link cards stay in the
+// markdown as a bare URL on its own line (a carded URL becomes a
+// one-line <a class="link-card" ...> block instead).
+export const findUncardedUrls = (markdown) => {
+  const urls = new Set();
+  String(markdown ?? "")
+    .split("\n")
+    .forEach((line) => {
+      const trimmed = line.trim();
+      if (/^https?:\/\/\S+$/.test(trimmed)) urls.add(trimmed);
+    });
+  return [...urls];
+};
+
+// The home server's published fetch results ({ entries: { url:
+// { status, ... } } }); status "ok" carries title/image/description.
+export const fetchZeOgpEntries = async (fetchImpl = fetch) => {
+  const payload = await fetchJsonOnce(ZE_OGP_CACHE_URL, fetchImpl);
+  if (!payload || typeof payload.entries !== "object" || payload.entries === null) {
+    throw new Error("Malformed ogp-cache.json");
+  }
+  return payload.entries;
+};
+
+// Of the uncarded URLs, only some are worth waiting for: ones the
+// home server has not tried yet (the first conversion just
+// requested them) and ones it already has data for (a refetch lets
+// blog-gas import it). A URL the server already failed on will not
+// be retried for hours, so waiting would change nothing.
+export const waitWorthyUncardedUrls = (urls, zeEntries) =>
+  urls.filter((url) => {
+    const entry = zeEntries[url];
+    if (!entry) return true;
+    return entry.status === "ok";
+  });
+
+// Second-chance pass for link cards: when any fetched article has
+// uncarded URLs worth waiting for, wait once for the home server's
+// batch and the backend caches, then refetch the affected articles
+// and return the items with their payloads replaced. Any failure
+// keeps the first version — this pass must never break generation.
+export const refetchUncardedArticles = async ({
+  items,
+  fetchImpl = fetch,
+  log = console.log,
+  waitMs = OGP_REFETCH_WAIT_MS,
+  sleepImpl = (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
+} = {}) => {
+  if (!waitMs || waitMs <= 0) return items;
+  const uncardedByIndex = items.map((item) => findUncardedUrls(item.payload.markdown));
+  const allUncarded = [...new Set(uncardedByIndex.flat())];
+  if (!allUncarded.length) return items;
+  let zeEntries;
+  try {
+    zeEntries = await fetchZeOgpEntries(fetchImpl);
+  } catch (error) {
+    log(`ogp refetch: skipped (ze cache unreadable: ${error.message})`);
+    return items;
+  }
+  const worthy = waitWorthyUncardedUrls(allUncarded, zeEntries);
+  if (!worthy.length) {
+    log(
+      `ogp refetch: skipped (${allUncarded.length} uncarded URL(s) already known to have no OG data)`,
+    );
+    return items;
+  }
+  log(
+    `ogp refetch: waiting ${Math.round(waitMs / 1000)}s for ze to fetch ` +
+      `${worthy.length} URL(s), then refetching`,
+  );
+  await sleepImpl(waitMs);
+  const updated = [...items];
+  for (let i = 0; i < items.length; i += 1) {
+    if (!uncardedByIndex[i].some((url) => worthy.includes(url))) continue;
+    try {
+      const payload = await fetchArticle(items[i].article.docId, fetchImpl);
+      updated[i] = { article: items[i].article, payload };
+      log(`ogp refetch: refetched ${items[i].article.slug} (${payload.markdown.length} chars)`);
+    } catch (error) {
+      log(
+        `ogp refetch: refetch of ${items[i].article.slug} failed (${error.message}); keeping first version`,
+      );
+    }
+  }
+  return updated;
 };
 
 // Fetches the cumulative music play count from ga-gas's public
@@ -2304,6 +2404,8 @@ export const generateStaticArticles = async ({
   year = new Date().getFullYear(),
   log = console.log,
   musicCountApiUrl = process.env.GA_GAS_EXEC_URL || "",
+  ogpWaitMs = OGP_REFETCH_WAIT_MS,
+  sleepImpl = (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
 } = {}) => {
   // The hero link target: the blog's latest article id (the first id
   // in the list response). A failed list fetch must not block the
@@ -2324,7 +2426,7 @@ export const generateStaticArticles = async ({
     latestArticleId = null;
     blogTitles = null;
   }
-  const pages = [];
+  let items = [];
   for (const article of ARTICLES) {
     const started = Date.now();
     const payload = await fetchArticle(article.docId, fetchImpl);
@@ -2333,11 +2435,23 @@ export const generateStaticArticles = async ({
       `fetched ${article.slug}: "${payload.title}" ` +
         `(${payload.markdown.length} chars, ${seconds}s)`
     );
-    pages.push({
-      article,
-      html: renderStaticArticlePage({ article, payload, year, latestArticleId }),
-    });
+    items.push({ article, payload });
   }
+  // Link cards the backend resolves asynchronously (via the home
+  // server) may only exist after a wait; refetch those articles
+  // once so the cards are baked in now instead of at the next
+  // regeneration.
+  items = await refetchUncardedArticles({
+    items,
+    fetchImpl,
+    log,
+    waitMs: ogpWaitMs,
+    sleepImpl,
+  });
+  const pages = items.map(({ article, payload }) => ({
+    article,
+    html: renderStaticArticlePage({ article, payload, year, latestArticleId }),
+  }));
   const results = pages.map(({ article, html }) => {
     const dir = join(outDir, article.slug);
     const target = join(dir, "index.html");
@@ -2376,7 +2490,12 @@ export const generateStaticArticles = async ({
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const repoRoot = dirname(dirname(fileURLToPath(import.meta.url)));
   const outDir = process.argv[2] ?? join(repoRoot, "public");
-  generateStaticArticles({ outDir }).catch((error) => {
+  // STATIC_OGP_WAIT_MS=0 skips the link-card second-chance wait
+  // (e.g. for a quick manual regeneration).
+  const ogpWaitMs = process.env.STATIC_OGP_WAIT_MS
+    ? Number(process.env.STATIC_OGP_WAIT_MS)
+    : undefined;
+  generateStaticArticles({ outDir, ogpWaitMs }).catch((error) => {
     console.error(`Failed to generate static articles: ${error.message}`);
     process.exit(1);
   });
