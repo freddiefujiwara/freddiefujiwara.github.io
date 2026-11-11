@@ -47,6 +47,17 @@ describe('ページ構造の不変条件', () => {
     ]);
   });
 
+  it('フッターは4グループ（このサイト／SNS／口コミ／プロフィール・その他）に分かれている', () => {
+    const groups = [...document.querySelectorAll('footer .foot-group')];
+    expect(groups.map((g) => g.querySelector('.foot-group-title').textContent)).toEqual([
+      'このサイト',
+      'SNS',
+      '口コミ',
+      'プロフィール・その他',
+    ]);
+    expect(groups.map((g) => g.querySelectorAll('.foot-links a').length)).toEqual([4, 3, 4, 4]);
+  });
+
   it('JS が参照する id がすべて HTML に存在する', () => {
     // main.js の getElementById 呼び出しと、スパイ対象セクションの id 一覧
     const byId = [...mainJs.matchAll(/getElementById\("([^"]+)"\)/g)].map(

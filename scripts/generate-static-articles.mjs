@@ -555,39 +555,69 @@ ${items}
     </nav>`;
 };
 
-const FOOTER_LINKS = [
-  ["https://freddiefujiwara.com/", "トップ"],
-  ["https://freddiefujiwara.com/blog/", "ブログ"],
-  ["https://freddiefujiwara.com/list-of-stuff/", "持ち物"],
-  ["https://freddiefujiwara.com/bucket-list/", "バケットリスト"],
-  ["https://www.instagram.com/freddiefujiwara", "Instagram"],
-  ["https://www.facebook.com/freddiefujiwara", "Facebook"],
-  [
-    "https://www.google.com/maps/contrib/105456242747265663411/reviews",
-    "Googleマップの口コミ",
-  ],
-  [
-    "https://review.travel.rakuten.co.jp/reviewer/fumikazufujiwara",
-    "楽天トラベルの口コミ",
-  ],
-  ["https://tabelog.com/rvwr/zegenvs/", "食べログの口コミ"],
-  ["https://retty.me/user/50281/", "Rettyの口コミ"],
-  ["https://x.com/freddiefujiwara", "X"],
-  ["https://github.com/freddiefujiwara", "GitHub"],
-  ["https://linkedin.com/in/freddiefujiwara", "LinkedIn"],
-  ["https://youtrust.jp/users/freddiefujiwara", "YOUTRUST"],
-  ["https://fril.jp/shop/freddiefujiwara", "ラクマ"],
+const FOOTER_GROUPS = [
+  {
+    title: "このサイト",
+    links: [
+      ["https://freddiefujiwara.com/", "トップ"],
+      ["https://freddiefujiwara.com/blog/", "ブログ"],
+      ["https://freddiefujiwara.com/list-of-stuff/", "持ち物"],
+      ["https://freddiefujiwara.com/bucket-list/", "バケットリスト"],
+    ],
+  },
+  {
+    title: "SNS",
+    links: [
+      ["https://www.instagram.com/freddiefujiwara", "Instagram"],
+      ["https://x.com/freddiefujiwara", "X"],
+      ["https://www.facebook.com/freddiefujiwara", "Facebook"],
+    ],
+  },
+  {
+    title: "口コミ",
+    links: [
+      [
+        "https://www.google.com/maps/contrib/105456242747265663411/reviews",
+        "Googleマップの口コミ",
+      ],
+      [
+        "https://review.travel.rakuten.co.jp/reviewer/fumikazufujiwara",
+        "楽天トラベルの口コミ",
+      ],
+      ["https://tabelog.com/rvwr/zegenvs/", "食べログの口コミ"],
+      ["https://retty.me/user/50281/", "Rettyの口コミ"],
+    ],
+  },
+  {
+    title: "プロフィール・その他",
+    links: [
+      ["https://github.com/freddiefujiwara", "GitHub"],
+      ["https://linkedin.com/in/freddiefujiwara", "LinkedIn"],
+      ["https://youtrust.jp/users/freddiefujiwara", "YOUTRUST"],
+      ["https://fril.jp/shop/freddiefujiwara", "ラクマ"],
+    ],
+  },
 ];
 
 const buildFooterHtml = (year) => {
-  const links = FOOTER_LINKS.map(
-    ([href, label]) =>
-      `          <a href="${href}" target="_blank" rel="noopener">${label} <span class="arr">↗</span></a>`
-  ).join("\n");
+  const groups = FOOTER_GROUPS.map((group) => {
+    const links = group.links
+      .map(
+        ([href, label]) =>
+          `              <a href="${href}" target="_blank" rel="noopener">${label} <span class="arr">↗</span></a>`
+      )
+      .join("\n");
+    return `          <div class="foot-group">
+            <p class="foot-group-title">${group.title}</p>
+            <div class="foot-links">
+${links}
+            </div>
+          </div>`;
+  }).join("\n");
   return `<footer>
       <div class="wrap">
-        <div class="foot-links">
-${links}
+        <div class="foot-groups">
+${groups}
         </div>
         <p class="copy">© ${year} 藤原史和（Fumikazu Fujiwara）— freddiefujiwara.com</p>
       </div>
@@ -1074,6 +1104,9 @@ const PAGE_CSS = `
 
       /* ---------- footer (shared site chrome) ---------- */
       footer { margin-top: 56px; border-top: 1px solid var(--line); padding: 24px 0 46px; }
+      .foot-groups { display: flex; flex-wrap: wrap; gap: 16px 44px; margin-bottom: 22px; }
+      .foot-group-title { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em; color: var(--ink-3); margin: 0 0 8px; }
+      .foot-group .foot-links { margin-bottom: 0; }
       .foot-links { display: flex; flex-wrap: wrap; gap: 10px 22px; margin-bottom: 22px; }
       .foot-links a { color: var(--ink-2); font-size: 0.92rem; display: inline-flex; align-items: center; gap: 6px; }
       .foot-links a:hover { color: var(--accent); text-decoration: none; }
