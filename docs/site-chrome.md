@@ -284,10 +284,10 @@ a.hero-inner { /* ヒーローをリンクにする場合の共通指定 */
   - このサイト: トップ（https://freddiefujiwara.com/）/ ブログ（https://freddiefujiwara.com/blog/）/
     持ち物（https://freddiefujiwara.com/list-of-stuff/）/
     バケットリスト（https://freddiefujiwara.com/bucket-list/）
-  - 自作ツール: 学习（中国語の復習）（https://freddiefujiwara.com/xuexi/） / openapi-fetch（https://freddiefujiwara.com/openapi-fetch/） / md2img（Markdown to Image）（https://freddiefujiwara.com/md2img/） / portfolio-treemap（ポートフォリオ構成図）（https://freddiefujiwara.com/portfolio-treemap/） / dtgwt（デシジョンテーブル→Given/When/Then）（https://freddiefujiwara.com/dtgwt/） / node-qict（ペアワイズ法のテストケース生成）（https://freddiefujiwara.com/node-qict/） / smtc（状態遷移のテストケース生成）（https://freddiefujiwara.com/smtc/） / dtdt（デシジョンツリー→デシジョンテーブル）（https://freddiefujiwara.com/dtdt/）
   - SNS: Instagram / X / Facebook
   - 口コミ: Googleマップの口コミ / 楽天トラベルの口コミ / 食べログの口コミ / Rettyの口コミ
   - プロフィール・その他: GitHub / LinkedIn / YOUTRUST / ラクマ
+  - 自作ツール: 学习（中国語の復習）（https://freddiefujiwara.com/xuexi/） / openapi-fetch（https://freddiefujiwara.com/openapi-fetch/） / md2img（Markdown to Image）（https://freddiefujiwara.com/md2img/） / portfolio-treemap（ポートフォリオ構成図）（https://freddiefujiwara.com/portfolio-treemap/） / dtgwt（デシジョンテーブル→Given/When/Then）（https://freddiefujiwara.com/dtgwt/） / node-qict（ペアワイズ法のテストケース生成）（https://freddiefujiwara.com/node-qict/） / smtc（状態遷移のテストケース生成）（https://freddiefujiwara.com/smtc/） / dtdt（デシジョンツリー→デシジョンテーブル）（https://freddiefujiwara.com/dtdt/）
   （各リンクに ↗ つき、target="_blank" rel="noopener"）
 
 ## 6. favicon と OGP
