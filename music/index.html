@@ -178,6 +178,29 @@
       article th { background: var(--surface); }
       .article-content h2, .article-content h3 { scroll-margin-top: 72px; }
       .article-content p[id^="item-"] { scroll-margin-top: 72px; }
+
+      /* ---------- prev / next article links ---------- */
+      .article-nav {
+        display: flex; justify-content: space-between; align-items: center;
+        gap: 16px; margin-top: 40px; padding-top: 16px;
+        border-top: 1px solid var(--line);
+      }
+      .article-nav-link {
+        display: inline-flex; align-items: center; gap: 8px; min-width: 0;
+        color: var(--ink); text-decoration: none;
+      }
+      .article-nav-link:only-child { max-width: 100%; }
+      .article-nav-next { margin-left: auto; }
+      .article-nav-arrow { flex-shrink: 0; color: var(--accent); }
+      .article-nav-title {
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+      .article-nav-link:hover .article-nav-title {
+        color: var(--accent); text-decoration: underline;
+      }
+      @media (max-width: 768px) {
+        .article-nav-link { font-size: 0.8rem; }
+      }
       article .item-link { font-size: 0.8rem; }
       article .item-link a { color: var(--ink-3); }
 
@@ -632,6 +655,7 @@
 
 <p>曲になりそうな川口市の道や散歩道があれば、ぜひ教えてください。</p>
           </div>
+          <nav class="article-nav" aria-label="前後の記事"><a class="article-nav-link article-nav-prev" href="https://freddiefujiwara.com/blog/13jx2m400GXkY5vf4KJZQtFglwa4I0VtqtlFigtsFrTE" aria-label="前の記事: 7年ぶりに中国語を学び直す。最初のマンツーマンレッスンで感じたこと"><span class="article-nav-arrow" aria-hidden="true">←</span><span class="article-nav-title">7年ぶりに中国語を学び直す。最初のマンツーマンレッスンで感じたこと</span></a><a class="article-nav-link article-nav-next" href="https://freddiefujiwara.com/blog/1XSiPwsHceG9FwmaMYWWtfk-P72ZhmQuTcRkoBxPkoPk" aria-label="次の記事: 初の10万再生達成！川口ローカル情報の伸び方メモ"><span class="article-nav-title">初の10万再生達成！川口ローカル情報の伸び方メモ</span><span class="article-nav-arrow" aria-hidden="true">→</span></a></nav>
         </article>
       </div>
     </main>
