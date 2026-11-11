@@ -1,873 +1,107 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="color-scheme" content="light dark" />
-    <meta name="description" content="📍川口のリールを、地図にまとめました" />
-    <meta property="og:title" content="2026-10-27 川口のリールを、地図にまとめました" />
-    <meta property="og:description" content="📍川口のリールを、地図にまとめました" />
-    <meta property="og:url" content="https://freddiefujiwara.com/map" />
-    <meta property="og:type" content="article" />
-    <meta property="og:image" content="https://freddiefujiwara.com/blog/ogp/1bNigXcTT-1LSXjUYAlfFQuJPX6U7U3ELeWAfG5XIb58.png" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:site_name" content="藤原史和｜川口を歩くQAエンジニア" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content="https://freddiefujiwara.com/blog/ogp/1bNigXcTT-1LSXjUYAlfFQuJPX6U7U3ELeWAfG5XIb58.png" />
-    <link rel="canonical" href="https://freddiefujiwara.com/map" />
-    <link rel="icon" href="/favicon.ico" sizes="any" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <title>2026-10-27 川口のリールを、地図にまとめました</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <link rel="canonical" href="https://freddiefujiwara.com/blog/1bNigXcTT-1LSXjUYAlfFQuJPX6U7U3ELeWAfG5XIb58">
+    <title>川口のリールを、地図にまとめました｜藤原史和</title>
     <style>
       :root {
-        --bg: #fbfaf7;
-        --surface: #ffffff;
-        --ink: #221d16;
-        --ink-2: #5d5546;
-        --ink-3: #8a8071;
-        --line: #e3ddd0;
-        --accent: #b23a1f;
-        --accent-strong: #8f2a12;
-        --accent-soft: #f7e9e2;
         color-scheme: light dark;
       }
-      @media (prefers-color-scheme: dark) {
-        :root {
-          --bg: #17140f;
-          --surface: #211c15;
-          --ink: #f2ecdf;
-          --ink-2: #c2b8a4;
-          --ink-3: #948a77;
-          --line: #3a332a;
-          --accent: #ec7a52;
-          --accent-strong: #f0936f;
-          --accent-soft: #33231b;
-        }
-      }
-      * { box-sizing: border-box; }
-      html { scroll-behavior: smooth; scrollbar-gutter: stable; }
-      @media (prefers-reduced-motion: reduce) {
-        html { scroll-behavior: auto; }
+      * {
+        box-sizing: border-box;
       }
       body {
         margin: 0;
-        background: var(--bg);
-        color: var(--ink);
-        font-family: "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", sans-serif;
-        font-size: 16px;
-        line-height: 1.85;
-        -webkit-font-smoothing: antialiased;
-        -webkit-text-size-adjust: 100%;
-      }
-      a { color: var(--accent); text-decoration: none; }
-      a:hover { text-decoration: underline; }
-      .wrap { max-width: 820px; margin: 0 auto; padding: 0 20px; }
-
-      /* ---------- nav (shared site chrome) ---------- */
-      .site-nav {
-        position: sticky; top: 0; z-index: 50;
-        display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
-        padding: 0 clamp(16px, 4vw, 40px);
-        height: 56px;
-        background: color-mix(in srgb, var(--bg) 86%, transparent);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border-bottom: 1px solid var(--line);
-      }
-      .site-nav .brand {
-        justify-self: start;
-        font-family: "Shippori Mincho B1", "Hiragino Mincho ProN", "Yu Mincho", serif;
-        font-weight: 700; font-size: 15px;
-        color: var(--ink); letter-spacing: 0.04em; white-space: nowrap;
-        text-decoration: none;
-      }
-      .site-nav ul { justify-self: center; display: flex; gap: clamp(14px, 3vw, 30px); list-style: none; margin: 0; padding: 0; }
-      .site-nav ul a {
-        color: var(--ink-2); font-size: 13.5px; font-weight: 500; letter-spacing: 0.05em;
-        padding: 4px 0; border-bottom: 2px solid transparent; white-space: nowrap;
-        text-decoration: none;
-      }
-      .site-nav ul a:hover { color: var(--ink); }
-      .site-nav ul a.active { color: var(--accent); border-bottom-color: var(--accent); }
-      .music-play-count { color: var(--accent); font-size: 11px; font-weight: 700; margin-left: 5px; }
-      .music-play-count:empty { display: none; }
-      @media (max-width: 560px) {
-        .site-nav { grid-template-columns: 1fr; }
-        .site-nav .brand { display: none; }
-        .site-nav ul { justify-self: stretch; width: 100%; justify-content: space-between; gap: 6px; }
-        .site-nav ul a { font-size: 12px; letter-spacing: 0.02em; }
-        .site-nav li.nav-section { display: none; }
-      }
-
-      /* ---------- hero (the blog's band) ---------- */
-      .hero {
-        position: relative; display: flex; align-items: flex-end;
-        min-height: 300px; color: #fdfbf7; overflow: hidden;
-        background: #241a12 url(https://freddiefujiwara.com/assets/hero-koinobori.jpg) center 38% / cover no-repeat;
-      }
-      .hero::after {
-        content: ""; position: absolute; inset: 0;
-        background: linear-gradient(to top, rgba(16, 11, 6, 0.88) 0%, rgba(16, 11, 6, 0.45) 45%, rgba(16, 11, 6, 0.15) 75%);
-      }
-      .hero-inner {
-        position: relative; z-index: 2; width: 100%;
-        max-width: 820px; margin: 0 auto; padding: 96px 20px 36px;
-      }
-      a.hero-inner {
-        color: inherit;
-        text-decoration: none;
-        cursor: pointer;
-      }
-      .hero-place {
-        display: inline-flex; align-items: center; gap: 10px;
-        font-size: 12px; letter-spacing: 0.22em; font-weight: 700; margin: 0 0 14px;
-      }
-      .hero-place::before { content: ""; width: 34px; height: 2px; background: #f0764f; }
-      .hero h1 {
-        margin: 0;
-        font-family: "Shippori Mincho B1", "Hiragino Mincho ProN", "Yu Mincho", serif;
-        font-weight: 800; letter-spacing: 0.03em; line-height: 1.35;
-      }
-      .hero h1 .h1-sep { display: none; }
-      .hero h1 .h1-name { display: block; font-size: clamp(2rem, 6vw, 2.9rem); }
-      .hero h1 .h1-role {
-        display: block; font-size: clamp(1.05rem, 3.4vw, 1.45rem);
-        font-weight: 700; letter-spacing: 0.06em; margin-top: 10px;
-      }
-
-      /* ---------- article (the blog's typography) ---------- */
-      main .wrap { padding-top: 28px; }
-      article { line-height: 1.9; }
-      article h1 {
-        font-family: "Shippori Mincho B1", "Hiragino Mincho ProN", "Yu Mincho", serif;
-        font-size: clamp(1.6rem, 4.5vw, 2.1rem); font-weight: 800;
-        letter-spacing: 0.02em; margin: 0 0 1.75rem; line-height: 1.45;
-      }
-      article p { margin: 0 0 1.4rem; }
-      article h2 {
-        font-family: "Shippori Mincho B1", "Hiragino Mincho ProN", "Yu Mincho", serif;
-        font-size: 1.45rem; font-weight: 700;
-        margin: 2.6rem 0 1rem; border-bottom: 1px solid var(--line);
-        padding-bottom: 0.5rem; line-height: 1.5;
-      }
-      article h3 { font-size: 1.15rem; font-weight: 700; margin: 2rem 0 0.75rem; line-height: 1.6; }
-      article a { color: var(--accent); text-decoration: underline; text-underline-offset: 4px; overflow-wrap: anywhere; }
-      article a:hover { color: var(--accent-strong); }
-      article img { max-width: 100%; height: auto; border-radius: 12px; }
-      article blockquote {
-        margin: 1.5rem 0; padding: 0.25rem 0 0.25rem 1.1rem;
-        border-left: 3px solid var(--accent); color: var(--ink-2);
-      }
-      article code { background: var(--accent-soft); border-radius: 6px; padding: 0.15em 0.4em; font-size: 0.88em; }
-      article pre {
-        background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
-        padding: 16px; overflow-x: auto; line-height: 1.6;
-      }
-      article pre code { background: transparent; padding: 0; }
-      article hr { border: none; border-top: 1px solid var(--line); margin: 2.5rem 0; }
-      article ul, article ol { margin: 0 0 1.4rem; padding-left: 1.5rem; }
-      article li { margin-bottom: 0.4rem; }
-      article table { border-collapse: collapse; margin-bottom: 1.5rem; width: 100%; }
-      article th, article td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; }
-      article th { background: var(--surface); }
-      .article-content h2, .article-content h3 { scroll-margin-top: 72px; }
-      .article-content p[id^="item-"] { scroll-margin-top: 72px; }
-
-      /* ---------- prev / next article links ---------- */
-      .article-nav {
-        display: flex; justify-content: space-between; align-items: center;
-        gap: 16px; margin-top: 40px; padding-top: 16px;
-        border-top: 1px solid var(--line);
-      }
-      .article-nav-link {
-        display: inline-flex; align-items: center; gap: 8px; min-width: 0;
-        color: var(--ink); text-decoration: none;
-      }
-      .article-nav-link:only-child { max-width: 100%; }
-      .article-nav-next { margin-left: auto; }
-      .article-nav-arrow { flex-shrink: 0; color: var(--accent); }
-      .article-nav-title {
-        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      }
-      .article-nav-link:hover .article-nav-title {
-        color: var(--accent); text-decoration: underline;
-      }
-      .article-nav-top {
-        margin-top: 0; margin-bottom: 20px;
-        padding-top: 0; padding-bottom: 12px;
-        border-top: none; border-bottom: 1px solid var(--line);
-      }
-      @media (max-width: 768px) {
-        .article-nav-link { font-size: 0.8rem; }
-      }
-      article .item-link { font-size: 0.8rem; }
-      article .item-link a { color: var(--ink-3); }
-
-      /* OGP link cards, emitted by blog-gas for standalone link paragraphs */
-      article a.link-card {
-        display: flex; gap: 14px; align-items: stretch;
-        margin: 1.5rem 0; padding: 12px;
-        border: 1px solid var(--line); border-radius: 12px;
-        background: var(--surface); color: inherit; text-decoration: none;
-        overflow-wrap: normal; line-height: 1.5;
-      }
-      article a.link-card:hover { border-color: var(--accent); color: inherit; }
-      /* cards flagged .is-grayout by blog-gas are grayed out */
-      article a.link-card.is-grayout { opacity: .55; }
-      article a.link-card.is-grayout .link-card-image { filter: grayscale(1); }
-      /* images flagged .is-grayout by blog-gas are grayed out */
-      article img.is-grayout { opacity: .55; filter: grayscale(1); }
-      article .link-card-image { width: 112px; height: 112px; object-fit: cover; border-radius: 8px; flex-shrink: 0; }
-      article .link-card-body { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-      article .link-card-title {
-        font-weight: 700; display: -webkit-box;
-        -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-      }
-      article .link-card-description {
-        color: var(--ink-2); font-size: 0.88rem; line-height: 1.6;
-        display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-      }
-      article .link-card-domain { color: var(--ink-3); font-size: 0.78rem; margin-top: auto; }
-      @media (max-width: 560px) {
-        article .link-card-image { width: 84px; height: 84px; }
-      }
-
-      /* table of contents */
-      .table-of-contents {
-        margin: 20px 0 28px; padding: 16px 20px;
-        background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
-      }
-      .toc-heading { margin: 0 0 8px; color: var(--ink-3); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.08em; }
-      .toc-list { margin: 0; padding-left: 20px; }
-      .toc-item { margin: 5px 0; }
-      .toc-item-sub { margin-left: 16px; }
-
-      /* tag chips */
-      .tag-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: -6px 0 18px; padding: 0; list-style: none; }
-      .tag-chip {
-        display: inline-flex; align-items: center; gap: 6px;
-        padding: 2px 12px; color: var(--ink); background: var(--surface);
-        border: 1px solid var(--line); border-radius: 999px;
-        font-size: 0.85rem; text-decoration: none;
-      }
-      .tag-chip:hover { color: var(--accent); border-color: var(--accent); text-decoration: none; }
-
-      /* ---------- lyrics (the blog's boxed lyric sheet) ---------- */
-      article .lyrics {
-        background: var(--surface);
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        padding: 18px 22px;
-        margin: 20px 0;
-      }
-      article .lyrics-label {
-        font-weight: 700;
-        margin: 0 0 10px;
-      }
-      article .lyrics-line {
-        margin: 0 0 3px;
-        line-height: 1.8;
-      }
-      article .lyrics-part {
-        color: var(--ink-2);
-        font-size: 0.85em;
-        margin: 14px 0 5px;
-      }
-      article .lyrics-label + .lyrics-part {
-        margin-top: 2px;
-      }
-
-      /* ---------- music player (hand-rolled, styled like the blog) ---------- */
-      article .music-player {
-        margin: 16px 0;
-        background: var(--surface);
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        padding: 16px 18px;
-      }
-
-      article .music-player .mp-now {
-        font-size: 15px;
-        font-weight: 700;
-        margin: 0 0 12px;
-      }
-
-      article .music-player .mp-controls,
-      article .music-player .mp-toggles {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-      }
-
-      article .music-player .mp-toggles {
-        justify-content: flex-end;
-        gap: 2px;
-        margin-top: 2px;
-      }
-
-      article .music-player .mp-controls {
-        margin-bottom: 12px;
-        justify-content: center;
-      }
-
-      article .music-player .mp-button {
-        touch-action: manipulation;
-        font: inherit;
-        font-size: 14px;
-        color: var(--ink);
-        background: var(--surface);
-        border: 1px solid var(--line);
-        border-radius: 999px;
-        padding: 6px 16px;
-        cursor: pointer;
-      }
-
-      article .music-player .mp-button:hover {
-        background: var(--accent-soft);
-      }
-
-      /* The transport buttons are circles carrying drawn SVG glyphs.
-         The play button is the player's reason to exist (its press
-         count is the top KPI), so it stands a size above the rest and
-         wears the primary color. */
-      article .music-player .mp-prev,
-      article .music-player .mp-next,
-      article .music-player .mp-play {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        padding: 0;
-      }
-
-      article .music-player .mp-prev,
-      article .music-player .mp-next {
-        width: 44px;
-        height: 44px;
-        color: var(--ink);
-      }
-
-      article .music-player .mp-prev svg,
-      article .music-player .mp-next svg {
-        width: 20px;
-        height: 20px;
-        fill: currentColor;
-      }
-
-      article .music-player .mp-play {
-        width: 58px;
-        height: 58px;
-        font-size: 20px;
-        color: var(--surface);
-        background: var(--accent);
-        border-color: var(--accent);
-      }
-
-      article .music-player .mp-play svg {
-        width: 26px;
-        height: 26px;
-        fill: currentColor;
-      }
-
-      article .music-player .mp-play:hover {
-        background: var(--accent);
-      }
-
-      /* The mode switches stay quiet on purpose: small borderless
-         icons in a muted tone, full-strength only while active. The
-         primary color belongs to the play button alone. */
-      article .music-player .mp-repeat,
-      article .music-player .mp-random {
-        position: relative;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 34px;
-        height: 34px;
-        padding: 0;
-        color: var(--ink-3);
-        background: transparent;
-        border: none;
-        border-radius: 50%;
-      }
-
-      article .music-player .mp-repeat:hover,
-      article .music-player .mp-random:hover {
-        background: var(--accent-soft);
-      }
-
-      article .music-player .mp-repeat svg,
-      article .music-player .mp-random svg {
-        width: 18px;
-        height: 18px;
-        fill: currentColor;
-      }
-
-      article .music-player .mp-repeat.is-on,
-      article .music-player .mp-random.is-on {
-        color: var(--ink);
-      }
-
-      article .music-player .mp-badge {
-        position: absolute;
-        top: 1px;
-        right: 0;
-        font-size: 9px;
-        font-weight: 700;
-        line-height: 1;
-      }
-
-      article .music-player .mp-progress {
+        min-height: 100vh;
         display: flex;
         align-items: center;
-        gap: 10px;
-        margin-bottom: 12px;
+        justify-content: center;
+        padding: 24px;
+        background: #fbfaf7;
+        color: #221d16;
+        font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
       }
-
-      article .music-player .mp-time {
-        font-size: 12px;
-        color: var(--ink-3);
-        min-width: 32px;
-      }
-
-      article .music-player .mp-time.mp-total {
-        text-align: right;
-      }
-
-      article .music-player .mp-seek {
-        flex: 1;
-        -webkit-appearance: none;
-        appearance: none;
-        height: 4px;
-        border-radius: 2px;
-        background: var(--line);
-        outline: none;
-        cursor: pointer;
-      }
-
-      article .music-player .mp-seek::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        appearance: none;
-        width: 16px;
-        height: 16px;
-        border-radius: 50%;
-        background: var(--accent);
-        border: none;
-      }
-
-      article .music-player .mp-seek::-moz-range-thumb {
-        width: 16px;
-        height: 16px;
-        border-radius: 50%;
-        background: var(--accent);
-        border: none;
-      }
-
-      article .music-player .mp-seek::-moz-range-track {
-        height: 4px;
-        border-radius: 2px;
-        background: var(--line);
-      }
-
-      article .music-player .mp-list {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-      }
-
-      article .music-player .mp-item {
-        border-top: 1px solid var(--line);
-      }
-
-      article .music-player .mp-track {
-        display: flex;
-        gap: 10px;
+      .card {
         width: 100%;
-        font: inherit;
+        max-width: 420px;
+        padding: 32px 28px;
+        text-align: center;
+        background: #ffffff;
+        border: 1px solid #e3ddd0;
+        border-radius: 16px;
+        box-shadow: 0 18px 40px rgba(34, 29, 22, 0.14);
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: 22px;
+      }
+      .sub {
+        margin: 0 0 24px;
+        color: #5d5546;
         font-size: 14px;
-        text-align: left;
-        color: var(--ink);
-        background: none;
-        border: none;
-        padding: 9px 6px;
-        cursor: pointer;
+        line-height: 1.7;
       }
-
-      article .music-player .mp-track:hover {
-        background: var(--accent-soft);
-      }
-
-      article .music-player .mp-track.is-active {
-        background: var(--accent-soft);
+      .go {
+        display: block;
+        padding: 14px 20px;
+        border-radius: 999px;
+        background: #b23a1f;
+        color: #ffffff;
+        font-size: 16px;
         font-weight: 700;
+        text-decoration: none;
       }
-
-      article .music-player .mp-track-index {
-        color: var(--ink-2);
+      .home {
+        display: inline-block;
+        margin-top: 20px;
+        color: inherit;
+        font-size: 14px;
       }
-
-      article .music-player .mp-status {
-        font-size: 13px;
-        color: var(--ink-2);
-        margin: 10px 0 0;
-      }
-
-      article .music-player .mp-status:empty {
-        display: none;
-      }
-
-      article .music-player audio {
-        display: none;
-      }
-
-      /* ---------- footer (shared site chrome) ---------- */
-      footer { margin-top: 56px; border-top: 1px solid var(--line); padding: 24px 0 46px; }
-      .foot-groups { display: flex; flex-wrap: wrap; gap: 16px 44px; margin-bottom: 22px; }
-      .foot-group-title { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em; color: var(--ink-3); margin: 0 0 8px; }
-      .foot-group .foot-links { margin-bottom: 0; }
-      .foot-links { display: flex; flex-wrap: wrap; gap: 10px 22px; margin-bottom: 22px; }
-      .foot-links a { color: var(--ink-2); font-size: 0.92rem; display: inline-flex; align-items: center; gap: 6px; }
-      .foot-links a:hover { color: var(--accent); text-decoration: none; }
-      .foot-links a .arr { font-size: 11px; color: var(--ink-3); }
-      footer .copy { font-size: 0.85rem; color: var(--ink-2); margin: 0; }
-    </style>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-W2C6FNCW86"></script>
-    <script src="/js/gtag.js"></script>
-  </head>
-  <body>
-    <nav class="site-nav">
-      <a class="brand" href="https://freddiefujiwara.com/">藤原史和｜川口を歩くQAエンジニア</a>
-      <ul>
-        <li><a href="https://freddiefujiwara.com/">トップ</a></li>
-        <li class="nav-section"><a href="https://freddiefujiwara.com/#about">プロフィール</a></li>
-        <li class="nav-section"><a href="https://freddiefujiwara.com/#activity">活動・発信</a></li>
-        <li class="nav-section"><a href="https://freddiefujiwara.com/#contact">情報交換</a></li>
-        <li><a href="/blog/">ブログ</a></li>
-        <li><a href="https://freddiefujiwara.com/list-of-stuff/">持ち物リスト</a></li>
-        <li><a href="https://freddiefujiwara.com/music">川口の歌 ♪<span class="music-play-count"></span></a></li>
-      </ul>
-    </nav>
-    <header class="hero">
-      <a class="hero-inner hero-link" href="https://freddiefujiwara.com/blog/1Shso7kKRSzJOptQiEXdlB5Pi1WBQypw96OF1AagStyI">
-        <p class="hero-place">KAWAGUCHI — BLOG</p>
-        <h1><span class="h1-name">藤原史和</span><span class="h1-sep" aria-hidden="true">｜</span><span class="h1-role">川口を歩くQAエンジニア</span></h1>
-      </a>
-    </header>
-    <main>
-      <div class="wrap">
-        <article class="article-content">
-          <nav class="article-nav article-nav-top" aria-label="前後の記事"><a class="article-nav-link article-nav-prev" href="https://freddiefujiwara.com/blog/1UJziyYzHPuIZGVTSNUL2AXP0_oakUNmAhIUhNm0WHbM" aria-label="前の記事: 「自分の環境で通る」と「まっさらな環境でも再現する」は別物。SwitchBotサーキュレーターとCIの教訓"><span class="article-nav-arrow" aria-hidden="true">←</span><span class="article-nav-title">「自分の環境で通る」と「まっさらな環境でも再現する」は別物。SwitchBotサーキュレーターとCIの教訓</span></a><a class="article-nav-link article-nav-next" href="https://freddiefujiwara.com/blog/1miVeFJ_0ZcKWg3baLywSTTLemh6EAzJcVD8GvUxXAjg" aria-label="次の記事: 中国語が少しずつ話せるようになる。先生の「越来越好」がうれしかった3回目のレッスン"><span class="article-nav-title">中国語が少しずつ話せるようになる。先生の「越来越好」がうれしかった3回目のレッスン</span><span class="article-nav-arrow" aria-hidden="true">→</span></a></nav>
-          <h1>2026-10-27 川口のリールを、地図にまとめました</h1>
-          <ul class="tag-chips">
-      <li class="tag-chip-item"><a class="tag-chip" href="https://freddiefujiwara.com/blog/tag/%E5%B7%9D%E5%8F%A3">川口</a></li>
-    </ul>
-          <div class="article-body">
-<p>📍川口のリールを、地図にまとめました</p>
-<p>これまでInstagramで紹介してきた川口のお店を、Googleマイマップに全部ピン留めしました。</p>
-<p>🍜 飲食店 29軒</p>
-<p>💈 理容・サロン 5軒</p>
-<p>🧘 リラクゼーション 3軒</p>
-<p>ピンをタップすると、そのお店のリールと一言メモが見られます。</p>
-<p>全部、川口在住の私が実際に歩いて行って、食べて、体験したお店だけです。</p>
-<p>「今度の休み、川口でどこ行こう？」というときに使ってもらえたら嬉しいです。保存・シェア歓迎です。</p>
-<p>川口を歩くQAエンジニアマップ</p>
-<p><a class="link-card" href="https://www.google.com/maps/d/viewer?mid=13lbAcrd5hOq5xSvPsbX607gmzqNdw0E&amp;usp=sharing" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://www.google.com/maps/d/thumbnail?mid=13lbAcrd5hOq5xSvPsbX607gmzqNdw0E" alt=""><span class="link-card-body"><span class="link-card-title">川口を歩くQAエンジニアマップ - Google My Maps</span><span class="link-card-description">Instagram @freddiefujiwara のリールで紹介した、川口市のお店のマップです。飲食店と理容店をレイヤー分けしています。各ピンの詳細にはリールのURLと内容のまとめを載せています。</span><span class="link-card-domain">www.google.com</span></span></a></p>
-<nav class="table-of-contents" aria-label="目次">
-    <p class="toc-heading">目次</p>
-    <ul class="toc-list">
-      <li class="toc-item"><a href="#h-dd97fdcb">飲食店</a></li>
-      <li class="toc-item toc-item-sub"><a href="#h-a2e1115f">マンディル（南鳩ヶ谷）</a></li>
-      <li class="toc-item toc-item-sub"><a href="#h-1c73fdd5">月のうさぎ（前川）</a></li>
-      <li class="toc-item toc-item-sub"><a href="#h-fae1b844">カフェ気まま（安行領根岸）</a></li>
-      <li class="toc-item toc-item-sub"><a href="#h-21403752">ToiToiToi apartment（安行領根岸）</a></li>
-      <li class="toc-item toc-item-sub"><a href="#h-3286eda7">琉菊（栄町）</a></li>
-      <li class="toc-item toc-item-sub"><a href="#h-51cd8501">ラホンバンマーラータン 西川口店（並木）</a></li>
-      <li class="toc-item toc-item-sub"><a href="#h-9c31a221">オルブロード ミカド（坂下町）</a></li>
-      <li class="toc-item toc-item-sub"><a href="#h-620edea5">ペルメニブティック（鳩ヶ谷緑町）</a></li>
-      <li class="toc-item toc-item-sub"><a href="#h-8177d12d">異味香（西川口）</a></li>
-      <li class="toc-item toc-item-sub"><a href="#h-0d391451">HAO台湾食堂（栄町）</a></li>
-      <li class="toc-item toc-item-sub"><a href="#h-3b90522e">Bakery Cafe SORA（宮町）</a></li>
-      <li class="toc-item toc-item-sub"><a href="#h-825cf780">COCINA GRILL（西青木）</a></li>
-      <li class="toc-item toc-item-sub"><a href="#h-a3e11a09">ノバンノ（NOBANNO）（末広）</a></li>
-      <li class="toc-item toc-item-sub"><a href="#h-4f7b1155">mellow cafe（メロウカフェ）（里）</a></li>
-      <li class="toc-item toc-item-sub"><a href="#h-4694d948">CHIANTI TRE（キャンティ・トレ）（芝）</a></li>
-      <li class="toc-item toc-item-sub"><a href="#h-ab003478">香楽福（シャンルーフー）（西川口）</a></li>
-      <li class="toc-item toc-item-sub"><a href="#h-04e19340">ラボ（西川口）</a></li>
-      <li class="toc-item toc-item-sub"><a href="#h-85f3dd96">羊大厨（西川口）</a></li>
-      <li class="toc-item toc-item-sub"><a href="#h-cb7c5208">CAFE ALI（北園町）</a></li>
-      <li class="toc-item toc-item-sub"><a href="#h-ca8404e8">白鹿原ビャンビャン麺 西川口店（西川口）</a></li>
-      <li class="toc-item toc-item-sub"><a href="#h-08c194c6">TsuKuRuBa竹蔵（鳩ヶ谷本町）</a></li>
-      <li class="toc-item toc-item-sub"><a href="#h-6fb001c7">とんとんラーメン川口店（差間）</a></li>
-      <li class="toc-item toc-item-sub"><a href="#h-c10f6d61">BOOM CAFE（赤山）</a></li>
-      <li class="toc-item toc-item-sub"><a href="#h-283e5f03">銀龍（前川）</a></li>
-      <li class="toc-item toc-item-sub"><a href="#h-a889ee57">AZEL Restaurant &amp; Bar（道合）</a></li>
-      <li class="toc-item toc-item-sub"><a href="#h-823314a0">橋頭 私家菜（西川口）</a></li>
-      <li class="toc-item toc-item-sub"><a href="#h-86a05c15">No.25（飯塚）</a></li>
-      <li class="toc-item toc-item-sub"><a href="#h-ccb0f865">ロコピコ珈琲（川口）</a></li>
-      <li class="toc-item toc-item-sub"><a href="#h-046ce9ee">1110 CAFE（領家）</a></li>
-      <li class="toc-item"><a href="#h-01ae72d0">理容・サロン</a></li>
-      <li class="toc-item toc-item-sub"><a href="#h-74ee9813">Barber&#39;s Green（幸町）</a></li>
-      <li class="toc-item toc-item-sub"><a href="#h-4b0e20a8">理容cut-A 南鳩ヶ谷店（南鳩ヶ谷）</a></li>
-      <li class="toc-item toc-item-sub"><a href="#h-b8bdb49e">ニュー川口理容室（中青木）</a></li>
-      <li class="toc-item toc-item-sub"><a href="#h-dd64fde1">Cut One（西川口）</a></li>
-      <li class="toc-item toc-item-sub"><a href="#h-045b58f0">銀座バーバー 鳩ヶ谷店（桜町）</a></li>
-      <li class="toc-item"><a href="#h-3509b45c">リラクゼーション</a></li>
-      <li class="toc-item toc-item-sub"><a href="#h-650a8e7d">友SSOOK・Gapi かわぐち店（芝）</a></li>
-      <li class="toc-item toc-item-sub"><a href="#h-d7a43b39">ガーデントランポリンパーク（南鳩ヶ谷）</a></li>
-      <li class="toc-item toc-item-sub"><a href="#h-f046fd0a">中国式イヤーエステ 朴境 西川口店（西川口）</a></li>
-    </ul>
-  </nav>
-<h2 id="h-dd97fdcb">飲食店</h2>
-<h3 id="h-a2e1115f">マンディル（南鳩ヶ谷）</h3>
-<p>南鳩ヶ谷の本格インド料理店。丸いチーズナンは持ち上げるたびにチーズがどこまでも伸びます。チーズナンランチセット（税込1,353円）でカレーは9種類から選べ、ほうれん草チキンがおすすめ。お座敷もあり、ランチは11:00〜15:00です。</p>
-<p><a href="https://www.instagram.com/reel/DfeZoBhzS2Y/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://retty.me/area/PRE11/ARE52/SUB5201/100000865343/" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://og-image.retty.me/restaurant/100000865343/" alt=""><span class="link-card-body"><span class="link-card-title">マンディル - Retty（レッティ）</span><span class="link-card-description">こちらは『マンディルのご予約（川口/インド料理）』のお店ページです。実名でのオススメが7件集まっています。Rettyで食が好きなグルメな人たちからお店を探そう！</span><span class="link-card-domain">retty.me</span></span></a></p>
-<h3 id="h-1c73fdd5">月のうさぎ（前川）</h3>
-<p>イオンモール川口前川1階に2026年11月6日にオープンした、埼玉県初出店の浅草今川焼き専門店。北海道十勝産の小豆と創業75年の製餡技術が売りで、極上つぶあんと濃厚カスタードが各248円。オープン直後は約30分待ちの行列でした。</p>
-<p><a href="https://www.instagram.com/reel/DfeEZP4T7Ex/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://www.google.com/maps/search/?api=1&amp;query=%E6%9C%88%E3%81%AE%E3%81%86%E3%81%95%E3%81%8E+%E3%82%A4%E3%82%AA%E3%83%B3%E3%83%A2%E3%83%BC%E3%83%AB%E5%B7%9D%E5%8F%A3%E5%89%8D%E5%B7%9D" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://maps.google.com/maps/api/staticmap?center=37.0625%2C-95.677068&amp;zoom=4&amp;size=900x900&amp;language=en&amp;sensor=false&amp;key=AIzaSyBoYjeRtfVI0Jd8Q_9mnflo9i4sOYpShB0&amp;signature=bhDRZQvDkRDlhzWj6J7pTMYyH5k" alt=""><span class="link-card-body"><span class="link-card-title">Google Maps</span><span class="link-card-description">Find local businesses, view maps and get driving directions in Google Maps.</span><span class="link-card-domain">www.google.com</span></span></a></p>
-<h3 id="h-fae1b844">カフェ気まま（安行領根岸）</h3>
-<p>安行領根岸の住宅街にある相談処カフェ。元看護師の店主さんが営み、靴を脱いで上がる店内は、常連さんのお喋りで温かい雰囲気です。モーニング（8:00〜10:30）は、混ぜごはんのおにぎりと小鉢、お味噌汁、ホットコーヒー付きで850円でした。</p>
-<p><a href="https://www.instagram.com/reel/DfdlAcwzQ_H/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://maps.app.goo.gl/rdCRD5L3ML8mHEKp7" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://maps.google.com/maps/api/staticmap?center=36.5626%2C136.362305&amp;zoom=5&amp;size=900x900&amp;language=ja&amp;sensor=false&amp;key=AIzaSyBoYjeRtfVI0Jd8Q_9mnflo9i4sOYpShB0&amp;signature=Xnw2vdQjF6W9i0SDMBHNmeiaOeA" alt=""><span class="link-card-body"><span class="link-card-title">Google マップ</span><span class="link-card-description">Google マップで地図を検索。乗換案内、路線図、ドライブルート、ストリートビューも。見やすい地図でお店やサービス、地域の情報を検索できます。世界地図も日本語で、旅のプランにも便利。</span><span class="link-card-domain">maps.app.goo.gl</span></span></a></p>
-<h3 id="h-21403752">ToiToiToi apartment（安行領根岸）</h3>
-<p>安行領根岸のシェアショップで味わう、沖縄料理研究家・宮澤かおるさんの琉球料理ランチ。黒米ごはんにイナムドゥチ、ミヌダル、クーブイリチー、田芋の唐揚げなど、琉球宮廷料理の流れをくむ御膳がワンドリンク付き1,990円でした。全部美味しかったです。</p>
-<p><a href="https://www.instagram.com/reel/Dfb1jt0ztWM/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://www.google.com/maps/search/?api=1&amp;query=ToiToiToi+Apartment+%E5%9F%BC%E7%8E%89%E7%9C%8C%E5%B7%9D%E5%8F%A3%E5%B8%82%E5%AE%89%E8%A1%8C%E9%A0%98%E6%A0%B9%E5%B2%B82004" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://maps.google.com/maps/api/staticmap?center=37.0625%2C-95.677068&amp;zoom=4&amp;size=900x900&amp;language=en&amp;sensor=false&amp;key=AIzaSyBoYjeRtfVI0Jd8Q_9mnflo9i4sOYpShB0&amp;signature=bhDRZQvDkRDlhzWj6J7pTMYyH5k" alt=""><span class="link-card-body"><span class="link-card-title">Google Maps</span><span class="link-card-description">Find local businesses, view maps and get driving directions in Google Maps.</span><span class="link-card-domain">www.google.com</span></span></a></p>
-<h3 id="h-3286eda7">琉菊（栄町）</h3>
-<p>川口元郷駅そば、ミエル川口の向かいにある町中華。ラーメンは450円で、大きなチャーシューに海苔、ナルト、メンマがのった、あっさり醤油の昔ながらの一杯です。定食も750円中心と、全体に手頃な価格でした。</p>
-<p><a href="https://www.instagram.com/reel/DfQ8CuMTQnQ/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://retty.me/area/PRE11/ARE52/SUB5201/100001042555/" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://og-image.retty.me/restaurant/100001042555/" alt=""><span class="link-card-body"><span class="link-card-title">琉菊 - Retty（レッティ）</span><span class="link-card-description">[中華好き人気店☆] こちらは『琉菊（川口/中華）』のお店ページです。実名でのオススメが14件集まっています。Rettyで食が好きなグルメな人たちからお店を探そう！</span><span class="link-card-domain">retty.me</span></span></a></p>
-<h3 id="h-51cd8501">ラホンバンマーラータン 西川口店（並木）</h3>
-<p>西川口に2026年11月2日にオープンした韓国式マーラータンのお店。具材は冷蔵棚から自分で選ぶスタイルで、辛さは0〜4の6段階。1辛でも結構辛く、パンダの形の練り物が名物です。食後にアイスクリームのサービスもありました。</p>
-<p><a href="https://www.instagram.com/reel/DfPW-lSTotB/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://www.google.com/maps/search/?api=1&amp;query=%E3%83%A9%E3%83%9B%E3%83%B3%E3%83%90%E3%83%B3%E3%83%9E%E3%83%BC%E3%83%A9%E3%83%BC%E3%82%BF%E3%83%B3+%E8%A5%BF%E5%B7%9D%E5%8F%A3%E5%BA%97+%E5%9F%BC%E7%8E%89%E7%9C%8C%E5%B7%9D%E5%8F%A3%E5%B8%82%E4%B8%A6%E6%9C%A82-1-14" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://maps.google.com/maps/api/staticmap?center=37.0625%2C-95.677068&amp;zoom=4&amp;size=900x900&amp;language=en&amp;sensor=false&amp;key=AIzaSyBoYjeRtfVI0Jd8Q_9mnflo9i4sOYpShB0&amp;signature=bhDRZQvDkRDlhzWj6J7pTMYyH5k" alt=""><span class="link-card-body"><span class="link-card-title">Google Maps</span><span class="link-card-description">Find local businesses, view maps and get driving directions in Google Maps.</span><span class="link-card-domain">www.google.com</span></span></a></p>
-<h3 id="h-9c31a221">オルブロード ミカド（坂下町）</h3>
-<p>鳩ヶ谷駅から徒歩約5分、朝6時から開いている老舗パン屋さん。白身魚フライのサンドと、名物の坂下あんぱんを購入しました。やっぱりあんぱんが美味しかったです。朝の早い時間でも売り切れている棚がある人気店です。</p>
-<p><a href="https://www.instagram.com/reel/DfLVcmkTdBv/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://retty.me/area/PRE11/ARE52/SUB5201/100000880466/" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://og-image.retty.me/restaurant/100000880466/" alt=""><span class="link-card-body"><span class="link-card-title">オルブロート ミカド - Retty（レッティ）</span><span class="link-card-description">こちらは『オルブロート ミカド（川口/パン屋）』のお店ページです。実名でのオススメが7件集まっています。Rettyで食が好きなグルメな人たちからお店を探そう！</span><span class="link-card-domain">retty.me</span></span></a></p>
-<h3 id="h-620edea5">ペルメニブティック（鳩ヶ谷緑町）</h3>
-<p>南鳩ヶ谷駅から徒歩約10分のウクライナ家庭料理店。ガーリッククリーム、ボルシチ、ジュリエン、そして名物のペルメニ（ウクライナ風水餃子）をいただきました。サワークリームに付けて食べるペルメニが一番美味しかったです。</p>
-<p><a href="https://www.instagram.com/reel/DfKGXhAz877/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://retty.me/area/PRE11/ARE52/SUB5201/100001642274/" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://og-image.retty.me/restaurant/100001642274/" alt=""><span class="link-card-body"><span class="link-card-title">PELMENI BOUTIQUE - Retty（レッティ）</span><span class="link-card-description">こちらは『PELMENI BOUTIQUE（ペルメニ ブティック）のご予約（川口/ロシア料理）』のお店ページです。実名でのオススメが2件集まっています。Rettyで食が好きなグルメな人たちからお店を探そう！</span><span class="link-card-domain">retty.me</span></span></a></p>
-<h3 id="h-8177d12d">異味香（西川口）</h3>
-<p>西川口の山東料理店。焼き餃子が山盛りで出てきて、とても美味しかったです。名物の焼きシューマイは割ると中がぎっしり。木クラゲとニラの玉子炒め、エビの炒め物、空芯菜炒め、砂肝の冷菜など、本場の家庭料理がそろいます。予約は電話が確実です。</p>
-<p><a href="https://www.instagram.com/reel/DfDoIDsz0Cn/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://r.gnavi.co.jp/gfyk900/" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="http://rimage.gnst.jp/rest/img/6zt83ddr0000/t_0n5c.jpg" alt=""><span class="link-card-body"><span class="link-card-title">楽天ぐるなび - 異味香 （川口・東川口/中華料理）</span><span class="link-card-description">異味香（川口・東川口/中華料理）の店舗情報をご紹介。お店のウリキーワード：ワンコイン料理多種など。楽天ぐるなびなら店舗の詳細なメニューの情報や地図・口コミなど、「異味香」の情報が満載です。シューマイや餃子など名物の絶品手作り点心をご堪能
-「煎人餃子」を含む絶品中華のコース2,80</span><span class="link-card-domain">r.gnavi.co.jp</span></span></a></p>
-<h3 id="h-0d391451">HAO台湾食堂（栄町）</h3>
-<p>川口駅東口で台湾ランチ。魯肉飯（中）に煮卵をトッピングし、ワンタンスープと小鉢付きのセットを注文しました。注文・支払いはテーブルのQRで完結し、緑タイルのテーブルが印象的な店内でした。</p>
-<p><a href="https://www.instagram.com/reel/De53VwST3_P/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://www.google.com/maps/search/?api=1&amp;query=HAO%E5%8F%B0%E6%B9%BE%E9%A3%9F%E5%A0%82+%E5%9F%BC%E7%8E%89%E7%9C%8C%E5%B7%9D%E5%8F%A3%E5%B8%82%E6%A0%84%E7%94%BA3-3-8" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://maps.google.com/maps/api/staticmap?center=37.0625%2C-95.677068&amp;zoom=4&amp;size=900x900&amp;language=en&amp;sensor=false&amp;key=AIzaSyBoYjeRtfVI0Jd8Q_9mnflo9i4sOYpShB0&amp;signature=bhDRZQvDkRDlhzWj6J7pTMYyH5k" alt=""><span class="link-card-body"><span class="link-card-title">Google Maps</span><span class="link-card-description">Find local businesses, view maps and get driving directions in Google Maps.</span><span class="link-card-domain">www.google.com</span></span></a></p>
-<h3 id="h-3b90522e">Bakery Cafe SORA（宮町）</h3>
-<p>通るたびに気になっていた空色のパン屋さん。朝7:00オープンでモーニングがあり、ホットドッグにサラダとコーヒーのセットを注文しました。パンが並ぶ店内に、イートインスペースもあります。</p>
-<p><a href="https://www.instagram.com/reel/De20jmPz8Am/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://retty.me/area/PRE11/ARE52/SUB5201/100001353070/" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://og-image.retty.me/restaurant/100001353070/" alt=""><span class="link-card-body"><span class="link-card-title">Bread&amp;Cake SORA - Retty（レッティ）</span><span class="link-card-description">こちらは『Bread&amp;Cake SORA（川口/カフェ）』のお店ページです。実名でのオススメが4件集まっています。Rettyで食が好きなグルメな人たちからお店を探そう！</span><span class="link-card-domain">retty.me</span></span></a></p>
-<h3 id="h-825cf780">COCINA GRILL（西青木）</h3>
-<p>川口でフィリピンランチ。チキンの煮物や豚足など、いろんな料理が一皿で楽しめるランチを注文しました。デザートは、バナナを春巻きの皮で包んで揚げたお菓子「トゥロン」。お会計は1,650円でした。</p>
-<p><a href="https://www.instagram.com/reel/DelXlyiT8Ei/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://www.google.com/maps/search/?api=1&amp;query=COCINA+GRILL+%E5%9F%BC%E7%8E%89%E7%9C%8C%E5%B7%9D%E5%8F%A3%E5%B8%82%E8%A5%BF%E9%9D%92%E6%9C%A81-9-15" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://maps.google.com/maps/api/staticmap?center=37.0625%2C-95.677068&amp;zoom=4&amp;size=900x900&amp;language=en&amp;sensor=false&amp;key=AIzaSyBoYjeRtfVI0Jd8Q_9mnflo9i4sOYpShB0&amp;signature=bhDRZQvDkRDlhzWj6J7pTMYyH5k" alt=""><span class="link-card-body"><span class="link-card-title">Google Maps</span><span class="link-card-description">Find local businesses, view maps and get driving directions in Google Maps.</span><span class="link-card-domain">www.google.com</span></span></a></p>
-<h3 id="h-a3e11a09">ノバンノ（NOBANNO）（末広）</h3>
-<p>川口でバングラデシュ料理。一番高い「ノバンノスペシャル」を注文し、いろいろな料理を楽しみました。店員さんとは英語で会話し、お菓子「Pitha（ピタ）」のサービスも。海外旅行気分が味わえる一軒です。</p>
-<p><a href="https://www.instagram.com/reel/DeV9nz2zm2l/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://www.google.com/maps/search/?api=1&amp;query=NOBANNO+%E5%9F%BC%E7%8E%89%E7%9C%8C%E5%B7%9D%E5%8F%A3%E5%B8%82%E6%9C%AB%E5%BA%832-15-1" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://maps.google.com/maps/api/staticmap?center=37.0625%2C-95.677068&amp;zoom=4&amp;size=900x900&amp;language=en&amp;sensor=false&amp;key=AIzaSyBoYjeRtfVI0Jd8Q_9mnflo9i4sOYpShB0&amp;signature=bhDRZQvDkRDlhzWj6J7pTMYyH5k" alt=""><span class="link-card-body"><span class="link-card-title">Google Maps</span><span class="link-card-description">Find local businesses, view maps and get driving directions in Google Maps.</span><span class="link-card-domain">www.google.com</span></span></a></p>
-<h3 id="h-4f7b1155">mellow cafe（メロウカフェ）（里）</h3>
-<p>鳩ヶ谷で朝ごはん。明るい店内で、パンケーキとソーセージ、付け合わせが一皿になったモーニングをいただきました。いつもと少し違う場所で過ごす朝の時間を紹介しています。</p>
-<p><a href="https://www.instagram.com/reel/DeS5ksfzdO9/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://retty.me/area/PRE11/ARE52/SUB5201/100001244217/" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://og-image.retty.me/restaurant/100001244217/" alt=""><span class="link-card-body"><span class="link-card-title">メロウ カフェ - Retty（レッティ）</span><span class="link-card-description">[カフェ好き人気店] こちらは『メロウ カフェ（川口/カフェ）』のお店ページです。実名でのオススメが5件集まっています。Rettyで食が好きなグルメな人たちからお店を探そう！</span><span class="link-card-domain">retty.me</span></span></a></p>
-<h3 id="h-4694d948">CHIANTI TRE（キャンティ・トレ）（芝）</h3>
-<p>産業道路沿いを通るたびに気になっていた赤いお店。注文したムール貝がかなり美味しく、残ったソースまでパンにつけて完食しました。ずっと気になっていた店に「入って正解」でした。</p>
-<p><a href="https://www.instagram.com/reel/DeDtfopTFBr/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://retty.me/area/PRE11/ARE52/SUB5201/100000722836/" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://og-image.retty.me/restaurant/100000722836/" alt=""><span class="link-card-body"><span class="link-card-title">キャンティトレ - Retty（レッティ）</span><span class="link-card-description">こちらは『キャンティトレのご予約（川口/イタリアン）』のお店ページです。実名でのオススメが51件集まっています。Rettyで食が好きなグルメな人たちからお店を探そう！</span><span class="link-card-domain">retty.me</span></span></a></p>
-<h3 id="h-ab003478">香楽福（シャンルーフー）（西川口）</h3>
-<p>西川口で朝7時からの「朝中華」。中国語メニューを見ながらジャージャー麺と油条を注文しました。肉味噌ときゅうりをしっかり混ぜるジャージャー麺と、朝から食べられる油条で、中国の朝ごはん気分でした。</p>
-<p><a href="https://www.instagram.com/reel/DeAy8RhTbPX/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://retty.me/area/PRE11/ARE52/SUB5201/100001511314/" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://og-image.retty.me/restaurant/100001511314/" alt=""><span class="link-card-body"><span class="link-card-title">香楽福 - Retty（レッティ）</span><span class="link-card-description">こちらは『香楽福（川口/飲茶・点心）』のお店ページです。実名でのオススメが2件集まっています。Rettyで食が好きなグルメな人たちからお店を探そう！</span><span class="link-card-domain">retty.me</span></span></a></p>
-<h3 id="h-04e19340">ラボ（西川口）</h3>
-<p>中国語レッスン終わりに西川口でランチ。落ち着いた雰囲気の店内で、ポークナンシンジャーステーキ（1,400円、味噌汁とご飯付き）を注文し、食後はコーヒーでひと休みしました。</p>
-<p><a href="https://www.instagram.com/reel/DdvKvGkTyIK/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://retty.me/area/PRE11/ARE52/SUB5201/100001296431/" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://og-image.retty.me/restaurant/100001296431/" alt=""><span class="link-card-body"><span class="link-card-title">レストランカフェ ラボ - Retty（レッティ）</span><span class="link-card-description">こちらは『レストランカフェ ラボ（川口/カフェ）』のお店ページです。実名でのオススメが11件集まっています。Rettyで食が好きなグルメな人たちからお店を探そう！</span><span class="link-card-domain">retty.me</span></span></a></p>
-<h3 id="h-85f3dd96">羊大厨（西川口）</h3>
-<p>中国人同僚に注文を全部おまかせした西川口のガチ中華。羊肉串、鍋包肉、腐竹の料理、尖椒干豆腐などが出てきて、特にクミンなどのスパイスが効いた羊肉串が好みでした。</p>
-<p><a href="https://www.instagram.com/reel/DdqmOevTEE6/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://retty.me/area/PRE11/ARE52/SUB5201/100001732533/" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://og-image.retty.me/restaurant/100001732533/" alt=""><span class="link-card-body"><span class="link-card-title">羊大厨西川口店 - Retty（レッティ）</span><span class="link-card-description">こちらは『羊大厨西川口店（川口）』のお店ページです。実名でのオススメが1件集まっています。Rettyで食が好きなグルメな人たちからお店を探そう！</span><span class="link-card-domain">retty.me</span></span></a></p>
-<h3 id="h-cb7c5208">CAFE ALI（北園町）</h3>
-<p>川口市北園町の異国感あふれるアジアン・エスニックカフェ。ネオンや雑貨いっぱいの店内でランチを注文したら、まさかの花火付きで登場しました。店前のトゥクトゥクも特徴です。</p>
-<p><a href="https://www.instagram.com/reel/DdlM6hmz33Y/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://retty.me/area/PRE11/ARE52/SUB5201/100001623350/" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://og-image.retty.me/restaurant/100001623350/" alt=""><span class="link-card-body"><span class="link-card-title">CAFE ALI - Retty（レッティ）</span><span class="link-card-description">こちらは『CAFE ALI（カフェ アリ）（川口/カフェ）』のお店ページです。実名でのオススメが2件集まっています。Rettyで食が好きなグルメな人たちからお店を探そう！</span><span class="link-card-domain">retty.me</span></span></a></p>
-<h3 id="h-ca8404e8">白鹿原ビャンビャン麺 西川口店（西川口）</h3>
-<p>西川口駅から歩いて行けるガチ中華。幅広のビャンビャン麺がもちもちで、肉も存在感あり。「これは通っちゃいそう」な当たりのお店でした。</p>
-<p><a href="https://www.instagram.com/reel/Ddhu7GGT614/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://www.google.com/maps/search/?api=1&amp;query=%E7%99%BD%E9%B9%BF%E5%8E%9F%E3%83%93%E3%83%A3%E3%83%B3%E3%83%93%E3%83%A3%E3%83%B3%E9%BA%BA+%E8%A5%BF%E5%B7%9D%E5%8F%A3%E5%BA%97+%E5%9F%BC%E7%8E%89%E7%9C%8C%E5%B7%9D%E5%8F%A3%E5%B8%82%E8%A5%BF%E5%B7%9D%E5%8F%A31-23-7" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://maps.google.com/maps/api/staticmap?center=37.0625%2C-95.677068&amp;zoom=4&amp;size=900x900&amp;language=en&amp;sensor=false&amp;key=AIzaSyBoYjeRtfVI0Jd8Q_9mnflo9i4sOYpShB0&amp;signature=bhDRZQvDkRDlhzWj6J7pTMYyH5k" alt=""><span class="link-card-body"><span class="link-card-title">Google Maps</span><span class="link-card-description">Find local businesses, view maps and get driving directions in Google Maps.</span><span class="link-card-domain">www.google.com</span></span></a></p>
-<h3 id="h-08c194c6">TsuKuRuBa竹蔵（鳩ヶ谷本町）</h3>
-<p>鳩ヶ谷の古民家で、人生初めての生ジャズ。「JAZZ DAY 〜ヴィブラフォンカルテット〜」へ行き、ヴィブラフォンの音を間近で聴きました。古民家の空間で聴く生演奏が心地よい体験でした。</p>
-<p><a href="https://www.instagram.com/reel/DdhO57dSmH5/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://retty.me/area/PRE11/ARE52/SUB5201/100001780294/" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://og-image.retty.me/restaurant/100001780294/" alt=""><span class="link-card-body"><span class="link-card-title">TsuKuRuBa 竹蔵 - Retty（レッティ）</span><span class="link-card-description">こちらは『TsuKuRuBa 竹蔵（川口/その他）』のお店ページです。実名でのオススメが4件集まっています。Rettyで食が好きなグルメな人たちからお店を探そう！</span><span class="link-card-domain">retty.me</span></span></a></p>
-<h3 id="h-6fb001c7">とんとんラーメン川口店（差間）</h3>
-<p>国道122号を北上するサイクリング途中に立ち寄ったお店。ネギチャーシューメンを注文し、ネギもチャーシューもしっかり入った一杯でひと休みして、また122号を北へ進みました。</p>
-<p><a href="https://www.instagram.com/reel/DdcoUkyTwGM/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://retty.me/area/PRE11/ARE52/SUB5201/100000413539/" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://og-image.retty.me/restaurant/100000413539/" alt=""><span class="link-card-body"><span class="link-card-title">とんとんラーメン川口店 - Retty（レッティ）</span><span class="link-card-description">[ラーメン好き人気店☆] こちらは『とんとんラーメン川口店（川口/ラーメン）』のお店ページです。実名でのオススメが17件集まっています。Rettyで食が好きなグルメな人たちからお店を探そう！</span><span class="link-card-domain">retty.me</span></span></a></p>
-<h3 id="h-c10f6d61">BOOM CAFE（赤山）</h3>
-<p>川口ハイウェイオアシスで川口らしいものを探す寄り道。BOOM CAFEでは豆乳ソフトをいただき、HWO STOREには川口のお土産や特産品も並んでいました。高速に乗らなくても立ち寄れます。</p>
-<p><a href="https://www.instagram.com/reel/DdRDo5nzYJ3/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://retty.me/area/PRE11/ARE52/SUB5201/100001650557/" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://og-image.retty.me/restaurant/100001650557/" alt=""><span class="link-card-body"><span class="link-card-title">Kawaguchi HWO BOOM CAFÉ 川口ハイウェイオアシス - Retty（レッティ）</span><span class="link-card-description">こちらは『Kawaguchi HWO BOOM CAFÉ 川口ハイウェイオアシス（川口/カフェ）』のお店ページです。実名でのオススメが1件集まっています。Rettyで食が好きなグルメな人たちからお店を探そう！</span><span class="link-card-domain">retty.me</span></span></a></p>
-<h3 id="h-283e5f03">銀龍（前川）</h3>
-<p>「2026年にラーメン300円は本当か」を確かめに行った昔ながらの町中華。シンプルな一杯を食べて500円を出したら、本当に300円でした。川口にまだ残る、こういうお店の紹介です。</p>
-<p><a href="https://www.instagram.com/reel/DdK_6pxzSU1/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://retty.me/area/PRE11/ARE52/SUB5201/100000413506/" target="_blank" rel="noopener noreferrer"><span class="link-card-body"><span class="link-card-title">銀龍（川口/中華） - Retty（レッティ）</span><span class="link-card-domain">retty.me</span></span></a></p>
-<h3 id="h-a889ee57">AZEL Restaurant &amp; Bar（道合）</h3>
-<p>川口市道合で、日曜朝8:30からのトルコ式朝食ビュッフェ。チーズ、オリーブ、卵料理、サラダ、パン、デザートまで種類が豊富で、少しずつ取ったつもりがお腹いっぱいになりました。最後は温かい紅茶とデザートで締めました。</p>
-<p><a href="https://www.instagram.com/reel/Dc7Y5IDTVkI/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://retty.me/area/PRE11/ARE52/SUB5201/100001692990/" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://og-image.retty.me/restaurant/100001692990/" alt=""><span class="link-card-body"><span class="link-card-title">AZEL Restaurant &amp; Bar - Retty（レッティ）</span><span class="link-card-description">こちらは『AZEL Restaurant &amp; Bar（川口/トルコ料理）』のお店ページです。実名でのオススメが3件集まっています。Rettyで食が好きなグルメな人たちからお店を探そう！</span><span class="link-card-domain">retty.me</span></span></a></p>
-<h3 id="h-823314a0">橋頭 私家菜（西川口）</h3>
-<p>西川口のガチ中華。孜然牛肉粒（牛肉のクミン風味炒め、1,780円）と酸辣粉（780円）を注文しました。クミンの香りがしっかりした牛肉と、酸味と辛味のあるスープにもちっとした太麺の酸辣粉を楽しみました。</p>
-<p><a href="https://www.instagram.com/reel/DcqMfgfzWa7/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://retty.me/area/PRE11/ARE52/SUB5201/100001481483/" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://og-image.retty.me/restaurant/100001481483/" alt=""><span class="link-card-body"><span class="link-card-title">橋頭私家菜 - Retty（レッティ）</span><span class="link-card-description">[中華好き人気店☆] こちらは『橋頭私家菜（川口/中華）』のお店ページです。実名でのオススメが11件集まっています。Rettyで食が好きなグルメな人たちからお店を探そう！</span><span class="link-card-domain">retty.me</span></span></a></p>
-<h3 id="h-86a05c15">No.25（飯塚）</h3>
-<p>川口市の人気カフェで「大人のお子様ランチ」。11:40に着いたら満席で、名前を書いて約1時間待ってようやく対面できました。ハンバーグ、エビフライ、ナポリタンが揃った一皿です。</p>
-<p><a href="https://www.instagram.com/reel/DcnJmmkz_VZ/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://retty.me/area/PRE11/ARE52/SUB5201/100001650897/" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://og-image.retty.me/restaurant/100001650897/" alt=""><span class="link-card-body"><span class="link-card-title">No.25 - Retty（レッティ）</span><span class="link-card-description">こちらは『No.25（川口/カフェ）』のお店ページです。実名でのオススメが4件集まっています。Rettyで食が好きなグルメな人たちからお店を探そう！</span><span class="link-card-domain">retty.me</span></span></a></p>
-<h3 id="h-ccb0f865">ロコピコ珈琲（川口）</h3>
-<p>川口駅西口から徒歩約2分。「とろける苺のショートケーキ氷」を食べに行きました。たっぷりの生クリームで、見た目は本当にショートケーキのよう。苺と生クリーム、ふわふわの氷で、暑い日にぴったりでした。</p>
-<p><a href="https://www.instagram.com/reel/Dcm78ZTzSGx/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://r.gnavi.co.jp/bn7ktguv0000" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="http://rimage.gnst.jp/rest/img/bn7ktguv0000/t_0n99.jpg" alt=""><span class="link-card-body"><span class="link-card-title">楽天ぐるなび - ロコピコ珈琲 （川口・東川口/カフェ）</span><span class="link-card-description">ロコピコ珈琲（川口・東川口/カフェ）の店舗情報をご紹介。お店のウリキーワード：川口駅からすぐなど。楽天ぐるなびなら店舗の詳細なメニューの情報や地図・口コミなど、「ロコピコ珈琲」の情報が満載です。川口駅西口から徒歩2分。川口総合文化センターリリアすぐ、カフェも食事利用も、毎日に寄り</span><span class="link-card-domain">r.gnavi.co.jp</span></span></a></p>
-<h3 id="h-046ce9ee">1110 CAFE（領家）</h3>
-<p>雰囲気のいい店内でランチを楽しんだあと、楽しみにしていたパンダのかき氷が登場。ところが自分で組み立てるスタイルで、思っていたより難しかったものの、完成するとちゃんとかわいい一品になりました。</p>
-<p><a href="https://www.instagram.com/reel/DcXrWm_z-aA/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://retty.me/area/PRE11/ARE52/SUB5201/100001541023/" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://og-image.retty.me/restaurant/100001541023/" alt=""><span class="link-card-body"><span class="link-card-title">1110CAFE/BAKERY - Retty（レッティ）</span><span class="link-card-description">[カフェ好き人気店☆] こちらは『1110CAFE/BAKERY（川口/カフェ）』のお店ページです。実名でのオススメが15件集まっています。Rettyで食が好きなグルメな人たちからお店を探そう！</span><span class="link-card-domain">retty.me</span></span></a></p>
-<h2 id="h-01ae72d0">理容・サロン</h2>
-<h3 id="h-74ee9813">Barber&#39;s Green（幸町）</h3>
-<p>幸町の理容室。2026年にオープンしたばかりの新しいお店で、顔剃りの泡はミキサーを使わず手で立て、石鹸は川口市製、椅子も電動ではないなど、アナログな道具へのこだわりがあります。店内は隅々まで清潔感があり、丸刈り（シャンプー・シェーブ付き）は3,000円でした。</p>
-<p><a href="https://www.instagram.com/reel/DfeWs_nTTlN/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://beauty.hotpepper.jp/slnH000795895/" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://imgbp.hotp.jp/CSP/IMG_SRC/29/19/B254632919/B254632919.jpg?impolicy=HPB_policy_default&amp;w=119&amp;h=89" alt=""><span class="link-card-body"><span class="link-card-title">バーバーズ グリーン 川口(Barber&apos;s Green)｜ホットペッパービューティー</span><span class="link-card-description">【ホットペッパービューティー】バーバーズ グリーン 川口(Barber&apos;s Green)のサロン情報。お得なクーポン、ブログ、口コミ、住所、電話番号など知りたい情報満載です。ホットペッパービューティーの２４時間いつでもOKなネット予約を活用しよう！</span><span class="link-card-domain">beauty.hotpepper.jp</span></span></a></p>
-<h3 id="h-4b0e20a8">理容cut-A 南鳩ヶ谷店（南鳩ヶ谷）</h3>
-<p>南鳩ヶ谷の理容室。朝9時の開店に合わせて行ったら、もう行列で番号札は10番でした。「総合（顔剃り・シャンプー込み）」は2,200円で、バリカンは最短0.8mm。顔剃りもシャンプーも丁寧でした。年中無休、受付は9:00〜18:30です。</p>
-<p><a href="https://www.instagram.com/reel/De5oMP6z5xs/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://www.google.com/maps/search/?api=1&amp;query=%E7%90%86%E5%AE%B9cut-A+%E9%B3%A9%E3%83%B6%E8%B0%B7%E5%BA%97+%E5%9F%BC%E7%8E%89%E7%9C%8C%E5%B7%9D%E5%8F%A3%E5%B8%82%E5%8D%97%E9%B3%A9%E3%83%B6%E8%B0%B74-32-1" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://maps.google.com/maps/api/staticmap?center=37.0625%2C-95.677068&amp;zoom=4&amp;size=900x900&amp;language=en&amp;sensor=false&amp;key=AIzaSyBoYjeRtfVI0Jd8Q_9mnflo9i4sOYpShB0&amp;signature=bhDRZQvDkRDlhzWj6J7pTMYyH5k" alt=""><span class="link-card-body"><span class="link-card-title">Google Maps</span><span class="link-card-description">Find local businesses, view maps and get driving directions in Google Maps.</span><span class="link-card-domain">www.google.com</span></span></a></p>
-<h3 id="h-b8bdb49e">ニュー川口理容室（中青木）</h3>
-<p>川口市中青木の理容室を開拓。丸刈りを0.3mmでお願いし、お会計は3,000円でした。帰りに次回100円引きのサンクスカードをもらいました。店主さんが私のInstagramを見てくださっていたという出会いもありました。</p>
-<p><a href="https://www.instagram.com/reel/DeTxlMXTbfx/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://www.google.com/maps/search/?api=1&amp;query=%E3%83%8B%E3%83%A5%E3%83%BC%E5%B7%9D%E5%8F%A3%E7%90%86%E5%AE%B9%E5%AE%A4+%E5%9F%BC%E7%8E%89%E7%9C%8C%E5%B7%9D%E5%8F%A3%E5%B8%82%E4%B8%AD%E9%9D%92%E6%9C%A82-3-2" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://maps.google.com/maps/api/staticmap?center=37.0625%2C-95.677068&amp;zoom=4&amp;size=900x900&amp;language=en&amp;sensor=false&amp;key=AIzaSyBoYjeRtfVI0Jd8Q_9mnflo9i4sOYpShB0&amp;signature=bhDRZQvDkRDlhzWj6J7pTMYyH5k" alt=""><span class="link-card-body"><span class="link-card-title">Google Maps</span><span class="link-card-description">Find local businesses, view maps and get driving directions in Google Maps.</span><span class="link-card-domain">www.google.com</span></span></a></p>
-<h3 id="h-dd64fde1">Cut One（西川口）</h3>
-<p>西川口の理容室。2週間に一度の散髪で、丸刈り派にはありがたい0.2mmのバリカンがあり、お会計は3,000円でした。スッキリ感が少し長持ちする一軒です。</p>
-<p><a href="https://www.instagram.com/reel/Ddu0A9Qzyki/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://www.google.com/maps/search/?api=1&amp;query=cut-one+%E8%A5%BF%E5%B7%9D%E5%8F%A3%E5%BA%97+%E5%9F%BC%E7%8E%89%E7%9C%8C%E5%B7%9D%E5%8F%A3%E5%B8%82%E8%A5%BF%E5%B7%9D%E5%8F%A31-9-4" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://maps.google.com/maps/api/staticmap?center=37.0625%2C-95.677068&amp;zoom=4&amp;size=900x900&amp;language=en&amp;sensor=false&amp;key=AIzaSyBoYjeRtfVI0Jd8Q_9mnflo9i4sOYpShB0&amp;signature=bhDRZQvDkRDlhzWj6J7pTMYyH5k" alt=""><span class="link-card-body"><span class="link-card-title">Google Maps</span><span class="link-card-description">Find local businesses, view maps and get driving directions in Google Maps.</span><span class="link-card-domain">www.google.com</span></span></a></p>
-<h3 id="h-045b58f0">銀座バーバー 鳩ヶ谷店（桜町）</h3>
-<p>2週間に1回の丸刈りで訪問。「できるだけ短く、シャンプー・顔剃り付き、できれば安く」が条件で、お会計は4,000円、クーポンを使って3,700円でした。仕上がりには満足でした。</p>
-<p><a href="https://www.instagram.com/reel/DdcsJR0T46d/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://beauty.hotpepper.jp/slnH000393152/" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://imgbp.hotp.jp/CSP/IMG_SRC/85/80/B242338580/B242338580.jpg?impolicy=HPB_policy_default&amp;w=119&amp;h=89" alt=""><span class="link-card-body"><span class="link-card-title">銀座バーバー 鳩ヶ谷店｜ホットペッパービューティー</span><span class="link-card-description">【ホットペッパービューティー】銀座バーバー 鳩ヶ谷店のサロン情報。お得なクーポン、ブログ、口コミ、住所、電話番号など知りたい情報満載です。ホットペッパービューティーの２４時間いつでもOKなネット予約を活用しよう！</span><span class="link-card-domain">beauty.hotpepper.jp</span></span></a></p>
-<h2 id="h-3509b45c">リラクゼーション</h2>
-<h3 id="h-650a8e7d">友SSOOK・Gapi かわぐち店（芝）</h3>
-<p>川口の韓国式・黄土よもぎ蒸し。まずは足湯から、紫のガウンと布フードで45分。けっこう汗をかき、よもぎのいい匂いに包まれました。終わったあとはハーブティーとお菓子が出ます。45分税込4,000円で、男1人でも入れました。</p>
-<p><a href="https://www.instagram.com/reel/DfRbxKiTXLd/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://beauty.hotpepper.jp/kr/slnH000455370/" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://imgbp.hotp.jp/CSP/IMG_SRC_K/69/49/C049166949/C049166949.jpg?impolicy=HPB_policy_default&amp;w=119&amp;h=89" alt=""><span class="link-card-body"><span class="link-card-title">友スック ガピ かわぐち店(友SSOOK Gapi)｜ホットペッパービューティー</span><span class="link-card-description">【ホットペッパービューティー】友スック ガピ かわぐち店(友SSOOK Gapi)のサロン情報。サロンの内外装、お得なクーポン、ブログ、口コミ、住所、電話番号など知りたい情報満載です。ホットペッパービューティーの２４時間いつでもOKなネット予約を活用しよう！</span><span class="link-card-domain">beauty.hotpepper.jp</span></span></a></p>
-<h3 id="h-d7a43b39">ガーデントランポリンパーク（南鳩ヶ谷）</h3>
-<p>川口のトランポリンパーク。ジムを辞めて運動は街歩きとサイクリングだけなので、筋トレ代わりに行ってきました。跳ぶだけでも全身運動で、腕を回すとさらに効きます。祝日60分2,200円で、大人1人でも気軽に入れました。</p>
-<p><a href="https://www.instagram.com/reel/DfQ45VfTx6n/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://www.google.com/maps/search/?api=1&amp;query=%E3%82%AC%E3%83%BC%E3%83%87%E3%83%B3%E3%83%88%E3%83%A9%E3%83%B3%E3%83%9D%E3%83%AA%E3%83%B3%E3%83%91%E3%83%BC%E3%82%AF+%E5%9F%BC%E7%8E%89%E7%9C%8C%E5%B7%9D%E5%8F%A3%E5%B8%82%E5%8D%97%E9%B3%A9%E3%83%B6%E8%B0%B71-1-1" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://maps.google.com/maps/api/staticmap?center=37.0625%2C-95.677068&amp;zoom=4&amp;size=900x900&amp;language=en&amp;sensor=false&amp;key=AIzaSyBoYjeRtfVI0Jd8Q_9mnflo9i4sOYpShB0&amp;signature=bhDRZQvDkRDlhzWj6J7pTMYyH5k" alt=""><span class="link-card-body"><span class="link-card-title">Google Maps</span><span class="link-card-description">Find local businesses, view maps and get driving directions in Google Maps.</span><span class="link-card-domain">www.google.com</span></span></a></p>
-<h3 id="h-f046fd0a">中国式イヤーエステ 朴境 西川口店（西川口）</h3>
-<p>47歳、初めての中国式イヤーエステ。子どもの頃は親にしてもらう耳掃除がくすぐったくて苦手でしたが、大人になって改めてやってもらうと、やっぱりくすぐったいけれど不思議と気持ちいい。耳掃除の印象が少し変わりました。</p>
-<p><a href="https://www.instagram.com/reel/DdfpVT2z_0l/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://beauty.hotpepper.jp/kr/slnH000824243/" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://imgbp.hotp.jp/CSP/IMG_SRC_K/54/08/C062765408/C062765408.jpg?impolicy=HPB_policy_default&amp;w=119&amp;h=89" alt=""><span class="link-card-body"><span class="link-card-title">朴境(パクキョウ)｜ホットペッパービューティー</span><span class="link-card-description">【ホットペッパービューティー】朴境(パクキョウ)のサロン情報。サロンの内外装、お得なクーポン、ブログ、口コミ、住所、電話番号など知りたい情報満載です。ホットペッパービューティーの２４時間いつでもOKなネット予約を活用しよう！</span><span class="link-card-domain">beauty.hotpepper.jp</span></span></a></p>
-<p>みなさんの「川口のおすすめ」もぜひ教えてください。行ってみます。</p>
-<p>これから行きたいお店は、こちらにまとめています。</p>
-<p><a href="https://freddiefujiwara.com/blog/1ORcobKE3DfRrSUV6yMUodfVQgiL1ouKaCTWKTEFUR6A">▶ 川口の行きたい店・スポットをまとめました</a></p>
-<p><a class="link-card" href="https://freddiefujiwara.com/blog/1ORcobKE3DfRrSUV6yMUodfVQgiL1ouKaCTWKTEFUR6A" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://freddiefujiwara.com/blog/ogp/1ORcobKE3DfRrSUV6yMUodfVQgiL1ouKaCTWKTEFUR6A.png" alt=""><span class="link-card-body"><span class="link-card-title">2026-10-31 川口の行きたい店とスポットをまとめました</span><span class="link-card-description">📍 川口の「行きたい店・スポット」をまとめました コメントやDMでおすすめを教えていただくことが増えたので、一覧にしてみます。ありがとうございます。順番に行ってみます。行ったお店は「川口のリールを、地図にまとめました」にまとめています。 </span><span class="link-card-domain">freddiefujiwara.com</span></span></a></p>
-          </div>
-          <nav class="article-nav" aria-label="前後の記事"><a class="article-nav-link article-nav-prev" href="https://freddiefujiwara.com/blog/1UJziyYzHPuIZGVTSNUL2AXP0_oakUNmAhIUhNm0WHbM" aria-label="前の記事: 「自分の環境で通る」と「まっさらな環境でも再現する」は別物。SwitchBotサーキュレーターとCIの教訓"><span class="article-nav-arrow" aria-hidden="true">←</span><span class="article-nav-title">「自分の環境で通る」と「まっさらな環境でも再現する」は別物。SwitchBotサーキュレーターとCIの教訓</span></a><a class="article-nav-link article-nav-next" href="https://freddiefujiwara.com/blog/1miVeFJ_0ZcKWg3baLywSTTLemh6EAzJcVD8GvUxXAjg" aria-label="次の記事: 中国語が少しずつ話せるようになる。先生の「越来越好」がうれしかった3回目のレッスン"><span class="article-nav-title">中国語が少しずつ話せるようになる。先生の「越来越好」がうれしかった3回目のレッスン</span><span class="article-nav-arrow" aria-hidden="true">→</span></a></nav>
-        </article>
-      </div>
-    </main>
-    <footer>
-      <div class="wrap">
-        <div class="foot-groups">
-          <div class="foot-group">
-            <p class="foot-group-title">このサイト</p>
-            <div class="foot-links">
-              <a href="https://freddiefujiwara.com/" target="_blank" rel="noopener">トップ <span class="arr">↗</span></a>
-              <a href="https://freddiefujiwara.com/blog/" target="_blank" rel="noopener">ブログ <span class="arr">↗</span></a>
-              <a href="https://freddiefujiwara.com/list-of-stuff/" target="_blank" rel="noopener">持ち物 <span class="arr">↗</span></a>
-              <a href="https://freddiefujiwara.com/bucket-list/" target="_blank" rel="noopener">バケットリスト <span class="arr">↗</span></a>
-            </div>
-          </div>
-          <div class="foot-group">
-            <p class="foot-group-title">SNS</p>
-            <div class="foot-links">
-              <a href="https://www.instagram.com/freddiefujiwara" target="_blank" rel="noopener">Instagram <span class="arr">↗</span></a>
-              <a href="https://x.com/freddiefujiwara" target="_blank" rel="noopener">X <span class="arr">↗</span></a>
-              <a href="https://www.facebook.com/freddiefujiwara" target="_blank" rel="noopener">Facebook <span class="arr">↗</span></a>
-            </div>
-          </div>
-          <div class="foot-group">
-            <p class="foot-group-title">口コミ</p>
-            <div class="foot-links">
-              <a href="https://www.google.com/maps/contrib/105456242747265663411/reviews" target="_blank" rel="noopener">Googleマップの口コミ <span class="arr">↗</span></a>
-              <a href="https://review.travel.rakuten.co.jp/reviewer/fumikazufujiwara" target="_blank" rel="noopener">楽天トラベルの口コミ <span class="arr">↗</span></a>
-              <a href="https://tabelog.com/rvwr/zegenvs/" target="_blank" rel="noopener">食べログの口コミ <span class="arr">↗</span></a>
-              <a href="https://retty.me/user/50281/" target="_blank" rel="noopener">Rettyの口コミ <span class="arr">↗</span></a>
-            </div>
-          </div>
-          <div class="foot-group">
-            <p class="foot-group-title">プロフィール・その他</p>
-            <div class="foot-links">
-              <a href="https://github.com/freddiefujiwara" target="_blank" rel="noopener">GitHub <span class="arr">↗</span></a>
-              <a href="https://linkedin.com/in/freddiefujiwara" target="_blank" rel="noopener">LinkedIn <span class="arr">↗</span></a>
-              <a href="https://youtrust.jp/users/freddiefujiwara" target="_blank" rel="noopener">YOUTRUST <span class="arr">↗</span></a>
-              <a href="https://fril.jp/shop/freddiefujiwara" target="_blank" rel="noopener">ラクマ <span class="arr">↗</span></a>
-            </div>
-          </div>
-          <div class="foot-group">
-            <p class="foot-group-title">自作ツール</p>
-            <div class="foot-links">
-              <a href="https://freddiefujiwara.com/xuexi/" target="_blank" rel="noopener">学习（中国語の復習） <span class="arr">↗</span></a>
-              <a href="https://freddiefujiwara.com/openapi-fetch/" target="_blank" rel="noopener">openapi-fetch <span class="arr">↗</span></a>
-              <a href="https://freddiefujiwara.com/md2img/" target="_blank" rel="noopener">md2img（Markdown to Image） <span class="arr">↗</span></a>
-              <a href="https://freddiefujiwara.com/portfolio-treemap/" target="_blank" rel="noopener">portfolio-treemap（ポートフォリオ構成図） <span class="arr">↗</span></a>
-              <a href="https://freddiefujiwara.com/dtgwt/" target="_blank" rel="noopener">dtgwt（デシジョンテーブル→Given/When/Then） <span class="arr">↗</span></a>
-              <a href="https://freddiefujiwara.com/node-qict/" target="_blank" rel="noopener">node-qict（ペアワイズ法のテストケース生成） <span class="arr">↗</span></a>
-              <a href="https://freddiefujiwara.com/smtc/" target="_blank" rel="noopener">smtc（状態遷移のテストケース生成） <span class="arr">↗</span></a>
-              <a href="https://freddiefujiwara.com/dtdt/" target="_blank" rel="noopener">dtdt（デシジョンツリー→デシジョンテーブル） <span class="arr">↗</span></a>
-            </div>
-          </div>
-        </div>
-        <p class="copy">© 2026 藤原史和（Fumikazu Fujiwara）— freddiefujiwara.com</p>
-      </div>
-    </footer>
-
-    <script>
-      (function () {
-        var FALLBACK = "https://tshop.r10s.jp/rukusu/cabinet/images/junbi.jpg";
-        function swap(img) {
-          if (img.dataset.errored) return;
-          img.dataset.errored = "true";
-          img.src = FALLBACK;
+      @media (prefers-color-scheme: dark) {
+        body {
+          background: #17140f;
+          color: #f3efe6;
         }
-        document.addEventListener(
-          "error",
-          function (event) {
-            var target = event.target;
-            if (
-              target &&
-              target.tagName === "IMG" &&
-              target.classList.contains("link-card-image")
-            ) {
-              swap(target);
-            }
-          },
-          true
-        );
-        document.querySelectorAll("img.link-card-image").forEach(function (img) {
-          if (img.complete && img.naturalWidth === 0) swap(img);
+        .card {
+          background: #221e17;
+          border-color: #3a352a;
+        }
+        .sub {
+          color: #b6ad9c;
+        }
+      }
+    </style>
+    <script>
+      // 初回だけ自動で転送する。アプリが開いてブラウザに戻ってきた
+      // とき（ページキャッシュからの復帰や、同じタブでの再読み込み）
+      // は転送を繰り返さず、この案内ページを表示する。
+      (function () {
+        var dest = "https://freddiefujiwara.com/blog/1bNigXcTT-1LSXjUYAlfFQuJPX6U7U3ELeWAfG5XIb58";
+        var key = "short-url-go:" + location.pathname;
+        var done = false;
+        try {
+          done = sessionStorage.getItem(key) === "1";
+        } catch (e) {}
+        window.addEventListener("pageshow", function (event) {
+          if (event.persisted || done) return;
+          done = true;
+          try {
+            sessionStorage.setItem(key, "1");
+          } catch (e) {}
+          window.location.replace(dest);
         });
       })();
     </script>
-    <script src="/js/music-count.js"></script>
+  </head>
+  <body>
+    <main class="card">
+      <h1>川口のリールを、地図にまとめました</h1>
+      <p class="sub">ブログの記事へ移動します。戻ってきた場合は、下のボタンから開き直せます。</p>
+      <a class="go" href="https://freddiefujiwara.com/blog/1bNigXcTT-1LSXjUYAlfFQuJPX6U7U3ELeWAfG5XIb58">記事を開く</a>
+      <a class="home" href="https://freddiefujiwara.com/">トップページへ戻る</a>
+    </main>
   </body>
 </html>
