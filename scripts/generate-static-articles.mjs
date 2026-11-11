@@ -92,6 +92,60 @@ const LINK_CARD_FALLBACK_IMAGE =
   "https://tshop.r10s.jp/rukusu/cabinet/images/junbi.jpg";
 
 /* ------------------------------------------------------------------ */
+/* Prev / next article navigation                                      */
+/* ------------------------------------------------------------------ */
+
+// The URL a reader follows from a static page to another article: a
+// fellow static page when the target has one (which also skips the
+// blog's redirect hop), the blog article page otherwise.
+export const articleHrefFor = (docId) => {
+  const target = ARTICLES.find((entry) => entry.docId === docId);
+  return target ? `${SITE_ORIGIN}/${target.slug}` : `${SITE_ORIGIN}/blog/${docId}`;
+};
+
+// Navigation titles drop the "YYYY-MM-DD " prefix, like the blog's
+// own prev/next links (see formatNavTitle in the blog).
+export const navTitleFor = (title) =>
+  String(title ?? "").replace(/^\d{4}-\d{2}-\d{2}\s*/, "");
+
+// The prev/next neighbours of one article in the blog's list order
+// (newest first): "prev" is the newer neighbour and "next" the older
+// one — the same arrangement as the blog's article pages, so a
+// reader who lands on a static page can keep browsing. Returns null
+// when the list is unavailable or the article is not in it (the page
+// then simply renders without the navigation).
+export const buildArticleNav = (list, docId) => {
+  if (!list || !Array.isArray(list.ids)) {
+    return null;
+  }
+  const index = list.ids.indexOf(docId);
+  if (index === -1) {
+    return null;
+  }
+  const titles =
+    list.titles && typeof list.titles === "object" ? list.titles : {};
+  const entry = (id) =>
+    id ? { href: articleHrefFor(id), title: navTitleFor(titles[id]) } : null;
+  return {
+    prev: entry(list.ids[index - 1]),
+    next: entry(list.ids[index + 1]),
+  };
+};
+
+const buildArticleNavHtml = (nav) => {
+  if (!nav || (!nav.prev && !nav.next)) {
+    return "";
+  }
+  const prev = nav.prev
+    ? `<a class="article-nav-link article-nav-prev" href="${escapeHtml(nav.prev.href)}" aria-label="前の記事: ${escapeHtml(nav.prev.title || "前の記事")}"><span class="article-nav-arrow" aria-hidden="true">←</span><span class="article-nav-title">${escapeHtml(nav.prev.title || "前の記事")}</span></a>`
+    : "";
+  const next = nav.next
+    ? `<a class="article-nav-link article-nav-next" href="${escapeHtml(nav.next.href)}" aria-label="次の記事: ${escapeHtml(nav.next.title || "次の記事")}"><span class="article-nav-title">${escapeHtml(nav.next.title || "次の記事")}</span><span class="article-nav-arrow" aria-hidden="true">→</span></a>`
+    : "";
+  return `<nav class="article-nav" aria-label="前後の記事">${prev}${next}</nav>`;
+};
+
+/* ------------------------------------------------------------------ */
 /* Markdown rendering — ported from the blog's src/services/markdown.js
    so the static pages render exactly like the blog article pages.   */
 /* ------------------------------------------------------------------ */
@@ -782,6 +836,29 @@ const PAGE_CSS = `
       article th { background: var(--surface); }
       .article-content h2, .article-content h3 { scroll-margin-top: 72px; }
       .article-content p[id^="item-"] { scroll-margin-top: 72px; }
+
+      /* ---------- prev / next article links ---------- */
+      .article-nav {
+        display: flex; justify-content: space-between; align-items: center;
+        gap: 16px; margin-top: 40px; padding-top: 16px;
+        border-top: 1px solid var(--line);
+      }
+      .article-nav-link {
+        display: inline-flex; align-items: center; gap: 8px; min-width: 0;
+        color: var(--ink); text-decoration: none;
+      }
+      .article-nav-link:only-child { max-width: 100%; }
+      .article-nav-next { margin-left: auto; }
+      .article-nav-arrow { flex-shrink: 0; color: var(--accent); }
+      .article-nav-title {
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+      .article-nav-link:hover .article-nav-title {
+        color: var(--accent); text-decoration: underline;
+      }
+      @media (max-width: 768px) {
+        .article-nav-link { font-size: 0.8rem; }
+      }
       article .item-link { font-size: 0.8rem; }
       article .item-link a { color: var(--ink-3); }
 
@@ -1771,7 +1848,7 @@ export const MUSIC_PLAYER_SCRIPT = `
     </script>
 `;
 // Renders one complete static article page.
-export const renderStaticArticlePage = ({ article, payload, year, latestArticleId }) => {
+export const renderStaticArticlePage = ({ article, payload, year, latestArticleId, nav = null }) => {
   // The title is the blog's title, used exactly as fetched — no
   // date stripping, no fixed replacement (the owner's instruction,
   // 2026-11-07: the static pages must match the blog's output). The
@@ -1804,6 +1881,10 @@ export const renderStaticArticlePage = ({ article, payload, year, latestArticleI
   const musicScript = bodyHtml.includes('class="music-track"')
     ? MUSIC_PLAYER_SCRIPT
     : "";
+  // Prev/next links at the foot of the article, mirroring the blog's
+  // own article navigation so the reading flow continues from the
+  // static pages too.
+  const navHtml = buildArticleNavHtml(nav);
   return `<!doctype html>
 <html lang="ja">
   <head>
@@ -1849,7 +1930,7 @@ export const renderStaticArticlePage = ({ article, payload, year, latestArticleI
           <h1>${escapeHtml(title)}</h1>
 ${chips ? `          ${chips}\n` : ""}          <div class="article-body">
 ${introHtml}${bodyHtml}          </div>
-        </article>
+${navHtml ? `          ${navHtml}\n` : ""}        </article>
       </div>
     </main>
     ${buildFooterHtml(year)}
@@ -2462,10 +2543,14 @@ export const generateStaticArticles = async ({
   // refresh below.
   let latestArticleId = null;
   let blogTitles = null;
+  let blogList = null;
   try {
     const list = await fetchJsonOnce(API_BASE, fetchImpl);
     if (Array.isArray(list?.ids) && list.ids.length > 0) {
       latestArticleId = list.ids[0];
+      // The same list (order + titles) also feeds each page's
+      // prev/next navigation.
+      blogList = { ids: list.ids, titles: list.titles };
     }
     if (list?.titles && typeof list.titles === "object") {
       blogTitles = list.titles;
@@ -2473,6 +2558,7 @@ export const generateStaticArticles = async ({
   } catch {
     latestArticleId = null;
     blogTitles = null;
+    blogList = null;
   }
   let items = [];
   for (const article of ARTICLES) {
@@ -2499,7 +2585,13 @@ export const generateStaticArticles = async ({
   });
   const pages = items.map(({ article, payload }) => ({
     article,
-    html: renderStaticArticlePage({ article, payload, year, latestArticleId }),
+    html: renderStaticArticlePage({
+      article,
+      payload,
+      year,
+      latestArticleId,
+      nav: buildArticleNav(blogList, article.docId),
+    }),
   }));
   const results = pages.map(({ article, html }) => {
     const dir = join(outDir, article.slug);
