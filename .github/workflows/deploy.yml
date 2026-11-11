@@ -6,7 +6,7 @@ on:
   schedule:
     # Daily 06:45 JST: regenerate the sitemap even on days without code changes.
     - cron: "45 21 * * *"
-    # Every 6 hours (03/09/15/21 JST): refresh the static articles.
+    # Every 6 hours (03/09/15/21 JST): refresh the top page data.
     - cron: "0 0,6,12,18 * * *"
   workflow_dispatch:
 
@@ -23,15 +23,13 @@ jobs:
       with:
         node-version: '20'
 
-    - name: Generate static articles
+    - name: Refresh top page data
       continue-on-error: true
       env:
         GA_GAS_EXEC_URL: ${{ secrets.GA_GAS_EXEC_URL }}
-        ZE_OGP_CACHE_URL: ${{ secrets.ZE_OGP_CACHE_URL }}
-        STATIC_OGP_WAIT_MS: "0"
       run: |
         npm install
-        node scripts/generate-static-articles.mjs
+        node scripts/refresh-top-data.mjs
 
     - name: Assemble publish folder (production + staging variant)
       run: |

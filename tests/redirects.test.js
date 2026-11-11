@@ -16,9 +16,10 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 // the stub must not fire again — it shows its guide card (a big
 // button to the destination and a way back to the top page)
 // instead of a blank white page.
-// Four short URLs (map / bucket-list / list-of-stuff / music) are no
-// longer stubs: they serve a generated static article page instead,
-// covered by tests/static-articles.test.js.
+// Four short URLs (map / bucket-list / list-of-stuff / music) point
+// at blog articles. They used to serve generated static copies of
+// those articles; since the blog API grew a snapshot cache and the
+// articles answer in a few seconds, they are ordinary stubs again.
 const REDIRECTS = [
   ['instagram', 'https://www.instagram.com/freddiefujiwara'],
   ['facebook', 'https://www.facebook.com/freddiefujiwara'],
@@ -27,6 +28,10 @@ const REDIRECTS = [
   ['youtube', 'https://www.youtube.com/@freddiefujiwara'],
   ['room', 'https://room.rakuten.co.jp/freddiefujiwara/items'],
   ['chinese', 'https://freddiefujiwara.com/blog/tag/中国語'],
+  ['map', 'https://freddiefujiwara.com/blog/1bNigXcTT-1LSXjUYAlfFQuJPX6U7U3ELeWAfG5XIb58'],
+  ['bucket-list', 'https://freddiefujiwara.com/blog/1WPrZI3RqXZcBIrVfrvY7Qn6AF-pFBHdNWXcK7PIwokM'],
+  ['list-of-stuff', 'https://freddiefujiwara.com/blog/1tn5P1vB1jnKHSay_FC2AEtNxH0gQZ3_jffRnHuz4YpM'],
+  ['music', 'https://freddiefujiwara.com/blog/1V7cXplHKbsT48EhLarl-SPHfDV-lSEafEId2OMgExkg'],
 ];
 
 describe('短縮URLの転送ページ', () => {

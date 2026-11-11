@@ -9,11 +9,11 @@ import {
 } from '../scripts/measure-smoke.mjs';
 
 describe('measure-smoke targets', () => {
-  it('covers the static pages, pinned articles and twelve endpoints once each', () => {
+  it('covers the top page, the four long-lived articles and twelve endpoints once each', () => {
     const names = TARGETS.map((t) => t.target);
     expect(new Set(names).size).toBe(names.length);
-    expect(TARGETS.filter((t) => t.kind === 'page')).toHaveLength(5);
-    expect(TARGETS.filter((t) => t.kind === 'article')).toHaveLength(3);
+    expect(TARGETS.filter((t) => t.kind === 'page')).toHaveLength(1);
+    expect(TARGETS.filter((t) => t.kind === 'article')).toHaveLength(4);
     expect(TARGETS.filter((t) => t.kind === 'endpoint')).toHaveLength(12);
     for (const t of TARGETS) {
       expect(t.url).toMatch(/^https:\/\//);
