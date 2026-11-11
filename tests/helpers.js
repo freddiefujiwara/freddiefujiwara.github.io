@@ -12,6 +12,7 @@ export const webVitalsGaJs = readFileSync(path.join(root, 'public/js/web-vitals-
 export const musicCountJs = readFileSync(path.join(root, 'public/js/music-count.js'), 'utf8');
 export const snsCountJs = readFileSync(path.join(root, 'public/js/sns-count.js'), 'utf8');
 export const popularArticlesJs = readFileSync(path.join(root, 'public/js/popular-articles.js'), 'utf8');
+export const liveBarJs = readFileSync(path.join(root, 'public/js/live-bar.js'), 'utf8');
 
 // IntersectionObserver のモック。生成されたインスタンスを保持し、
 // テスト側から交差イベントを発火できるようにする。
