@@ -87,7 +87,7 @@ describe('ページ構造の不変条件', () => {
     const local = [...document.querySelectorAll('script[src]')]
       .map((s) => s.getAttribute('src'))
       .filter((src) => src.startsWith('/js/'));
-    expect(local).toEqual(['/js/gtag.js', '/js/main.js', '/js/web-vitals.iife.js', '/js/web-vitals-ga.js', '/js/music-count.js', '/js/sns-count.js', '/js/popular-articles.js']);
+    expect(local).toEqual(['/js/gtag.js', '/js/main.js', '/js/web-vitals.iife.js', '/js/web-vitals-ga.js', '/js/music-count.js', '/js/sns-count.js', '/js/popular-articles.js', '/js/live-bar.js']);
     for (const src of local) {
       expect(existsSync(path.join(root, 'public', src)), src).toBe(true);
     }
