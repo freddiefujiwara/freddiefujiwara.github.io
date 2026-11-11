@@ -177,6 +177,9 @@
       article th, article td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; }
       article th { background: var(--surface); }
       .article-content h2, .article-content h3 { scroll-margin-top: 72px; }
+      .article-content p[id^="item-"] { scroll-margin-top: 72px; }
+      article .item-link { font-size: 0.8rem; }
+      article .item-link a { color: var(--ink-3); }
 
       /* OGP link cards, emitted by blog-gas for standalone link paragraphs */
       article a.link-card {
@@ -187,6 +190,11 @@
         overflow-wrap: normal; line-height: 1.5;
       }
       article a.link-card:hover { border-color: var(--accent); color: inherit; }
+      /* cards flagged .is-grayout by blog-gas are grayed out */
+      article a.link-card.is-grayout { opacity: .55; }
+      article a.link-card.is-grayout .link-card-image { filter: grayscale(1); }
+      /* images flagged .is-grayout by blog-gas are grayed out */
+      article img.is-grayout { opacity: .55; filter: grayscale(1); }
       article .link-card-image { width: 112px; height: 112px; object-fit: cover; border-radius: 8px; flex-shrink: 0; }
       article .link-card-body { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
       article .link-card-title {
@@ -492,6 +500,9 @@
 
       /* ---------- footer (shared site chrome) ---------- */
       footer { margin-top: 56px; border-top: 1px solid var(--line); padding: 24px 0 46px; }
+      .foot-groups { display: flex; flex-wrap: wrap; gap: 16px 44px; margin-bottom: 22px; }
+      .foot-group-title { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em; color: var(--ink-3); margin: 0 0 8px; }
+      .foot-group .foot-links { margin-bottom: 0; }
       .foot-links { display: flex; flex-wrap: wrap; gap: 10px 22px; margin-bottom: 22px; }
       .foot-links a { color: var(--ink-2); font-size: 0.92rem; display: inline-flex; align-items: center; gap: 6px; }
       .foot-links a:hover { color: var(--accent); text-decoration: none; }
@@ -513,7 +524,7 @@
       </ul>
     </nav>
     <header class="hero">
-      <a class="hero-inner hero-link" href="https://freddiefujiwara.com/blog/1rb1BZG19mzzSQ9qK8thIl_LpGySGJgi7K2ZoKLzCB7U">
+      <a class="hero-inner hero-link" href="https://freddiefujiwara.com/blog/1Shso7kKRSzJOptQiEXdlB5Pi1WBQypw96OF1AagStyI">
         <p class="hero-place">KAWAGUCHI — MUSIC</p>
         <h1><span class="h1-name">藤原史和</span><span class="h1-sep" aria-hidden="true">｜</span><span class="h1-role">川口を歩くQAエンジニア</span></h1>
       </a>
@@ -623,22 +634,42 @@
     </main>
     <footer>
       <div class="wrap">
-        <div class="foot-links">
-          <a href="https://freddiefujiwara.com/" target="_blank" rel="noopener">トップ <span class="arr">↗</span></a>
-          <a href="https://freddiefujiwara.com/blog/" target="_blank" rel="noopener">ブログ <span class="arr">↗</span></a>
-          <a href="https://freddiefujiwara.com/list-of-stuff/" target="_blank" rel="noopener">持ち物 <span class="arr">↗</span></a>
-          <a href="https://freddiefujiwara.com/bucket-list/" target="_blank" rel="noopener">バケットリスト <span class="arr">↗</span></a>
-          <a href="https://www.instagram.com/freddiefujiwara" target="_blank" rel="noopener">Instagram <span class="arr">↗</span></a>
-          <a href="https://www.facebook.com/freddiefujiwara" target="_blank" rel="noopener">Facebook <span class="arr">↗</span></a>
-          <a href="https://www.google.com/maps/contrib/105456242747265663411/reviews" target="_blank" rel="noopener">Googleマップの口コミ <span class="arr">↗</span></a>
-          <a href="https://review.travel.rakuten.co.jp/reviewer/fumikazufujiwara" target="_blank" rel="noopener">楽天トラベルの口コミ <span class="arr">↗</span></a>
-          <a href="https://tabelog.com/rvwr/zegenvs/" target="_blank" rel="noopener">食べログの口コミ <span class="arr">↗</span></a>
-          <a href="https://retty.me/user/50281/" target="_blank" rel="noopener">Rettyの口コミ <span class="arr">↗</span></a>
-          <a href="https://x.com/freddiefujiwara" target="_blank" rel="noopener">X <span class="arr">↗</span></a>
-          <a href="https://github.com/freddiefujiwara" target="_blank" rel="noopener">GitHub <span class="arr">↗</span></a>
-          <a href="https://linkedin.com/in/freddiefujiwara" target="_blank" rel="noopener">LinkedIn <span class="arr">↗</span></a>
-          <a href="https://youtrust.jp/users/freddiefujiwara" target="_blank" rel="noopener">YOUTRUST <span class="arr">↗</span></a>
-          <a href="https://fril.jp/shop/freddiefujiwara" target="_blank" rel="noopener">ラクマ <span class="arr">↗</span></a>
+        <div class="foot-groups">
+          <div class="foot-group">
+            <p class="foot-group-title">このサイト</p>
+            <div class="foot-links">
+              <a href="https://freddiefujiwara.com/" target="_blank" rel="noopener">トップ <span class="arr">↗</span></a>
+              <a href="https://freddiefujiwara.com/blog/" target="_blank" rel="noopener">ブログ <span class="arr">↗</span></a>
+              <a href="https://freddiefujiwara.com/list-of-stuff/" target="_blank" rel="noopener">持ち物 <span class="arr">↗</span></a>
+              <a href="https://freddiefujiwara.com/bucket-list/" target="_blank" rel="noopener">バケットリスト <span class="arr">↗</span></a>
+            </div>
+          </div>
+          <div class="foot-group">
+            <p class="foot-group-title">SNS</p>
+            <div class="foot-links">
+              <a href="https://www.instagram.com/freddiefujiwara" target="_blank" rel="noopener">Instagram <span class="arr">↗</span></a>
+              <a href="https://x.com/freddiefujiwara" target="_blank" rel="noopener">X <span class="arr">↗</span></a>
+              <a href="https://www.facebook.com/freddiefujiwara" target="_blank" rel="noopener">Facebook <span class="arr">↗</span></a>
+            </div>
+          </div>
+          <div class="foot-group">
+            <p class="foot-group-title">口コミ</p>
+            <div class="foot-links">
+              <a href="https://www.google.com/maps/contrib/105456242747265663411/reviews" target="_blank" rel="noopener">Googleマップの口コミ <span class="arr">↗</span></a>
+              <a href="https://review.travel.rakuten.co.jp/reviewer/fumikazufujiwara" target="_blank" rel="noopener">楽天トラベルの口コミ <span class="arr">↗</span></a>
+              <a href="https://tabelog.com/rvwr/zegenvs/" target="_blank" rel="noopener">食べログの口コミ <span class="arr">↗</span></a>
+              <a href="https://retty.me/user/50281/" target="_blank" rel="noopener">Rettyの口コミ <span class="arr">↗</span></a>
+            </div>
+          </div>
+          <div class="foot-group">
+            <p class="foot-group-title">プロフィール・その他</p>
+            <div class="foot-links">
+              <a href="https://github.com/freddiefujiwara" target="_blank" rel="noopener">GitHub <span class="arr">↗</span></a>
+              <a href="https://linkedin.com/in/freddiefujiwara" target="_blank" rel="noopener">LinkedIn <span class="arr">↗</span></a>
+              <a href="https://youtrust.jp/users/freddiefujiwara" target="_blank" rel="noopener">YOUTRUST <span class="arr">↗</span></a>
+              <a href="https://fril.jp/shop/freddiefujiwara" target="_blank" rel="noopener">ラクマ <span class="arr">↗</span></a>
+            </div>
+          </div>
         </div>
         <p class="copy">© 2026 藤原史和（Fumikazu Fujiwara）— freddiefujiwara.com</p>
       </div>
@@ -676,7 +707,7 @@
       (function () {
         // Hand-rolled music player, ported from the blog's
         // src/services/musicPlayer.js. blog-gas turns a document
-        // paragraph [[music|title|file.mp3]] into a placeholder
+        // paragraph [[音楽|title|file.mp3]] into a placeholder
         // div; this script collects the article's placeholders
         // into a single playlist player at the first placeholder's
         // place. The MP3s live in Google Drive, whose direct links
@@ -705,7 +736,14 @@
           return new Blob(parts, { type: mime || "audio/mpeg" });
         }
 
+        // Fetched track blobs are kept for the session: switching
+        // back to a track that already played never asks music-gas
+        // again. The resolved blobs are remembered separately,
+        // because iOS Safari only honours play() calls made
+        // synchronously inside the tap handler — a cached track
+        // must be attachable without waiting for a promise tick.
         var blobCache = {};
+        var blobValues = {};
         function fetchTrackBlob(file) {
           if (blobCache[file]) return blobCache[file];
           var promise = (async function () {
@@ -716,11 +754,19 @@
             if (!payload || !payload.ok) {
               throw new Error((payload && payload.error) || "music-gas request failed");
             }
-            return decodeBase64ToBlob(payload.data, payload.mime);
+            var blob = decodeBase64ToBlob(payload.data, payload.mime);
+            blobValues[file] = blob;
+            return blob;
           })();
           blobCache[file] = promise;
           promise.catch(function () { delete blobCache[file]; });
           return promise;
+        }
+
+        // The already-fetched blob for a file, or undefined while
+        // its fetch has not landed yet.
+        function cachedBlob(file) {
+          return blobValues[file];
         }
 
         function formatTime(seconds) {
@@ -806,6 +852,35 @@
           window.gtag("event", "music_play", { method: method });
         }
 
+        // How long the reader waits, in milliseconds, so the
+        // values can be registered as custom metrics in GA4 and
+        // read as averages. music_ready fires once per player,
+        // when the first track has been fetched and cached;
+        // ready_ms is measured from page load, so it is the time
+        // until a press would start playback almost at once.
+        // music_latency fires when playback actually starts after
+        // a start intent (button / list / auto advance);
+        // latency_ms runs from the intent to the audio element's
+        // 'playing' event. Same suppression rules as music_play.
+        function sendTiming(eventName, paramName, ms, extra) {
+          if (location.pathname.indexOf("/staging/") !== -1) return;
+          if (typeof window.gtag !== "function") return;
+          var value = Math.round(Number(ms));
+          if (!isFinite(value) || value < 0) return;
+          var params = {};
+          params[paramName] = value;
+          if (extra) {
+            for (var key in extra) params[key] = extra[key];
+          }
+          window.gtag("event", eventName, params);
+        }
+        function trackMusicReady(ms) {
+          sendTiming("music_ready", "ready_ms", ms);
+        }
+        function trackMusicLatency(ms, method) {
+          sendTiming("music_latency", "latency_ms", ms, { method: method });
+        }
+
         function createPlayer(container, tracks) {
           var audio = new Audio();
           audio.preload = "auto";
@@ -817,6 +892,8 @@
             played: new Set(),
             history: [],
             wantPlay: false,
+            pressStartedAt: null,
+            pressMethod: "",
             loadedFile: "",
             loading: false,
             loadSeq: 0,
@@ -831,6 +908,16 @@
               objectUrls[file] = url;
               return url;
             });
+          }
+          // The same, synchronously, when the blob is already in:
+          // returns null while the track still needs the network.
+          function objectUrlForSync(file) {
+            if (objectUrls[file]) return objectUrls[file];
+            var blob = cachedBlob(file);
+            if (!blob) return null;
+            var url = URL.createObjectURL(blob);
+            objectUrls[file] = url;
+            return url;
           }
 
           function el(tag, className, text) {
@@ -896,6 +983,7 @@
             button.addEventListener("click", function () {
               state.wantPlay = true;
               trackMusicPlay("list");
+              notePlayIntent("list");
               startTrack(i);
             });
             item.appendChild(button);
@@ -937,19 +1025,34 @@
           }
           function setStatus(text) { statusEl.textContent = text; }
 
-          // Once one track is in, quietly fetch the rest of the
-          // playlist in the background, one at a time. Most
-          // switches then find their bytes already in the session
-          // cache, which also keeps iOS from treating a
-          // long-delayed programmatic play() as unsolicited
-          // autoplay.
-          var prefetchStarted = false;
-          function prefetchRemaining() {
-            if (prefetchStarted) return;
-            prefetchStarted = true;
-            tracks.reduce(function (chain, track) {
-              return chain.then(function () { return fetchTrackBlob(track.file); }).catch(function () {});
-            }, Promise.resolve());
+          // Loading stays light on purpose. At mount only the
+          // first track is warmed, so opening the page never pulls
+          // the whole playlist (about 11 MB of audio, more again
+          // as base64 text) over the wire, while the first press
+          // can still start almost at once. The remaining tracks
+          // are fetched in the background, one at a time, once
+          // playback has actually started. A track the reader taps
+          // is always served first: its request starts immediately
+          // and the background chain waits for it before moving on.
+          var backgroundStarted = false;
+          var priorityPromise = null;
+          function startBackgroundPrefetch() {
+            if (backgroundStarted) return;
+            backgroundStarted = true;
+            var chain = Promise.resolve();
+            tracks.forEach(function (track) {
+              chain = chain.then(function () {
+                if (state.destroyed) return;
+                var wait = priorityPromise
+                  ? priorityPromise.catch(function () {})
+                  : Promise.resolve();
+                return wait.then(function () {
+                  if (state.destroyed) return;
+                  return fetchTrackBlob(track.file);
+                }).catch(function () {});
+              });
+            });
+            return chain;
           }
 
           function startTrack(i, options) {
@@ -969,16 +1072,35 @@
               syncPlayButton();
               return;
             }
+            // A cached track is attached and started
+            // synchronously, still inside the tap handler's call
+            // stack: iOS Safari refuses a play() that only happens
+            // after a promise resolves, which is why the first
+            // press used to fail there.
+            var syncUrl = objectUrlForSync(file);
+            if (syncUrl) {
+              state.loadedFile = file;
+              audio.src = syncUrl;
+              if (state.wantPlay) tryPlay(audio);
+              syncPlayButton();
+              syncProgress();
+              return;
+            }
             state.loading = true;
             syncPlayButton();
             setStatus("");
+            var request = fetchTrackBlob(file);
+            priorityPromise = request;
+            var clearPriority = function () {
+              if (priorityPromise === request) priorityPromise = null;
+            };
+            request.then(clearPriority, clearPriority);
             objectUrlFor(file)
               .then(function (url) {
                 if (state.destroyed || seq !== state.loadSeq) return;
                 state.loading = false;
                 state.loadedFile = file;
                 audio.src = url;
-                prefetchRemaining();
                 if (state.wantPlay) tryPlay(audio);
                 syncPlayButton();
                 syncProgress();
@@ -986,9 +1108,19 @@
               .catch(function () {
                 if (state.destroyed || seq !== state.loadSeq) return;
                 state.loading = false;
+                state.pressStartedAt = null;
                 setStatus("音源を読み込めませんでした");
                 syncPlayButton();
               });
+          }
+
+          // A start intent (play button, list tap, next/prev,
+          // automatic advance) stamps the clock; when the element
+          // then reports 'playing', the gap is the wait the reader
+          // actually felt.
+          function notePlayIntent(method) {
+            state.pressStartedAt = performance.now();
+            state.pressMethod = method;
           }
 
           playButton.addEventListener("click", function () {
@@ -999,6 +1131,7 @@
             }
             state.wantPlay = true;
             trackMusicPlay("button");
+            notePlayIntent("button");
             if (state.loadedFile === tracks[state.index].file && audio.src) {
               tryPlay(audio);
             } else {
@@ -1007,6 +1140,7 @@
           });
 
           nextButton.addEventListener("click", function () {
+            notePlayIntent("button");
             if (state.random && tracks.length > 1) {
               var others = tracks.map(function (_, i) { return i; }).filter(function (i) { return i !== state.index; });
               startTrack(pickRandom(others));
@@ -1016,6 +1150,7 @@
           });
 
           prevButton.addEventListener("click", function () {
+            notePlayIntent("button");
             if (state.random) {
               var history = state.history;
               for (var k = history.length - 2; k >= 0; k -= 1) {
@@ -1063,7 +1198,15 @@
             }
           });
 
-          audio.addEventListener("play", syncPlayButton);
+          audio.addEventListener("play", function () {
+            syncPlayButton();
+            startBackgroundPrefetch();
+          });
+          audio.addEventListener("playing", function () {
+            if (state.pressStartedAt == null) return;
+            trackMusicLatency(performance.now() - state.pressStartedAt, state.pressMethod || "button");
+            state.pressStartedAt = null;
+          });
           audio.addEventListener("pause", syncPlayButton);
           audio.addEventListener("timeupdate", syncProgress);
           audio.addEventListener("loadedmetadata", syncProgress);
@@ -1080,11 +1223,13 @@
               played: state.played
             });
             if (plan.type === "replay") {
+              notePlayIntent("auto");
               audio.currentTime = 0;
               tryPlay(audio);
               return;
             }
             if (plan.type === "advance") {
+              notePlayIntent("auto");
               var next = state.random ? pickRandom(plan.candidates) : plan.candidates[0];
               if (plan.resetPlayed) state.played = new Set();
               state.wantPlay = true;
@@ -1101,11 +1246,29 @@
           syncRepeat();
           syncRandom();
 
-          // Warm the first track (and then the rest) as soon as
-          // the player appears, so the first press of the play
-          // button starts playback almost immediately.
+          // Warm only the first track as soon as the player
+          // appears, so the first press of the play button starts
+          // playback almost immediately. The rest wait until
+          // playback has actually started (see the play listener).
           fetchTrackBlob(tracks[0].file)
-            .then(function () { prefetchRemaining(); })
+            .then(function () {
+              // performance.now() counts from page load, so this
+              // is the reader's full wait until the first press
+              // could play.
+              trackMusicReady(performance.now());
+              // Attach the warmed track right away, so the first
+              // press is a plain play() on a loaded element — the
+              // one form iOS Safari always honours. Skipped once
+              // the reader (or an earlier load) has moved on to
+              // another track.
+              if (state.destroyed || state.loadedFile !== "" || state.loadSeq !== 0) return;
+              var url = objectUrlForSync(tracks[0].file);
+              if (url) {
+                state.loadedFile = tracks[0].file;
+                audio.src = url;
+                syncProgress();
+              }
+            })
             .catch(function () {});
 
           return {
