@@ -1694,7 +1694,7 @@ describe('前後の記事へのリンク（静的ページでも回遊できる�
     expect(buildArticleNav({ ids: ['x'] }, MAP_ID)).toBeNull();
   });
 
-  it('ページ末尾に前後のリンクが出る', () => {
+  it('ページの上下に前後のリンクが出る（ブログと同じ配置）', () => {
     const page = renderStaticArticlePage({
       article: ARTICLES[0],
       payload: {
@@ -1705,6 +1705,10 @@ describe('前後の記事へのリンク（静的ページでも回遊できる�
       year: 2026,
       nav: buildArticleNav(list, MAP_ID),
     });
+    // 上（見出しの前）と下（本文の後）の2か所に出る
+    expect(page.split('<nav class="article-nav')).toHaveLength(3);
+    expect(page).toContain('class="article-nav article-nav-top"');
+    expect(page.indexOf('article-nav-top')).toBeLessThan(page.indexOf('<h1>'));
     expect(page).toContain('class="article-nav"');
     expect(page).toContain('href="https://freddiefujiwara.com/blog/newer-id"');
     expect(page).toContain('href="https://freddiefujiwara.com/music"');

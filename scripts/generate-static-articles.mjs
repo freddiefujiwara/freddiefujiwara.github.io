@@ -132,7 +132,7 @@ export const buildArticleNav = (list, docId) => {
   };
 };
 
-const buildArticleNavHtml = (nav) => {
+const buildArticleNavHtml = (nav, top = false) => {
   if (!nav || (!nav.prev && !nav.next)) {
     return "";
   }
@@ -142,7 +142,7 @@ const buildArticleNavHtml = (nav) => {
   const next = nav.next
     ? `<a class="article-nav-link article-nav-next" href="${escapeHtml(nav.next.href)}" aria-label="次の記事: ${escapeHtml(nav.next.title || "次の記事")}"><span class="article-nav-title">${escapeHtml(nav.next.title || "次の記事")}</span><span class="article-nav-arrow" aria-hidden="true">→</span></a>`
     : "";
-  return `<nav class="article-nav" aria-label="前後の記事">${prev}${next}</nav>`;
+  return `<nav class="article-nav${top ? " article-nav-top" : ""}" aria-label="前後の記事">${prev}${next}</nav>`;
 };
 
 /* ------------------------------------------------------------------ */
@@ -855,6 +855,11 @@ const PAGE_CSS = `
       }
       .article-nav-link:hover .article-nav-title {
         color: var(--accent); text-decoration: underline;
+      }
+      .article-nav-top {
+        margin-top: 0; margin-bottom: 20px;
+        padding-top: 0; padding-bottom: 12px;
+        border-top: none; border-bottom: 1px solid var(--line);
       }
       @media (max-width: 768px) {
         .article-nav-link { font-size: 0.8rem; }
@@ -1881,10 +1886,11 @@ export const renderStaticArticlePage = ({ article, payload, year, latestArticleI
   const musicScript = bodyHtml.includes('class="music-track"')
     ? MUSIC_PLAYER_SCRIPT
     : "";
-  // Prev/next links at the foot of the article, mirroring the blog's
-  // own article navigation so the reading flow continues from the
-  // static pages too.
+  // Prev/next links above and below the article, mirroring the
+  // blog's own article navigation (BlogView renders it in both
+  // places) so the reading flow continues from the static pages too.
   const navHtml = buildArticleNavHtml(nav);
+  const navTopHtml = buildArticleNavHtml(nav, true);
   return `<!doctype html>
 <html lang="ja">
   <head>
@@ -1927,7 +1933,7 @@ export const renderStaticArticlePage = ({ article, payload, year, latestArticleI
     <main>
       <div class="wrap">
         <article class="article-content">
-          <h1>${escapeHtml(title)}</h1>
+${navTopHtml ? `          ${navTopHtml}\n` : ""}          <h1>${escapeHtml(title)}</h1>
 ${chips ? `          ${chips}\n` : ""}          <div class="article-body">
 ${introHtml}${bodyHtml}          </div>
 ${navHtml ? `          ${navHtml}\n` : ""}        </article>
