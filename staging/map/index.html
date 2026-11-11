@@ -177,6 +177,37 @@
       article th, article td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; }
       article th { background: var(--surface); }
       .article-content h2, .article-content h3 { scroll-margin-top: 72px; }
+      .article-content p[id^="item-"] { scroll-margin-top: 72px; }
+
+      /* ---------- prev / next article links ---------- */
+      .article-nav {
+        display: flex; justify-content: space-between; align-items: center;
+        gap: 16px; margin-top: 40px; padding-top: 16px;
+        border-top: 1px solid var(--line);
+      }
+      .article-nav-link {
+        display: inline-flex; align-items: center; gap: 8px; min-width: 0;
+        color: var(--ink); text-decoration: none;
+      }
+      .article-nav-link:only-child { max-width: 100%; }
+      .article-nav-next { margin-left: auto; }
+      .article-nav-arrow { flex-shrink: 0; color: var(--accent); }
+      .article-nav-title {
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+      .article-nav-link:hover .article-nav-title {
+        color: var(--accent); text-decoration: underline;
+      }
+      .article-nav-top {
+        margin-top: 0; margin-bottom: 20px;
+        padding-top: 0; padding-bottom: 12px;
+        border-top: none; border-bottom: 1px solid var(--line);
+      }
+      @media (max-width: 768px) {
+        .article-nav-link { font-size: 0.8rem; }
+      }
+      article .item-link { font-size: 0.8rem; }
+      article .item-link a { color: var(--ink-3); }
 
       /* OGP link cards, emitted by blog-gas for standalone link paragraphs */
       article a.link-card {
@@ -187,6 +218,11 @@
         overflow-wrap: normal; line-height: 1.5;
       }
       article a.link-card:hover { border-color: var(--accent); color: inherit; }
+      /* cards flagged .is-grayout by blog-gas are grayed out */
+      article a.link-card.is-grayout { opacity: .55; }
+      article a.link-card.is-grayout .link-card-image { filter: grayscale(1); }
+      /* images flagged .is-grayout by blog-gas are grayed out */
+      article img.is-grayout { opacity: .55; filter: grayscale(1); }
       article .link-card-image { width: 112px; height: 112px; object-fit: cover; border-radius: 8px; flex-shrink: 0; }
       article .link-card-body { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
       article .link-card-title {
@@ -492,6 +528,9 @@
 
       /* ---------- footer (shared site chrome) ---------- */
       footer { margin-top: 56px; border-top: 1px solid var(--line); padding: 24px 0 46px; }
+      .foot-groups { display: flex; flex-wrap: wrap; gap: 16px 44px; margin-bottom: 22px; }
+      .foot-group-title { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em; color: var(--ink-3); margin: 0 0 8px; }
+      .foot-group .foot-links { margin-bottom: 0; }
       .foot-links { display: flex; flex-wrap: wrap; gap: 10px 22px; margin-bottom: 22px; }
       .foot-links a { color: var(--ink-2); font-size: 0.92rem; display: inline-flex; align-items: center; gap: 6px; }
       .foot-links a:hover { color: var(--accent); text-decoration: none; }
@@ -513,7 +552,7 @@
       </ul>
     </nav>
     <header class="hero">
-      <a class="hero-inner hero-link" href="https://freddiefujiwara.com/blog/1rb1BZG19mzzSQ9qK8thIl_LpGySGJgi7K2ZoKLzCB7U">
+      <a class="hero-inner hero-link" href="https://freddiefujiwara.com/blog/1Shso7kKRSzJOptQiEXdlB5Pi1WBQypw96OF1AagStyI">
         <p class="hero-place">KAWAGUCHI — BLOG</p>
         <h1><span class="h1-name">藤原史和</span><span class="h1-sep" aria-hidden="true">｜</span><span class="h1-role">川口を歩くQAエンジニア</span></h1>
       </a>
@@ -521,6 +560,7 @@
     <main>
       <div class="wrap">
         <article class="article-content">
+          <nav class="article-nav article-nav-top" aria-label="前後の記事"><a class="article-nav-link article-nav-prev" href="https://freddiefujiwara.com/blog/1UJziyYzHPuIZGVTSNUL2AXP0_oakUNmAhIUhNm0WHbM" aria-label="前の記事: 「自分の環境で通る」と「まっさらな環境でも再現する」は別物。SwitchBotサーキュレーターとCIの教訓"><span class="article-nav-arrow" aria-hidden="true">←</span><span class="article-nav-title">「自分の環境で通る」と「まっさらな環境でも再現する」は別物。SwitchBotサーキュレーターとCIの教訓</span></a><a class="article-nav-link article-nav-next" href="https://freddiefujiwara.com/blog/1miVeFJ_0ZcKWg3baLywSTTLemh6EAzJcVD8GvUxXAjg" aria-label="次の記事: 中国語が少しずつ話せるようになる。先生の「越来越好」がうれしかった3回目のレッスン"><span class="article-nav-title">中国語が少しずつ話せるようになる。先生の「越来越好」がうれしかった3回目のレッスン</span><span class="article-nav-arrow" aria-hidden="true">→</span></a></nav>
           <h1>2026-10-27 川口のリールを、地図にまとめました</h1>
           <ul class="tag-chips">
       <li class="tag-chip-item"><a class="tag-chip" href="https://freddiefujiwara.com/blog/tag/%E5%B7%9D%E5%8F%A3">川口</a></li>
@@ -732,30 +772,67 @@
 <h3 id="h-f046fd0a">中国式イヤーエステ 朴境 西川口店（西川口）</h3>
 <p>47歳、初めての中国式イヤーエステ。子どもの頃は親にしてもらう耳掃除がくすぐったくて苦手でしたが、大人になって改めてやってもらうと、やっぱりくすぐったいけれど不思議と気持ちいい。耳掃除の印象が少し変わりました。</p>
 <p><a href="https://www.instagram.com/reel/DdfpVT2z_0l/" target="_blank" rel="noopener noreferrer">▶ Instagramを見る</a></p>
-<p><a class="link-card" href="https://beauty.hotpepper.jp/kr/slnH000824243/" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://imgbp.hotp.jp/CSP/IMG_SRC_K/31/68/C064183168/C064183168.jpg?impolicy=HPB_policy_default&amp;w=119&amp;h=89" alt=""><span class="link-card-body"><span class="link-card-title">朴境(パクキョウ)｜ホットペッパービューティー</span><span class="link-card-description">【ホットペッパービューティー】朴境(パクキョウ)のサロン情報。サロンの内外装、お得なクーポン、ブログ、口コミ、住所、電話番号など知りたい情報満載です。ホットペッパービューティーの２４時間いつでもOKなネット予約を活用しよう！</span><span class="link-card-domain">beauty.hotpepper.jp</span></span></a></p>
+<p><a class="link-card" href="https://beauty.hotpepper.jp/kr/slnH000824243/" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://imgbp.hotp.jp/CSP/IMG_SRC_K/54/08/C062765408/C062765408.jpg?impolicy=HPB_policy_default&amp;w=119&amp;h=89" alt=""><span class="link-card-body"><span class="link-card-title">朴境(パクキョウ)｜ホットペッパービューティー</span><span class="link-card-description">【ホットペッパービューティー】朴境(パクキョウ)のサロン情報。サロンの内外装、お得なクーポン、ブログ、口コミ、住所、電話番号など知りたい情報満載です。ホットペッパービューティーの２４時間いつでもOKなネット予約を活用しよう！</span><span class="link-card-domain">beauty.hotpepper.jp</span></span></a></p>
 <p>みなさんの「川口のおすすめ」もぜひ教えてください。行ってみます。</p>
+<p>これから行きたいお店は、こちらにまとめています。</p>
+<p><a href="https://freddiefujiwara.com/blog/1ORcobKE3DfRrSUV6yMUodfVQgiL1ouKaCTWKTEFUR6A">▶ 川口の行きたい店・スポットをまとめました</a></p>
+<p><a class="link-card" href="https://freddiefujiwara.com/blog/1ORcobKE3DfRrSUV6yMUodfVQgiL1ouKaCTWKTEFUR6A" target="_blank" rel="noopener noreferrer"><img class="link-card-image" src="https://freddiefujiwara.com/blog/ogp/1ORcobKE3DfRrSUV6yMUodfVQgiL1ouKaCTWKTEFUR6A.png" alt=""><span class="link-card-body"><span class="link-card-title">2026-10-31 川口の行きたい店とスポットをまとめました</span><span class="link-card-description">📍 川口の「行きたい店・スポット」をまとめました コメントやDMでおすすめを教えていただくことが増えたので、一覧にしてみます。ありがとうございます。順番に行ってみます。行ったお店は「川口のリールを、地図にまとめました」にまとめています。 </span><span class="link-card-domain">freddiefujiwara.com</span></span></a></p>
           </div>
+          <nav class="article-nav" aria-label="前後の記事"><a class="article-nav-link article-nav-prev" href="https://freddiefujiwara.com/blog/1UJziyYzHPuIZGVTSNUL2AXP0_oakUNmAhIUhNm0WHbM" aria-label="前の記事: 「自分の環境で通る」と「まっさらな環境でも再現する」は別物。SwitchBotサーキュレーターとCIの教訓"><span class="article-nav-arrow" aria-hidden="true">←</span><span class="article-nav-title">「自分の環境で通る」と「まっさらな環境でも再現する」は別物。SwitchBotサーキュレーターとCIの教訓</span></a><a class="article-nav-link article-nav-next" href="https://freddiefujiwara.com/blog/1miVeFJ_0ZcKWg3baLywSTTLemh6EAzJcVD8GvUxXAjg" aria-label="次の記事: 中国語が少しずつ話せるようになる。先生の「越来越好」がうれしかった3回目のレッスン"><span class="article-nav-title">中国語が少しずつ話せるようになる。先生の「越来越好」がうれしかった3回目のレッスン</span><span class="article-nav-arrow" aria-hidden="true">→</span></a></nav>
         </article>
       </div>
     </main>
     <footer>
       <div class="wrap">
-        <div class="foot-links">
-          <a href="https://freddiefujiwara.com/" target="_blank" rel="noopener">トップ <span class="arr">↗</span></a>
-          <a href="https://freddiefujiwara.com/blog/" target="_blank" rel="noopener">ブログ <span class="arr">↗</span></a>
-          <a href="https://freddiefujiwara.com/list-of-stuff/" target="_blank" rel="noopener">持ち物 <span class="arr">↗</span></a>
-          <a href="https://freddiefujiwara.com/bucket-list/" target="_blank" rel="noopener">バケットリスト <span class="arr">↗</span></a>
-          <a href="https://www.instagram.com/freddiefujiwara" target="_blank" rel="noopener">Instagram <span class="arr">↗</span></a>
-          <a href="https://www.facebook.com/freddiefujiwara" target="_blank" rel="noopener">Facebook <span class="arr">↗</span></a>
-          <a href="https://www.google.com/maps/contrib/105456242747265663411/reviews" target="_blank" rel="noopener">Googleマップの口コミ <span class="arr">↗</span></a>
-          <a href="https://review.travel.rakuten.co.jp/reviewer/fumikazufujiwara" target="_blank" rel="noopener">楽天トラベルの口コミ <span class="arr">↗</span></a>
-          <a href="https://tabelog.com/rvwr/zegenvs/" target="_blank" rel="noopener">食べログの口コミ <span class="arr">↗</span></a>
-          <a href="https://retty.me/user/50281/" target="_blank" rel="noopener">Rettyの口コミ <span class="arr">↗</span></a>
-          <a href="https://x.com/freddiefujiwara" target="_blank" rel="noopener">X <span class="arr">↗</span></a>
-          <a href="https://github.com/freddiefujiwara" target="_blank" rel="noopener">GitHub <span class="arr">↗</span></a>
-          <a href="https://linkedin.com/in/freddiefujiwara" target="_blank" rel="noopener">LinkedIn <span class="arr">↗</span></a>
-          <a href="https://youtrust.jp/users/freddiefujiwara" target="_blank" rel="noopener">YOUTRUST <span class="arr">↗</span></a>
-          <a href="https://fril.jp/shop/freddiefujiwara" target="_blank" rel="noopener">ラクマ <span class="arr">↗</span></a>
+        <div class="foot-groups">
+          <div class="foot-group">
+            <p class="foot-group-title">このサイト</p>
+            <div class="foot-links">
+              <a href="https://freddiefujiwara.com/" target="_blank" rel="noopener">トップ <span class="arr">↗</span></a>
+              <a href="https://freddiefujiwara.com/blog/" target="_blank" rel="noopener">ブログ <span class="arr">↗</span></a>
+              <a href="https://freddiefujiwara.com/list-of-stuff/" target="_blank" rel="noopener">持ち物 <span class="arr">↗</span></a>
+              <a href="https://freddiefujiwara.com/bucket-list/" target="_blank" rel="noopener">バケットリスト <span class="arr">↗</span></a>
+            </div>
+          </div>
+          <div class="foot-group">
+            <p class="foot-group-title">SNS</p>
+            <div class="foot-links">
+              <a href="https://www.instagram.com/freddiefujiwara" target="_blank" rel="noopener">Instagram <span class="arr">↗</span></a>
+              <a href="https://x.com/freddiefujiwara" target="_blank" rel="noopener">X <span class="arr">↗</span></a>
+              <a href="https://www.facebook.com/freddiefujiwara" target="_blank" rel="noopener">Facebook <span class="arr">↗</span></a>
+            </div>
+          </div>
+          <div class="foot-group">
+            <p class="foot-group-title">口コミ</p>
+            <div class="foot-links">
+              <a href="https://www.google.com/maps/contrib/105456242747265663411/reviews" target="_blank" rel="noopener">Googleマップの口コミ <span class="arr">↗</span></a>
+              <a href="https://review.travel.rakuten.co.jp/reviewer/fumikazufujiwara" target="_blank" rel="noopener">楽天トラベルの口コミ <span class="arr">↗</span></a>
+              <a href="https://tabelog.com/rvwr/zegenvs/" target="_blank" rel="noopener">食べログの口コミ <span class="arr">↗</span></a>
+              <a href="https://retty.me/user/50281/" target="_blank" rel="noopener">Rettyの口コミ <span class="arr">↗</span></a>
+            </div>
+          </div>
+          <div class="foot-group">
+            <p class="foot-group-title">プロフィール・その他</p>
+            <div class="foot-links">
+              <a href="https://github.com/freddiefujiwara" target="_blank" rel="noopener">GitHub <span class="arr">↗</span></a>
+              <a href="https://linkedin.com/in/freddiefujiwara" target="_blank" rel="noopener">LinkedIn <span class="arr">↗</span></a>
+              <a href="https://youtrust.jp/users/freddiefujiwara" target="_blank" rel="noopener">YOUTRUST <span class="arr">↗</span></a>
+              <a href="https://fril.jp/shop/freddiefujiwara" target="_blank" rel="noopener">ラクマ <span class="arr">↗</span></a>
+            </div>
+          </div>
+          <div class="foot-group">
+            <p class="foot-group-title">自作ツール</p>
+            <div class="foot-links">
+              <a href="https://freddiefujiwara.com/xuexi/" target="_blank" rel="noopener">学习（中国語の復習） <span class="arr">↗</span></a>
+              <a href="https://freddiefujiwara.com/openapi-fetch/" target="_blank" rel="noopener">openapi-fetch <span class="arr">↗</span></a>
+              <a href="https://freddiefujiwara.com/md2img/" target="_blank" rel="noopener">md2img（Markdown to Image） <span class="arr">↗</span></a>
+              <a href="https://freddiefujiwara.com/portfolio-treemap/" target="_blank" rel="noopener">portfolio-treemap（ポートフォリオ構成図） <span class="arr">↗</span></a>
+              <a href="https://freddiefujiwara.com/dtgwt/" target="_blank" rel="noopener">dtgwt（デシジョンテーブル→Given/When/Then） <span class="arr">↗</span></a>
+              <a href="https://freddiefujiwara.com/node-qict/" target="_blank" rel="noopener">node-qict（ペアワイズ法のテストケース生成） <span class="arr">↗</span></a>
+              <a href="https://freddiefujiwara.com/smtc/" target="_blank" rel="noopener">smtc（状態遷移のテストケース生成） <span class="arr">↗</span></a>
+              <a href="https://freddiefujiwara.com/dtdt/" target="_blank" rel="noopener">dtdt（デシジョンツリー→デシジョンテーブル） <span class="arr">↗</span></a>
+            </div>
+          </div>
         </div>
         <p class="copy">© 2026 藤原史和（Fumikazu Fujiwara）— freddiefujiwara.com</p>
       </div>
