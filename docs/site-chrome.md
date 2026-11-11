@@ -280,10 +280,11 @@ a.hero-inner { /* ヒーローをリンクにする場合の共通指定 */
 ```
 
 - 著作権行の文言は3サイト共通: `© {年} 藤原史和（Fumikazu Fujiwara）— freddiefujiwara.com`
-- リンク集合（15件共通）: 4グループに分けて見出し付きで並べます（2026-11-11 にグループ化）。
+- リンク集合（16件共通）: 5グループに分けて見出し付きで並べます（2026-11-11 にグループ化、2026-11-12 に「自作ツール」を追加）。
   - このサイト: トップ（https://freddiefujiwara.com/）/ ブログ（https://freddiefujiwara.com/blog/）/
     持ち物（https://freddiefujiwara.com/list-of-stuff/）/
     バケットリスト（https://freddiefujiwara.com/bucket-list/）
+  - 自作ツール: 学习（中国語の復習）（https://freddiefujiwara.com/xuexi/）
   - SNS: Instagram / X / Facebook
   - 口コミ: Googleマップの口コミ / 楽天トラベルの口コミ / 食べログの口コミ / Rettyの口コミ
   - プロフィール・その他: GitHub / LinkedIn / YOUTRUST / ラクマ

@@ -655,10 +655,10 @@ describe('renderStaticArticlePage', () => {
     expect(musicLink.textContent).toContain('川口の歌 ♪');
     expect(musicLink.querySelector('.music-play-count')).not.toBeNull();
     expect(page).toContain('<script src="/js/music-count.js"></script>');
-    expect(document.querySelectorAll('footer .foot-links a')).toHaveLength(15);
+    expect(document.querySelectorAll('footer .foot-links a')).toHaveLength(16);
     expect(
       [...document.querySelectorAll('footer .foot-group-title')].map((el) => el.textContent),
-    ).toEqual(['このサイト', 'SNS', '口コミ', 'プロフィール・その他']);
+    ).toEqual(['このサイト', '自作ツール', 'SNS', '口コミ', 'プロフィール・その他']);
     expect(document.querySelector('article h1')?.textContent).toBe(
       '2026-10-27 川口のリールを、地図にまとめました',
     );

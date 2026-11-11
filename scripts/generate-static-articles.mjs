@@ -620,6 +620,12 @@ const FOOTER_GROUPS = [
     ],
   },
   {
+    title: "自作ツール",
+    links: [
+      ["https://freddiefujiwara.com/xuexi/", "学习（中国語の復習）"],
+    ],
+  },
+  {
     title: "SNS",
     links: [
       ["https://www.instagram.com/freddiefujiwara", "Instagram"],
