@@ -1,733 +1,107 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="color-scheme" content="light dark" />
-    <meta name="description" content="死ぬまでにやりたいことリスト" />
-    <meta property="og:title" content="2025-12-27 死ぬまでにやりたいことリスト" />
-    <meta property="og:description" content="死ぬまでにやりたいことリスト" />
-    <meta property="og:url" content="https://freddiefujiwara.com/bucket-list" />
-    <meta property="og:type" content="article" />
-    <meta property="og:image" content="https://freddiefujiwara.com/blog/ogp/1WPrZI3RqXZcBIrVfrvY7Qn6AF-pFBHdNWXcK7PIwokM.png" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:site_name" content="藤原史和｜川口を歩くQAエンジニア" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content="https://freddiefujiwara.com/blog/ogp/1WPrZI3RqXZcBIrVfrvY7Qn6AF-pFBHdNWXcK7PIwokM.png" />
-    <link rel="canonical" href="https://freddiefujiwara.com/bucket-list" />
-    <link rel="icon" href="/favicon.ico" sizes="any" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <title>2025-12-27 死ぬまでにやりたいことリスト</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <link rel="canonical" href="https://freddiefujiwara.com/blog/1WPrZI3RqXZcBIrVfrvY7Qn6AF-pFBHdNWXcK7PIwokM">
+    <title>死ぬまでにやりたいことリスト｜藤原史和</title>
     <style>
       :root {
-        --bg: #fbfaf7;
-        --surface: #ffffff;
-        --ink: #221d16;
-        --ink-2: #5d5546;
-        --ink-3: #8a8071;
-        --line: #e3ddd0;
-        --accent: #b23a1f;
-        --accent-strong: #8f2a12;
-        --accent-soft: #f7e9e2;
         color-scheme: light dark;
       }
-      @media (prefers-color-scheme: dark) {
-        :root {
-          --bg: #17140f;
-          --surface: #211c15;
-          --ink: #f2ecdf;
-          --ink-2: #c2b8a4;
-          --ink-3: #948a77;
-          --line: #3a332a;
-          --accent: #ec7a52;
-          --accent-strong: #f0936f;
-          --accent-soft: #33231b;
-        }
-      }
-      * { box-sizing: border-box; }
-      html { scroll-behavior: smooth; scrollbar-gutter: stable; }
-      @media (prefers-reduced-motion: reduce) {
-        html { scroll-behavior: auto; }
+      * {
+        box-sizing: border-box;
       }
       body {
         margin: 0;
-        background: var(--bg);
-        color: var(--ink);
-        font-family: "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", sans-serif;
-        font-size: 16px;
-        line-height: 1.85;
-        -webkit-font-smoothing: antialiased;
-        -webkit-text-size-adjust: 100%;
-      }
-      a { color: var(--accent); text-decoration: none; }
-      a:hover { text-decoration: underline; }
-      .wrap { max-width: 820px; margin: 0 auto; padding: 0 20px; }
-
-      /* ---------- nav (shared site chrome) ---------- */
-      .site-nav {
-        position: sticky; top: 0; z-index: 50;
-        display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
-        padding: 0 clamp(16px, 4vw, 40px);
-        height: 56px;
-        background: color-mix(in srgb, var(--bg) 86%, transparent);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border-bottom: 1px solid var(--line);
-      }
-      .site-nav .brand {
-        justify-self: start;
-        font-family: "Shippori Mincho B1", "Hiragino Mincho ProN", "Yu Mincho", serif;
-        font-weight: 700; font-size: 15px;
-        color: var(--ink); letter-spacing: 0.04em; white-space: nowrap;
-        text-decoration: none;
-      }
-      .site-nav ul { justify-self: center; display: flex; gap: clamp(14px, 3vw, 30px); list-style: none; margin: 0; padding: 0; }
-      .site-nav ul a {
-        color: var(--ink-2); font-size: 13.5px; font-weight: 500; letter-spacing: 0.05em;
-        padding: 4px 0; border-bottom: 2px solid transparent; white-space: nowrap;
-        text-decoration: none;
-      }
-      .site-nav ul a:hover { color: var(--ink); }
-      .site-nav ul a.active { color: var(--accent); border-bottom-color: var(--accent); }
-      .music-play-count { color: var(--accent); font-size: 11px; font-weight: 700; margin-left: 5px; }
-      .music-play-count:empty { display: none; }
-      @media (max-width: 560px) {
-        .site-nav { grid-template-columns: 1fr; }
-        .site-nav .brand { display: none; }
-        .site-nav ul { justify-self: stretch; width: 100%; justify-content: space-between; gap: 6px; }
-        .site-nav ul a { font-size: 12px; letter-spacing: 0.02em; }
-        .site-nav li.nav-section { display: none; }
-      }
-
-      /* ---------- hero (the blog's band) ---------- */
-      .hero {
-        position: relative; display: flex; align-items: flex-end;
-        min-height: 300px; color: #fdfbf7; overflow: hidden;
-        background: #241a12 url(https://freddiefujiwara.com/assets/hero-koinobori.jpg) center 38% / cover no-repeat;
-      }
-      .hero::after {
-        content: ""; position: absolute; inset: 0;
-        background: linear-gradient(to top, rgba(16, 11, 6, 0.88) 0%, rgba(16, 11, 6, 0.45) 45%, rgba(16, 11, 6, 0.15) 75%);
-      }
-      .hero-inner {
-        position: relative; z-index: 2; width: 100%;
-        max-width: 820px; margin: 0 auto; padding: 96px 20px 36px;
-      }
-      a.hero-inner {
-        color: inherit;
-        text-decoration: none;
-        cursor: pointer;
-      }
-      .hero-place {
-        display: inline-flex; align-items: center; gap: 10px;
-        font-size: 12px; letter-spacing: 0.22em; font-weight: 700; margin: 0 0 14px;
-      }
-      .hero-place::before { content: ""; width: 34px; height: 2px; background: #f0764f; }
-      .hero h1 {
-        margin: 0;
-        font-family: "Shippori Mincho B1", "Hiragino Mincho ProN", "Yu Mincho", serif;
-        font-weight: 800; letter-spacing: 0.03em; line-height: 1.35;
-      }
-      .hero h1 .h1-sep { display: none; }
-      .hero h1 .h1-name { display: block; font-size: clamp(2rem, 6vw, 2.9rem); }
-      .hero h1 .h1-role {
-        display: block; font-size: clamp(1.05rem, 3.4vw, 1.45rem);
-        font-weight: 700; letter-spacing: 0.06em; margin-top: 10px;
-      }
-
-      /* ---------- article (the blog's typography) ---------- */
-      main .wrap { padding-top: 28px; }
-      article { line-height: 1.9; }
-      article h1 {
-        font-family: "Shippori Mincho B1", "Hiragino Mincho ProN", "Yu Mincho", serif;
-        font-size: clamp(1.6rem, 4.5vw, 2.1rem); font-weight: 800;
-        letter-spacing: 0.02em; margin: 0 0 1.75rem; line-height: 1.45;
-      }
-      article p { margin: 0 0 1.4rem; }
-      article h2 {
-        font-family: "Shippori Mincho B1", "Hiragino Mincho ProN", "Yu Mincho", serif;
-        font-size: 1.45rem; font-weight: 700;
-        margin: 2.6rem 0 1rem; border-bottom: 1px solid var(--line);
-        padding-bottom: 0.5rem; line-height: 1.5;
-      }
-      article h3 { font-size: 1.15rem; font-weight: 700; margin: 2rem 0 0.75rem; line-height: 1.6; }
-      article a { color: var(--accent); text-decoration: underline; text-underline-offset: 4px; overflow-wrap: anywhere; }
-      article a:hover { color: var(--accent-strong); }
-      article img { max-width: 100%; height: auto; border-radius: 12px; }
-      article blockquote {
-        margin: 1.5rem 0; padding: 0.25rem 0 0.25rem 1.1rem;
-        border-left: 3px solid var(--accent); color: var(--ink-2);
-      }
-      article code { background: var(--accent-soft); border-radius: 6px; padding: 0.15em 0.4em; font-size: 0.88em; }
-      article pre {
-        background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
-        padding: 16px; overflow-x: auto; line-height: 1.6;
-      }
-      article pre code { background: transparent; padding: 0; }
-      article hr { border: none; border-top: 1px solid var(--line); margin: 2.5rem 0; }
-      article ul, article ol { margin: 0 0 1.4rem; padding-left: 1.5rem; }
-      article li { margin-bottom: 0.4rem; }
-      article table { border-collapse: collapse; margin-bottom: 1.5rem; width: 100%; }
-      article th, article td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; }
-      article th { background: var(--surface); }
-      .article-content h2, .article-content h3 { scroll-margin-top: 72px; }
-
-      /* OGP link cards, emitted by blog-gas for standalone link paragraphs */
-      article a.link-card {
-        display: flex; gap: 14px; align-items: stretch;
-        margin: 1.5rem 0; padding: 12px;
-        border: 1px solid var(--line); border-radius: 12px;
-        background: var(--surface); color: inherit; text-decoration: none;
-        overflow-wrap: normal; line-height: 1.5;
-      }
-      article a.link-card:hover { border-color: var(--accent); color: inherit; }
-      article .link-card-image { width: 112px; height: 112px; object-fit: cover; border-radius: 8px; flex-shrink: 0; }
-      article .link-card-body { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-      article .link-card-title {
-        font-weight: 700; display: -webkit-box;
-        -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-      }
-      article .link-card-description {
-        color: var(--ink-2); font-size: 0.88rem; line-height: 1.6;
-        display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-      }
-      article .link-card-domain { color: var(--ink-3); font-size: 0.78rem; margin-top: auto; }
-      @media (max-width: 560px) {
-        article .link-card-image { width: 84px; height: 84px; }
-      }
-
-      /* table of contents */
-      .table-of-contents {
-        margin: 20px 0 28px; padding: 16px 20px;
-        background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
-      }
-      .toc-heading { margin: 0 0 8px; color: var(--ink-3); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.08em; }
-      .toc-list { margin: 0; padding-left: 20px; }
-      .toc-item { margin: 5px 0; }
-      .toc-item-sub { margin-left: 16px; }
-
-      /* tag chips */
-      .tag-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: -6px 0 18px; padding: 0; list-style: none; }
-      .tag-chip {
-        display: inline-flex; align-items: center; gap: 6px;
-        padding: 2px 12px; color: var(--ink); background: var(--surface);
-        border: 1px solid var(--line); border-radius: 999px;
-        font-size: 0.85rem; text-decoration: none;
-      }
-      .tag-chip:hover { color: var(--accent); border-color: var(--accent); text-decoration: none; }
-
-      /* ---------- lyrics (the blog's boxed lyric sheet) ---------- */
-      article .lyrics {
-        background: var(--surface);
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        padding: 18px 22px;
-        margin: 20px 0;
-      }
-      article .lyrics-label {
-        font-weight: 700;
-        margin: 0 0 10px;
-      }
-      article .lyrics-line {
-        margin: 0 0 3px;
-        line-height: 1.8;
-      }
-      article .lyrics-part {
-        color: var(--ink-2);
-        font-size: 0.85em;
-        margin: 14px 0 5px;
-      }
-      article .lyrics-label + .lyrics-part {
-        margin-top: 2px;
-      }
-
-      /* ---------- music player (hand-rolled, styled like the blog) ---------- */
-      article .music-player {
-        margin: 16px 0;
-        background: var(--surface);
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        padding: 16px 18px;
-      }
-
-      article .music-player .mp-now {
-        font-size: 15px;
-        font-weight: 700;
-        margin: 0 0 12px;
-      }
-
-      article .music-player .mp-controls,
-      article .music-player .mp-toggles {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-      }
-
-      article .music-player .mp-toggles {
-        justify-content: flex-end;
-        gap: 2px;
-        margin-top: 2px;
-      }
-
-      article .music-player .mp-controls {
-        margin-bottom: 12px;
-        justify-content: center;
-      }
-
-      article .music-player .mp-button {
-        touch-action: manipulation;
-        font: inherit;
-        font-size: 14px;
-        color: var(--ink);
-        background: var(--surface);
-        border: 1px solid var(--line);
-        border-radius: 999px;
-        padding: 6px 16px;
-        cursor: pointer;
-      }
-
-      article .music-player .mp-button:hover {
-        background: var(--accent-soft);
-      }
-
-      /* The transport buttons are circles carrying drawn SVG glyphs.
-         The play button is the player's reason to exist (its press
-         count is the top KPI), so it stands a size above the rest and
-         wears the primary color. */
-      article .music-player .mp-prev,
-      article .music-player .mp-next,
-      article .music-player .mp-play {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        padding: 0;
-      }
-
-      article .music-player .mp-prev,
-      article .music-player .mp-next {
-        width: 44px;
-        height: 44px;
-        color: var(--ink);
-      }
-
-      article .music-player .mp-prev svg,
-      article .music-player .mp-next svg {
-        width: 20px;
-        height: 20px;
-        fill: currentColor;
-      }
-
-      article .music-player .mp-play {
-        width: 58px;
-        height: 58px;
-        font-size: 20px;
-        color: var(--surface);
-        background: var(--accent);
-        border-color: var(--accent);
-      }
-
-      article .music-player .mp-play svg {
-        width: 26px;
-        height: 26px;
-        fill: currentColor;
-      }
-
-      article .music-player .mp-play:hover {
-        background: var(--accent);
-      }
-
-      /* The mode switches stay quiet on purpose: small borderless
-         icons in a muted tone, full-strength only while active. The
-         primary color belongs to the play button alone. */
-      article .music-player .mp-repeat,
-      article .music-player .mp-random {
-        position: relative;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 34px;
-        height: 34px;
-        padding: 0;
-        color: var(--ink-3);
-        background: transparent;
-        border: none;
-        border-radius: 50%;
-      }
-
-      article .music-player .mp-repeat:hover,
-      article .music-player .mp-random:hover {
-        background: var(--accent-soft);
-      }
-
-      article .music-player .mp-repeat svg,
-      article .music-player .mp-random svg {
-        width: 18px;
-        height: 18px;
-        fill: currentColor;
-      }
-
-      article .music-player .mp-repeat.is-on,
-      article .music-player .mp-random.is-on {
-        color: var(--ink);
-      }
-
-      article .music-player .mp-badge {
-        position: absolute;
-        top: 1px;
-        right: 0;
-        font-size: 9px;
-        font-weight: 700;
-        line-height: 1;
-      }
-
-      article .music-player .mp-progress {
+        min-height: 100vh;
         display: flex;
         align-items: center;
-        gap: 10px;
-        margin-bottom: 12px;
+        justify-content: center;
+        padding: 24px;
+        background: #fbfaf7;
+        color: #221d16;
+        font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
       }
-
-      article .music-player .mp-time {
-        font-size: 12px;
-        color: var(--ink-3);
-        min-width: 32px;
-      }
-
-      article .music-player .mp-time.mp-total {
-        text-align: right;
-      }
-
-      article .music-player .mp-seek {
-        flex: 1;
-        -webkit-appearance: none;
-        appearance: none;
-        height: 4px;
-        border-radius: 2px;
-        background: var(--line);
-        outline: none;
-        cursor: pointer;
-      }
-
-      article .music-player .mp-seek::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        appearance: none;
-        width: 16px;
-        height: 16px;
-        border-radius: 50%;
-        background: var(--accent);
-        border: none;
-      }
-
-      article .music-player .mp-seek::-moz-range-thumb {
-        width: 16px;
-        height: 16px;
-        border-radius: 50%;
-        background: var(--accent);
-        border: none;
-      }
-
-      article .music-player .mp-seek::-moz-range-track {
-        height: 4px;
-        border-radius: 2px;
-        background: var(--line);
-      }
-
-      article .music-player .mp-list {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-      }
-
-      article .music-player .mp-item {
-        border-top: 1px solid var(--line);
-      }
-
-      article .music-player .mp-track {
-        display: flex;
-        gap: 10px;
+      .card {
         width: 100%;
-        font: inherit;
+        max-width: 420px;
+        padding: 32px 28px;
+        text-align: center;
+        background: #ffffff;
+        border: 1px solid #e3ddd0;
+        border-radius: 16px;
+        box-shadow: 0 18px 40px rgba(34, 29, 22, 0.14);
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: 22px;
+      }
+      .sub {
+        margin: 0 0 24px;
+        color: #5d5546;
         font-size: 14px;
-        text-align: left;
-        color: var(--ink);
-        background: none;
-        border: none;
-        padding: 9px 6px;
-        cursor: pointer;
+        line-height: 1.7;
       }
-
-      article .music-player .mp-track:hover {
-        background: var(--accent-soft);
-      }
-
-      article .music-player .mp-track.is-active {
-        background: var(--accent-soft);
+      .go {
+        display: block;
+        padding: 14px 20px;
+        border-radius: 999px;
+        background: #b23a1f;
+        color: #ffffff;
+        font-size: 16px;
         font-weight: 700;
+        text-decoration: none;
       }
-
-      article .music-player .mp-track-index {
-        color: var(--ink-2);
+      .home {
+        display: inline-block;
+        margin-top: 20px;
+        color: inherit;
+        font-size: 14px;
       }
-
-      article .music-player .mp-status {
-        font-size: 13px;
-        color: var(--ink-2);
-        margin: 10px 0 0;
-      }
-
-      article .music-player .mp-status:empty {
-        display: none;
-      }
-
-      article .music-player audio {
-        display: none;
-      }
-
-      /* ---------- footer (shared site chrome) ---------- */
-      footer { margin-top: 56px; border-top: 1px solid var(--line); padding: 24px 0 46px; }
-      .foot-links { display: flex; flex-wrap: wrap; gap: 10px 22px; margin-bottom: 22px; }
-      .foot-links a { color: var(--ink-2); font-size: 0.92rem; display: inline-flex; align-items: center; gap: 6px; }
-      .foot-links a:hover { color: var(--accent); text-decoration: none; }
-      .foot-links a .arr { font-size: 11px; color: var(--ink-3); }
-      footer .copy { font-size: 0.85rem; color: var(--ink-2); margin: 0; }
-    </style>
-  </head>
-  <body>
-    <nav class="site-nav">
-      <a class="brand" href="https://freddiefujiwara.com/">藤原史和｜川口を歩くQAエンジニア</a>
-      <ul>
-        <li><a href="https://freddiefujiwara.com/">トップ</a></li>
-        <li class="nav-section"><a href="https://freddiefujiwara.com/#about">プロフィール</a></li>
-        <li class="nav-section"><a href="https://freddiefujiwara.com/#activity">活動・発信</a></li>
-        <li class="nav-section"><a href="https://freddiefujiwara.com/#contact">情報交換</a></li>
-        <li><a href="/blog/">ブログ</a></li>
-        <li><a href="https://freddiefujiwara.com/list-of-stuff/">持ち物リスト</a></li>
-        <li><a href="https://freddiefujiwara.com/music">川口の歌 ♪<span class="music-play-count"></span></a></li>
-      </ul>
-    </nav>
-    <header class="hero">
-      <a class="hero-inner hero-link" href="https://freddiefujiwara.com/blog/1rb1BZG19mzzSQ9qK8thIl_LpGySGJgi7K2ZoKLzCB7U">
-        <p class="hero-place">KAWAGUCHI — BLOG</p>
-        <h1><span class="h1-name">藤原史和</span><span class="h1-sep" aria-hidden="true">｜</span><span class="h1-role">川口を歩くQAエンジニア</span></h1>
-      </a>
-    </header>
-    <main>
-      <div class="wrap">
-        <article class="article-content">
-          <h1>2025-12-27 死ぬまでにやりたいことリスト</h1>
-          <ul class="tag-chips">
-      <li class="tag-chip-item"><a class="tag-chip" href="https://freddiefujiwara.com/blog/tag/%E6%9A%AE%E3%82%89%E3%81%97">暮らし</a></li>
-    </ul>
-          <div class="article-body">
-<nav class="table-of-contents" aria-label="目次">
-    <p class="toc-heading">目次</p>
-    <ul class="toc-list">
-      <li class="toc-item"><a href="#h-986145af">Health</a></li>
-      <li class="toc-item"><a href="#h-587846f8">Relationships</a></li>
-      <li class="toc-item"><a href="#h-c5dd218d">Finance</a></li>
-      <li class="toc-item"><a href="#h-8f02f09b">Career</a></li>
-      <li class="toc-item"><a href="#h-f7f3e180">Interests</a></li>
-      <li class="toc-item"><a href="#h-67669d54">Something else</a></li>
-      <li class="toc-item"><a href="#h-45e6a3ab">達成したもの</a></li>
-    </ul>
-  </nav><p>死ぬまでにやりたいことリスト</p>
-<p>「死ぬまでにやりたいこと」を34個、書き出しています。目標の年齢はあくまで目安で、順番に縛られず、できそうなものから叶えていく前提です。</p>
-<p>これまでは専用ページでタイル状に並べて公開していましたが、これからはブログ記事として公開することにしました。達成したり、新しく思いついたりしたときに、この記事を更新していきます。</p>
-<p>2026年11月現在、達成できたのは34個のうち1つだけです。</p>
-<h2 id="h-986145af">Health</h2>
-<p><img src="https://lh3.googleusercontent.com/d/1_H-9mF1iuTTe_hA41MGEtd_Yelllw_lm" alt=""></p>
-<p><strong>体重100キロ台から80キロ台に痩せる</strong></p>
-<p>目標：40歳台</p>
-<p>社会人になって３０キロくらい太ってしまいました。せめて８０キロ台に体重を戻したいです</p>
-<p><img src="https://lh3.googleusercontent.com/d/1lHPYzLdzwAXcPlv3vwj10EWcFCYE_c74" alt=""></p>
-<p><strong>運動系の趣味を作る</strong></p>
-<p>目標：50歳台</p>
-<p>まえはキックボクシングをやってましたが、病気を機にやめてしまいました。新しい運動系の趣味がほしいです。多分性格から考えると一人で黙々とできるものが向いてそうです</p>
-<h2 id="h-587846f8">Relationships</h2>
-<p><img src="https://lh3.googleusercontent.com/d/1syPAT2WguWJKRmw2EcRxcGY4Af7IyMMQ" alt=""></p>
-<p><strong>両親に相続について話す</strong></p>
-<p>目標：40歳台</p>
-<p>両親も後期高齢者になってしまいました、早めに相続のことは話しておきたいです</p>
-<p><img src="https://lh3.googleusercontent.com/d/1P9TebuRpkNp16LNiebwtT7Ce9Bhh-Uq0" alt=""></p>
-<p><strong>高校の時の硬式テニス部の仲間に会いに行く</strong></p>
-<p>目標：50歳台</p>
-<p>高校時代の友人全員と音信不通になってしまいました。どこかで連絡を取り合いたいです。一人でも構いません</p>
-<p><img src="https://lh3.googleusercontent.com/d/1pVoKFuduW53GJBkLysOokYLTjN4VA-z0" alt=""></p>
-<p><strong>なんでも話せる友人を新たに持つ</strong></p>
-<p>目標：50歳台</p>
-<p>大人になってから仕事以外で友人ができたことがないので、仕事以外で新しい友人を作りたいです</p>
-<p><img src="https://lh3.googleusercontent.com/d/1JEevUJT7HO-Wi2NABAh7lCMEs0Kqc5sV" alt=""></p>
-<p><strong>孫の顔を見る</strong></p>
-<p>目標：70歳台</p>
-<p>娘に子供ができるまで、つまり自分の孫ができるまで生き延びたいです</p>
-<p><img src="https://lh3.googleusercontent.com/d/1Ly2ZerAMHe8n2rIoRumHTYhjsPYJZD7Z" alt=""></p>
-<p><strong>妻と二人で地方に移住する</strong></p>
-<p>目標：50歳台</p>
-<h2 id="h-c5dd218d">Finance</h2>
-<p><img src="https://lh3.googleusercontent.com/d/1bTNgPZBpObEao93_US8D5PXLb_NWoN9Q" alt=""></p>
-<p><strong>無駄な保険を全部整理する</strong></p>
-<p>目標：40歳台</p>
-<p>毎月4,000円払っている県民共済金融資産から考えると不要なので解約したいです</p>
-<p><img src="https://lh3.googleusercontent.com/d/1fDsEg_gY7_SM2w1_ajXPbGPD7r2byCwh" alt=""></p>
-<p><strong>純金融資産一億円を達成する</strong></p>
-<p>目標：50歳台</p>
-<p>これは一つの目標というかせっかく資産形成しているので１億円は達成しておきたいところです</p>
-<p><img src="https://lh3.googleusercontent.com/d/1yPYykUMpTuS2FfvjGKqrBtYueVhAk_wm" alt=""></p>
-<p><strong>資産を投資信託などにまとめて、定期取り崩しをセットする</strong></p>
-<p>目標：50歳台</p>
-<p>最終的に金融資産は取り崩してそれで生活したいと考えています。個別株やETFなど分散しているのでどこかでオルカンに一本化して、楽天証券の定期取り崩し設定をしておきたいです</p>
-<h2 id="h-8f02f09b">Career</h2>
-<p><img src="https://lh3.googleusercontent.com/d/1ve8OZHTZMn2wdiV1YdmP9TU_I3ozimk2" alt=""></p>
-<p><strong>会社員を辞めて独立したい</strong></p>
-<p>目標：50歳台</p>
-<p>サラリーマンを長く続けてきましたが、一回でいいから独立して稼いでみたいものです。まぁ安全を考えるとFIREとセットかもしれません</p>
-<p><img src="https://lh3.googleusercontent.com/d/1hmV0LaJtdwlkKnLpSkC3XWeGpf0uku1M" alt=""></p>
-<p><strong>週3勤務のサイドFIREを実現する</strong></p>
-<p>目標：50歳台</p>
-<p>週5勤務を卒業し、週3程度を自分の裁量で働くサイドFIREに移行したい</p>
-<p><img src="https://lh3.googleusercontent.com/d/1KSf1UqJ6aW5_FNzQnHsmcxFKkuFiya4Y" alt=""></p>
-<p><strong>1か月以上、仕事しながら長期滞在をする</strong></p>
-<p>目標：50歳台</p>
-<h2 id="h-f7f3e180">Interests</h2>
-<p><img src="https://lh3.googleusercontent.com/d/1wdwKb00Mvj-zvZBwTHtv_EI4f8t2U6lO" alt=""></p>
-<p><strong>フィリピンに旅行に行く</strong></p>
-<p>目標：40歳台</p>
-<p><img src="https://lh3.googleusercontent.com/d/13pmM-yJskrrLrWpy6bcceGLRxvjo3b7o" alt=""></p>
-<p><strong>もう一度名古屋旅行に行く</strong></p>
-<p>目標：40歳台</p>
-<p>前中日ドラゴンズの試合を見に行きました。もう一度家族で行きたいです</p>
-<p><img src="https://lh3.googleusercontent.com/d/1sWf2NCm2rMp2CMv6FU3lYnMlqsKMWTk0" alt=""></p>
-<p><strong>沖縄に長期滞在したい</strong></p>
-<p>目標：50歳台</p>
-<p>旅行で何度も訪れている沖縄、いつも一週間くらいなので一ヶ月単位で滞在してみたいです</p>
-<p><img src="https://lh3.googleusercontent.com/d/1ZGoravlSGBcSC17rpxjQr0pDDF3OPBbc" alt=""></p>
-<p><strong>山口県周南市の麹町に長期滞在する</strong></p>
-<p>目標：50歳台</p>
-<p>母親の実家である麹町の家に一ヶ月単位で滞在してみたいです</p>
-<p><img src="https://lh3.googleusercontent.com/d/16hUPhZdA4XNVOfc2xLzbG_uFiyrZxy4G" alt=""></p>
-<p><strong>妻と新婚旅行で行ったオーストラリアにもう一度行く</strong></p>
-<p>目標：50歳台</p>
-<p>オーストラリアのケアンズもう一回行ってみたいです</p>
-<p><img src="https://lh3.googleusercontent.com/d/1dreLy8t8h_E--r73R6gD-EfjcxwtyNPa" alt=""></p>
-<p><strong>友人とだけで海外旅行に行く</strong></p>
-<p>目標：50歳台</p>
-<p>家族ではなく友人とだけで海外旅行もいいかなと思いました</p>
-<p><img src="https://lh3.googleusercontent.com/d/1iFuilweSohgZiqxfouGtu9ovvjix06Aj" alt=""></p>
-<p><strong>台湾に中国語語学留学に行く</strong></p>
-<p>目標：50歳台</p>
-<p>台湾が比較的に気に入っているのと、中国語を学びたいなとおもって長期滞在しながら勉強してみたいです</p>
-<p><img src="https://lh3.googleusercontent.com/d/189GoEj0hLtvtAaTp94wnpplerHMkIKX-" alt=""></p>
-<p><strong>夫婦でクルージング旅行をする</strong></p>
-<p>目標：60歳台</p>
-<p><img src="https://lh3.googleusercontent.com/d/1RkR_7U8m-iqhkZq9KcOYgOfrzLwKfS8T" alt=""></p>
-<p><strong>家族3人で海外旅行に行く</strong></p>
-<p>目標：40歳台</p>
-<p><img src="https://lh3.googleusercontent.com/d/1GXgzUf4xDdTBfeForSG6ArIvlypw88F_" alt=""></p>
-<p><strong>行きつけの店を作る</strong></p>
-<p>目標：50歳台</p>
-<p>行きつけの飲食店ちょっと憧れます</p>
-<p><img src="https://lh3.googleusercontent.com/d/1DoI09mSZwLs7deqKsf00Kucm_ucfrELf" alt=""></p>
-<p><strong>自分史を1冊分書く</strong></p>
-<p>目標：60歳台</p>
-<p><img src="https://lh3.googleusercontent.com/d/1Xz8q3H-FQOhutlPvNj-k2_eGOOy-YbnC" alt=""></p>
-<p><strong>日本語ボランティアとして活動する</strong></p>
-<p>目標：40歳台</p>
-<p><img src="https://lh3.googleusercontent.com/d/10eOgnK7M06npiIuwUVSnhgQxurHZb6u5" alt=""></p>
-<p><strong>HSK5級をもう一度受けて180点以上取る</strong></p>
-<p>目標：40歳台</p>
-<p><img src="https://lh3.googleusercontent.com/d/1NfjiyBblG_PXXHZaAy6RgKs_MC7tES4H" alt=""></p>
-<p><strong>カタコトでも中国語を話せるようになる</strong></p>
-<p>目標：50歳台</p>
-<p>HSK５級とりましたが、全く話せるようになりません。どこかでもう一回勉強したいです</p>
-<p><img src="https://lh3.googleusercontent.com/d/16zOHhH5Me9P2iL2wSt1ZlpZb6WEydcSY" alt=""></p>
-<p><strong>ピアノを一曲、両手を使って弾けるようになる</strong></p>
-<p>目標：50歳台</p>
-<p>なにか楽器が演奏できるようになりたいです。ピアノは前から気になっていたのでいつか挑戦したいです。</p>
-<h2 id="h-67669d54">Something else</h2>
-<p><img src="https://lh3.googleusercontent.com/d/1RJjuqtv8F7kVPVBPgckJ1QSYQDdk436-" alt=""></p>
-<p><strong>遺言書やエンディングノートを作成しておく</strong></p>
-<p>目標：70歳台</p>
-<p><img src="https://lh3.googleusercontent.com/d/1GzJehUo1iEefvses1tfPyYQiZZ4_3FIQ" alt=""></p>
-<p><strong>遺影に使う写真を決める</strong></p>
-<p>目標：70歳台</p>
-<p><img src="https://lh3.googleusercontent.com/d/1ZILz1RGFZNFoChm1lG-OnbuAh3SrT8qg" alt=""></p>
-<p><strong>自分の墓・供養の形を考えて決める</strong></p>
-<p>目標：70歳台</p>
-<p><img src="https://lh3.googleusercontent.com/d/1gPVaSiD4VwtnzxE7ogZ9Y36oIUMpTlJT" alt=""></p>
-<p><strong>自宅をリフォームする</strong></p>
-<p>目標：50歳台</p>
-<p>自宅の特に畳の部屋がやばいです。畳が毛羽立っています。これをきれいにしたいです</p>
-<p><img src="https://lh3.googleusercontent.com/d/1D_EbG7bud_pSWgvpwTVzU9yJyD-S8-ds" alt=""></p>
-<p><strong>自宅の風呂場を業者に綺麗にして欲しい</strong></p>
-<p>目標：50歳台</p>
-<p>水回り全波きれいにしたいです。風呂のマフラーの中とか怖くて開けてないです</p>
-<h2 id="h-45e6a3ab">達成したもの</h2>
-<p><img src="https://lh3.googleusercontent.com/d/1wdwKb00Mvj-zvZBwTHtv_EI4f8t2U6lO" alt=""></p>
-<p><strong>一人で旅行に行く</strong></p>
-<p>目標：50歳台／達成済み（2023年10月27日）</p>
-<p>2023年にシンガポールに移住した友人に会いに行きました。出張以外で初めての一人海外旅行となりました</p>
-<p>どれか一つでも多く叶えられるよう、ときどき見返していきます。</p>
-          </div>
-        </article>
-      </div>
-    </main>
-    <footer>
-      <div class="wrap">
-        <div class="foot-links">
-          <a href="https://freddiefujiwara.com/" target="_blank" rel="noopener">トップ <span class="arr">↗</span></a>
-          <a href="https://freddiefujiwara.com/blog/" target="_blank" rel="noopener">ブログ <span class="arr">↗</span></a>
-          <a href="https://freddiefujiwara.com/list-of-stuff/" target="_blank" rel="noopener">持ち物 <span class="arr">↗</span></a>
-          <a href="https://freddiefujiwara.com/bucket-list/" target="_blank" rel="noopener">バケットリスト <span class="arr">↗</span></a>
-          <a href="https://www.instagram.com/freddiefujiwara" target="_blank" rel="noopener">Instagram <span class="arr">↗</span></a>
-          <a href="https://www.facebook.com/freddiefujiwara" target="_blank" rel="noopener">Facebook <span class="arr">↗</span></a>
-          <a href="https://www.google.com/maps/contrib/105456242747265663411/reviews" target="_blank" rel="noopener">Googleマップの口コミ <span class="arr">↗</span></a>
-          <a href="https://review.travel.rakuten.co.jp/reviewer/fumikazufujiwara" target="_blank" rel="noopener">楽天トラベルの口コミ <span class="arr">↗</span></a>
-          <a href="https://tabelog.com/rvwr/zegenvs/" target="_blank" rel="noopener">食べログの口コミ <span class="arr">↗</span></a>
-          <a href="https://retty.me/user/50281/" target="_blank" rel="noopener">Rettyの口コミ <span class="arr">↗</span></a>
-          <a href="https://x.com/freddiefujiwara" target="_blank" rel="noopener">X <span class="arr">↗</span></a>
-          <a href="https://github.com/freddiefujiwara" target="_blank" rel="noopener">GitHub <span class="arr">↗</span></a>
-          <a href="https://linkedin.com/in/freddiefujiwara" target="_blank" rel="noopener">LinkedIn <span class="arr">↗</span></a>
-          <a href="https://youtrust.jp/users/freddiefujiwara" target="_blank" rel="noopener">YOUTRUST <span class="arr">↗</span></a>
-          <a href="https://fril.jp/shop/freddiefujiwara" target="_blank" rel="noopener">ラクマ <span class="arr">↗</span></a>
-        </div>
-        <p class="copy">© 2026 藤原史和（Fumikazu Fujiwara）— freddiefujiwara.com</p>
-      </div>
-    </footer>
-
-    <script>
-      (function () {
-        var FALLBACK = "https://tshop.r10s.jp/rukusu/cabinet/images/junbi.jpg";
-        function swap(img) {
-          if (img.dataset.errored) return;
-          img.dataset.errored = "true";
-          img.src = FALLBACK;
+      @media (prefers-color-scheme: dark) {
+        body {
+          background: #17140f;
+          color: #f3efe6;
         }
-        document.addEventListener(
-          "error",
-          function (event) {
-            var target = event.target;
-            if (
-              target &&
-              target.tagName === "IMG" &&
-              target.classList.contains("link-card-image")
-            ) {
-              swap(target);
-            }
-          },
-          true
-        );
-        document.querySelectorAll("img.link-card-image").forEach(function (img) {
-          if (img.complete && img.naturalWidth === 0) swap(img);
+        .card {
+          background: #221e17;
+          border-color: #3a352a;
+        }
+        .sub {
+          color: #b6ad9c;
+        }
+      }
+    </style>
+    <script>
+      // 初回だけ自動で転送する。アプリが開いてブラウザに戻ってきた
+      // とき（ページキャッシュからの復帰や、同じタブでの再読み込み）
+      // は転送を繰り返さず、この案内ページを表示する。
+      (function () {
+        var dest = "https://freddiefujiwara.com/blog/1WPrZI3RqXZcBIrVfrvY7Qn6AF-pFBHdNWXcK7PIwokM";
+        var key = "short-url-go:" + location.pathname;
+        var done = false;
+        try {
+          done = sessionStorage.getItem(key) === "1";
+        } catch (e) {}
+        window.addEventListener("pageshow", function (event) {
+          if (event.persisted || done) return;
+          done = true;
+          try {
+            sessionStorage.setItem(key, "1");
+          } catch (e) {}
+          window.location.replace(dest);
         });
       })();
     </script>
-    <script src="/js/music-count.js"></script>
+  </head>
+  <body>
+    <main class="card">
+      <h1>死ぬまでにやりたいことリスト</h1>
+      <p class="sub">ブログの記事へ移動します。戻ってきた場合は、下のボタンから開き直せます。</p>
+      <a class="go" href="https://freddiefujiwara.com/blog/1WPrZI3RqXZcBIrVfrvY7Qn6AF-pFBHdNWXcK7PIwokM">記事を開く</a>
+      <a class="home" href="https://freddiefujiwara.com/">トップページへ戻る</a>
+    </main>
   </body>
 </html>
