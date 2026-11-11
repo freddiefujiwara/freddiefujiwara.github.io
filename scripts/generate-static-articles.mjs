@@ -767,6 +767,8 @@ const PAGE_CSS = `
       /* cards flagged .is-grayout by blog-gas are grayed out */
       article a.link-card.is-grayout { opacity: .55; }
       article a.link-card.is-grayout .link-card-image { filter: grayscale(1); }
+      /* images flagged .is-grayout by blog-gas are grayed out */
+      article img.is-grayout { opacity: .55; filter: grayscale(1); }
       article .link-card-image { width: 112px; height: 112px; object-fit: cover; border-radius: 8px; flex-shrink: 0; }
       article .link-card-body { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
       article .link-card-title {

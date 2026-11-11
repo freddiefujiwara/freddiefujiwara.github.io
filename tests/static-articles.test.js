@@ -316,6 +316,17 @@ describe('renderMarkdown のリンク', () => {
     expect(page).toContain('article a.link-card.is-grayout { opacity: .55; }');
     expect(page).toContain('article a.link-card.is-grayout .link-card-image { filter: grayscale(1); }');
   });
+
+  it('グレーアウト指定の画像（img.is-grayout）はそのまま通り、グレーアウト用の CSS がページに含まれる', () => {
+    const img = '<img class="is-grayout" src="https://example.jp/done.jpg" alt="達成済み">';
+    const page = renderStaticArticlePage({
+      article: ARTICLES.find((a) => a.slug === 'bucket-list'),
+      payload: { title: 'バケットリスト', markdown: `本文\n\n${img}` },
+      siteLastModified: '2026-11-11',
+    });
+    expect(page).toContain('class="is-grayout"');
+    expect(page).toContain('article img.is-grayout { opacity: .55; filter: grayscale(1); }');
+  });
 });
 
 describe('目次', () => {
