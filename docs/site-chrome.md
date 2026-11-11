@@ -245,6 +245,22 @@ a.hero-inner { /* ヒーローをリンクにする場合の共通指定 */
   padding-top: 24px;
   border-top: 1px solid var(--line);
 }
+.foot-groups {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 44px;
+  margin-bottom: 22px;
+}
+.foot-group-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--ink-3);
+  margin: 0 0 8px;
+}
+.foot-group .foot-links {
+  margin-bottom: 0;
+}
 .foot-links {
   display: flex;
   flex-wrap: wrap;
@@ -264,12 +280,13 @@ a.hero-inner { /* ヒーローをリンクにする場合の共通指定 */
 ```
 
 - 著作権行の文言は3サイト共通: `© {年} 藤原史和（Fumikazu Fujiwara）— freddiefujiwara.com`
-- リンク集合（15件共通）: 自己リンク4件＋外部リンク11件です。
-  - 自己リンク: トップ（https://freddiefujiwara.com/）/ ブログ（https://freddiefujiwara.com/blog/）/
+- リンク集合（15件共通）: 4グループに分けて見出し付きで並べます（2026-11-11 にグループ化）。
+  - このサイト: トップ（https://freddiefujiwara.com/）/ ブログ（https://freddiefujiwara.com/blog/）/
     持ち物（https://freddiefujiwara.com/list-of-stuff/）/
     バケットリスト（https://freddiefujiwara.com/bucket-list/）
-  - 外部リンク: Instagram / Facebook / Googleマップの口コミ / 楽天トラベルの口コミ /
-    食べログの口コミ / Rettyの口コミ / X / GitHub / LinkedIn / YOUTRUST / ラクマ
+  - SNS: Instagram / X / Facebook
+  - 口コミ: Googleマップの口コミ / 楽天トラベルの口コミ / 食べログの口コミ / Rettyの口コミ
+  - プロフィール・その他: GitHub / LinkedIn / YOUTRUST / ラクマ
   （各リンクに ↗ つき、target="_blank" rel="noopener"）
 
 ## 6. favicon と OGP
