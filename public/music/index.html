@@ -78,6 +78,8 @@
       // 初回だけ自動で転送する。アプリが開いてブラウザに戻ってきた
       // とき（ページキャッシュからの復帰や、同じタブでの再読み込み）
       // は転送を繰り返さず、この案内ページを表示する。
+      // サイト内（freddiefujiwara.com）からの移動では、案内ページを
+      // 挟まず毎回即座に転送する。
       (function () {
         var dest = "https://freddiefujiwara.com/blog/1V7cXplHKbsT48EhLarl-SPHfDV-lSEafEId2OMgExkg";
         var key = "short-url-go:" + location.pathname;
@@ -85,6 +87,18 @@
         try {
           done = sessionStorage.getItem(key) === "1";
         } catch (e) {}
+        var internal = false;
+        try {
+          internal =
+            document.referrer !== "" &&
+            new URL(document.referrer).hostname === location.hostname;
+        } catch (e) {}
+        if (internal) {
+          // フラグは立てない。あとから直接開いたときに通常の
+          // 初回判定が効くようにするため。
+          window.location.replace(dest);
+          return;
+        }
         window.addEventListener("pageshow", function (event) {
           if (event.persisted || done) return;
           done = true;

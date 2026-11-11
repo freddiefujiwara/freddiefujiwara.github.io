@@ -141,4 +141,95 @@ describe('短縮URLの転送ページ', () => {
       expect(replaced).toEqual([]);
     });
   });
+
+  describe('サイト内からの移動では案内ページを挟まない（music）', () => {
+    const musicHtml = readFileSync(
+      path.join(root, 'public', 'music', 'index.html'),
+      'utf8',
+    );
+    const musicScript = musicHtml.match(/<script>([\s\S]*?)<\/script>/)[1];
+    const MDEST =
+      'https://freddiefujiwara.com/blog/1V7cXplHKbsT48EhLarl-SPHfDV-lSEafEId2OMgExkg';
+
+    const runMusic = (referrer, stored) => {
+      const replaced = [];
+      const listeners = {};
+      const store = { ...(stored || {}) };
+      const fakeLocation = {
+        pathname: '/music',
+        hostname: 'freddiefujiwara.com',
+        replace: (url) => replaced.push(url),
+      };
+      const fakeWindow = {
+        addEventListener: (type, fn) => {
+          listeners[type] = fn;
+        },
+        location: fakeLocation,
+      };
+      const fakeSession = {
+        getItem: (k) => (k in store ? store[k] : null),
+        setItem: (k, v) => {
+          store[k] = v;
+        },
+      };
+      new Function(
+        'window',
+        'location',
+        'sessionStorage',
+        'document',
+        musicScript,
+      )(fakeWindow, fakeLocation, fakeSession, { referrer });
+      return { replaced, listeners, store };
+    };
+
+    it('サイト内から来たら、表示を待たず即座に転送する', () => {
+      const { replaced, store } = runMusic('https://freddiefujiwara.com/blog/');
+      expect(replaced).toEqual([MDEST]);
+      // 直接開いたときの初回判定のため、記録は残さない
+      expect(store['short-url-go:/music']).toBeUndefined();
+    });
+
+    it('サイト内からなら、同じタブで記録があっても転送する', () => {
+      const { replaced } = runMusic('https://freddiefujiwara.com/', {
+        'short-url-go:/music': '1',
+      });
+      expect(replaced).toEqual([MDEST]);
+    });
+
+    it('サイト外から来たら即座には転送せず、初回表示で転送する', () => {
+      const { replaced, listeners } = runMusic('https://example.com/');
+      expect(replaced).toEqual([]);
+      listeners.pageshow({ persisted: false });
+      expect(replaced).toEqual([MDEST]);
+    });
+
+    it('遷移元がなければ従来どおり初回表示で転送する', () => {
+      const { replaced, listeners } = runMusic('');
+      expect(replaced).toEqual([]);
+      listeners.pageshow({ persisted: false });
+      expect(replaced).toEqual([MDEST]);
+    });
+  });
+
+  it.each(['chinese', 'map', 'bucket-list', 'list-of-stuff', 'music'])(
+    '%s の転送ページはサイト内判定を持つ',
+    (name) => {
+      const html = readFileSync(
+        path.join(root, 'public', name, 'index.html'),
+        'utf8',
+      );
+      expect(html).toContain('document.referrer');
+    },
+  );
+
+  it.each(['instagram', 'facebook', 'x', 'threads', 'youtube', 'room'])(
+    '%s の転送ページはサイト内判定を持たない（飛び先が外部）',
+    (name) => {
+      const html = readFileSync(
+        path.join(root, 'public', name, 'index.html'),
+        'utf8',
+      );
+      expect(html).not.toContain('document.referrer');
+    },
+  );
 });
