@@ -658,7 +658,7 @@ describe('renderStaticArticlePage', () => {
     expect(document.querySelectorAll('footer .foot-links a')).toHaveLength(23);
     expect(
       [...document.querySelectorAll('footer .foot-group-title')].map((el) => el.textContent),
-    ).toEqual(['このサイト', '自作ツール', 'SNS', '口コミ', 'プロフィール・その他']);
+    ).toEqual(['このサイト', 'SNS', '口コミ', 'プロフィール・その他', '自作ツール']);
     expect(document.querySelector('article h1')?.textContent).toBe(
       '2026-10-27 川口のリールを、地図にまとめました',
     );
