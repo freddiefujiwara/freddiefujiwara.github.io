@@ -34,22 +34,12 @@ export const SLOW_MS = 10_000;
 export const FETCH_TIMEOUT_MS = 30_000;
 
 export const TARGETS = [
-  // Static pages (content baked at build time).
+  // The top page itself (the only fully static page left; the
+  // former static article pages are redirect stubs now).
   { target: "top", kind: "page", url: "https://freddiefujiwara.com/" },
-  { target: "map", kind: "page", url: "https://freddiefujiwara.com/map" },
-  {
-    target: "list-of-stuff",
-    kind: "page",
-    url: "https://freddiefujiwara.com/list-of-stuff",
-  },
-  {
-    target: "bucket-list",
-    kind: "page",
-    url: "https://freddiefujiwara.com/bucket-list",
-  },
-  { target: "music", kind: "page", url: "https://freddiefujiwara.com/music" },
-  // The pinned blog articles: their ?id= answers are the ones
-  // whose cache regenerations used to spike past ten seconds.
+  // The four long-lived blog articles that used to be static
+  // pages: their ?id= answers are the ones whose cache
+  // regenerations used to spike past ten seconds.
   {
     target: "article-map",
     kind: "article",
@@ -64,6 +54,11 @@ export const TARGETS = [
     target: "article-stuff",
     kind: "article",
     url: `${BLOG_PROD}?id=1tn5P1vB1jnKHSay_FC2AEtNxH0gQZ3_jffRnHuz4YpM`,
+  },
+  {
+    target: "article-music",
+    kind: "article",
+    url: `${BLOG_PROD}?id=1V7cXplHKbsT48EhLarl-SPHfDV-lSEafEId2OMgExkg`,
   },
   // The twelve GAS endpoints (production + staging). A JSON
   // answer means the web app is authorized and serving; an

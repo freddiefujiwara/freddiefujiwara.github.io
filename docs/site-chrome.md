@@ -284,10 +284,10 @@ a.hero-inner { /* ヒーローをリンクにする場合の共通指定 */
   - このサイト: トップ（https://freddiefujiwara.com/）/ ブログ（https://freddiefujiwara.com/blog/）/
     持ち物（https://freddiefujiwara.com/list-of-stuff/）/
     バケットリスト（https://freddiefujiwara.com/bucket-list/）
+  - 自作ツール: 学习（中国語の復習）（https://freddiefujiwara.com/xuexi/） / openapi-fetch（https://freddiefujiwara.com/openapi-fetch/） / md2img（Markdown to Image）（https://freddiefujiwara.com/md2img/） / portfolio-treemap（ポートフォリオ構成図）（https://freddiefujiwara.com/portfolio-treemap/） / dtgwt（デシジョンテーブル→Given/When/Then）（https://freddiefujiwara.com/dtgwt/） / node-qict（ペアワイズ法のテストケース生成）（https://freddiefujiwara.com/node-qict/） / smtc（状態遷移のテストケース生成）（https://freddiefujiwara.com/smtc/） / dtdt（デシジョンツリー→デシジョンテーブル）（https://freddiefujiwara.com/dtdt/）
   - SNS: Instagram / X / Facebook
   - 口コミ: Googleマップの口コミ / 楽天トラベルの口コミ / 食べログの口コミ / Rettyの口コミ
   - プロフィール・その他: GitHub / LinkedIn / YOUTRUST / ラクマ
-  - 自作ツール: 学习（中国語の復習）（https://freddiefujiwara.com/xuexi/） / openapi-fetch（https://freddiefujiwara.com/openapi-fetch/） / md2img（Markdown to Image）（https://freddiefujiwara.com/md2img/） / portfolio-treemap（ポートフォリオ構成図）（https://freddiefujiwara.com/portfolio-treemap/） / dtgwt（デシジョンテーブル→Given/When/Then）（https://freddiefujiwara.com/dtgwt/） / node-qict（ペアワイズ法のテストケース生成）（https://freddiefujiwara.com/node-qict/） / smtc（状態遷移のテストケース生成）（https://freddiefujiwara.com/smtc/） / dtdt（デシジョンツリー→デシジョンテーブル）（https://freddiefujiwara.com/dtdt/）
   （各リンクに ↗ つき、target="_blank" rel="noopener"）
 
 ## 6. favicon と OGP
@@ -362,22 +362,15 @@ meta refresh は使いません。転送ページは noindex とし、計測タ�
 | https://freddiefujiwara.com/youtube | https://www.youtube.com/@freddiefujiwara |
 | https://freddiefujiwara.com/room | https://room.rakuten.co.jp/freddiefujiwara/items |
 | https://freddiefujiwara.com/chinese | https://freddiefujiwara.com/blog/tag/中国語 |
+| https://freddiefujiwara.com/map | https://freddiefujiwara.com/blog/1bNigXcTT-1LSXjUYAlfFQuJPX6U7U3ELeWAfG5XIb58 |
+| https://freddiefujiwara.com/bucket-list | https://freddiefujiwara.com/blog/1WPrZI3RqXZcBIrVfrvY7Qn6AF-pFBHdNWXcK7PIwokM |
+| https://freddiefujiwara.com/list-of-stuff | https://freddiefujiwara.com/blog/1tn5P1vB1jnKHSay_FC2AEtNxH0gQZ3_jffRnHuz4YpM |
+| https://freddiefujiwara.com/music | https://freddiefujiwara.com/blog/1V7cXplHKbsT48EhLarl-SPHfDV-lSEafEId2OMgExkg |
 
-### 静的記事ページ（転送しない短縮URL）
-
-次の4つは転送ページではなく、ブログ記事そのものを静的HTMLで表示します。
-ブログ側のGAS変換が重い（持ち物リストは変換に数十秒）ためで、原稿は
-Googleドキュメント（blog-gas）のまま、`scripts/generate-static-articles.mjs`
-が変換済み本文を取得して `public/<名前>/index.html` を生成します。
-定期実行のワークフローが再生成し、内容が変わったときだけコミットされます。
-テストは tests/static-articles.test.js です。
-
-| 短縮URL | 記事（Googleドキュメント） |
-|---|---|
-| https://freddiefujiwara.com/map | 川口のリールを、地図にまとめました（1bNigXcTT-1LSXjUYAlfFQuJPX6U7U3ELeWAfG5XIb58） |
-| https://freddiefujiwara.com/bucket-list | 死ぬまでにやりたいことリスト（1WPrZI3RqXZcBIrVfrvY7Qn6AF-pFBHdNWXcK7PIwokM） |
-| https://freddiefujiwara.com/list-of-stuff | 全持ち物リスト（1tn5P1vB1jnKHSay_FC2AEtNxH0gQZ3_jffRnHuz4YpM） |
-| https://freddiefujiwara.com/music | 川口のSunoリリックVlogを、まとめました（1V7cXplHKbsT48EhLarl-SPHfDV-lSEafEId2OMgExkg） |
+この4つ（map / bucket-list / list-of-stuff / music）は、2026年11月まで
+ブログ記事そのものを静的HTMLで表示する「静的記事ページ」でした。
+blog-gas のスナップショット化で記事の応答が数秒に収まったため、
+静的生成の仕組みは廃止し、他の短縮URLと同じ転送ページに戻しました。
 
 ---
 
