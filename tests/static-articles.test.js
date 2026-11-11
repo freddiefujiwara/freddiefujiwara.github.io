@@ -13,6 +13,8 @@ import { JSDOM } from 'jsdom';
 import {
   ARTICLES,
   addItemLinks,
+  articleHrefFor,
+  buildArticleNav,
   buildDescription,
   buildTagChipsHtml,
   buildTocHtml,
@@ -1646,5 +1648,81 @@ describe('リンクカードの2回取り（OGP再取得）', () => {
 
   it('OGP_REFETCH_WAIT_MS はバッチ間隔とキャッシュTTLより長い', () => {
     expect(OGP_REFETCH_WAIT_MS).toBeGreaterThan(600_000);
+  });
+});
+
+describe('前後の記事へのリンク（静的ページでも回遊できる）', () => {
+  const MAP_ID = '1bNigXcTT-1LSXjUYAlfFQuJPX6U7U3ELeWAfG5XIb58';
+  const MUSIC_ID = '1V7cXplHKbsT48EhLarl-SPHfDV-lSEafEId2OMgExkg';
+  const list = {
+    ids: ['newer-id', MAP_ID, MUSIC_ID, 'older-id'],
+    titles: {
+      'newer-id': '2026-11-10 新しい記事',
+      [MAP_ID]: '2026-10-27 川口のリールを、地図にまとめました',
+      [MUSIC_ID]: '2026-09-22 川口の歌を、まとめました',
+      'older-id': '2026-09-01 古い記事',
+    },
+  };
+
+  it('前は新しい記事、次は古い記事で、日付を除いたタイトルでリンクする', () => {
+    const nav = buildArticleNav(list, MAP_ID);
+    expect(nav.prev).toEqual({
+      href: 'https://freddiefujiwara.com/blog/newer-id',
+      title: '新しい記事',
+    });
+    // 次の記事は静的ページ（/music）へ直接リンクする
+    expect(nav.next).toEqual({
+      href: 'https://freddiefujiwara.com/music',
+      title: '川口の歌を、まとめました',
+    });
+  });
+
+  it('静的ページのある記事は静的ページへ、無い記事はブログへリンクする', () => {
+    expect(articleHrefFor(MUSIC_ID)).toBe('https://freddiefujiwara.com/music');
+    expect(articleHrefFor('some-other-id')).toBe(
+      'https://freddiefujiwara.com/blog/some-other-id'
+    );
+  });
+
+  it('端の記事は片側だけになる', () => {
+    expect(buildArticleNav(list, 'newer-id').prev).toBeNull();
+    expect(buildArticleNav(list, 'older-id').next).toBeNull();
+  });
+
+  it('一覧が無い・記事が含まれない場合は null', () => {
+    expect(buildArticleNav(null, MAP_ID)).toBeNull();
+    expect(buildArticleNav({ ids: ['x'] }, MAP_ID)).toBeNull();
+  });
+
+  it('ページ末尾に前後のリンクが出る', () => {
+    const page = renderStaticArticlePage({
+      article: ARTICLES[0],
+      payload: {
+        title: '2026-10-27 川口のリールを、地図にまとめました',
+        markdown: '本文です。',
+        tags: [],
+      },
+      year: 2026,
+      nav: buildArticleNav(list, MAP_ID),
+    });
+    expect(page).toContain('class="article-nav"');
+    expect(page).toContain('href="https://freddiefujiwara.com/blog/newer-id"');
+    expect(page).toContain('href="https://freddiefujiwara.com/music"');
+    expect(page).toContain('>新しい記事</span>');
+    expect(page).toContain('>川口の歌を、まとめました</span>');
+  });
+
+  it('nav が無ければリンクは出ない', () => {
+    const page = renderStaticArticlePage({
+      article: ARTICLES[0],
+      payload: {
+        title: '2026-10-27 川口のリールを、地図にまとめました',
+        markdown: '本文です。',
+        tags: [],
+      },
+      year: 2026,
+    });
+    // スタイル定義には .article-nav が常に入るため、要素の有無で見る
+    expect(page).not.toContain('class="article-nav"');
   });
 });
