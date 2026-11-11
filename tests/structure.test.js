@@ -51,12 +51,12 @@ describe('ページ構造の不変条件', () => {
     const groups = [...document.querySelectorAll('footer .foot-group')];
     expect(groups.map((g) => g.querySelector('.foot-group-title').textContent)).toEqual([
       'このサイト',
-      '自作ツール',
       'SNS',
       '口コミ',
       'プロフィール・その他',
+      '自作ツール',
     ]);
-    expect(groups.map((g) => g.querySelectorAll('.foot-links a').length)).toEqual([4, 8, 3, 4, 4]);
+    expect(groups.map((g) => g.querySelectorAll('.foot-links a').length)).toEqual([4, 3, 4, 4, 8]);
   });
 
   it('JS が参照する id がすべて HTML に存在する', () => {
