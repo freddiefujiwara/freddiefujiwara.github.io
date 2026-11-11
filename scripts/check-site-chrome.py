@@ -178,13 +178,20 @@ FOOTER_COMMON_LINKS = [
     "https://fril.jp/shop/freddiefujiwara",
 ]
 
-# フッターの自己リンク（サイト間の相互リンク）。外部リンクと合わせて16件が正本。
+# フッターの自己リンク（サイト間の相互リンク）。外部リンクと合わせて23件が正本。
 FOOTER_SELF_LINKS = [
     "https://freddiefujiwara.com/",
     "https://freddiefujiwara.com/blog/",
     "https://freddiefujiwara.com/list-of-stuff/",
     "https://freddiefujiwara.com/bucket-list/",
     "https://freddiefujiwara.com/xuexi/",
+    "https://freddiefujiwara.com/openapi-fetch/",
+    "https://freddiefujiwara.com/md2img/",
+    "https://freddiefujiwara.com/portfolio-treemap/",
+    "https://freddiefujiwara.com/dtgwt/",
+    "https://freddiefujiwara.com/node-qict/",
+    "https://freddiefujiwara.com/smtc/",
+    "https://freddiefujiwara.com/dtdt/",
 ]
 
 FOOTER_LINKS = FOOTER_SELF_LINKS + FOOTER_COMMON_LINKS
@@ -202,9 +209,9 @@ def _href_present(text, url):
 
 
 def footer_links(text):
-    """フッターのリンク集合（16件）のうちテキストに含まれるものの集合。
+    """フッターのリンク集合（23件）のうちテキストに含まれるものの集合。
 
-    外部リンク11件は URL の部分一致で数える。自己リンク3件は、トップの URL が
+    外部リンク11件は URL の部分一致で数える。自己リンク12件は、トップの URL が
     ブログ／持ち物の URL の接頭辞になるため、href の完全一致で数える。
     """
     found = {u for u in FOOTER_COMMON_LINKS if u in text}
@@ -232,6 +239,14 @@ FOOTER_LINK_LABELS = {
     "https://freddiefujiwara.com/blog/": "ブログ",
     "https://freddiefujiwara.com/list-of-stuff/": "持ち物",
     "https://freddiefujiwara.com/bucket-list/": "バケットリスト",
+    "https://freddiefujiwara.com/xuexi/": "学习",
+    "https://freddiefujiwara.com/openapi-fetch/": "openapi-fetch",
+    "https://freddiefujiwara.com/md2img/": "md2img",
+    "https://freddiefujiwara.com/portfolio-treemap/": "portfolio-treemap",
+    "https://freddiefujiwara.com/dtgwt/": "dtgwt",
+    "https://freddiefujiwara.com/node-qict/": "node-qict",
+    "https://freddiefujiwara.com/smtc/": "smtc",
+    "https://freddiefujiwara.com/dtdt/": "dtdt",
     "https://www.instagram.com/freddiefujiwara": "Instagram",
     "https://www.facebook.com/freddiefujiwara": "Facebook",
     "https://www.google.com/maps/contrib/105456242747265663411/reviews": "Googleマップ",
@@ -251,8 +266,8 @@ def _footer_value(block):
     found = footer_links(block)
     missing = [FOOTER_LINK_LABELS[u] for u in FOOTER_LINKS if u not in found]
     if not missing:
-        return "16/16 件"
-    return f"{len(found)}/16 件（不足: {'、'.join(missing)}）"
+        return "23/23 件"
+    return f"{len(found)}/23 件（不足: {'、'.join(missing)}）"
 
 
 SITE_ORIGIN = "https://freddiefujiwara.com"
@@ -431,9 +446,9 @@ def build_rows(data):
         compare=("ブログ", "持ち物"), note="トップは固有デザイン")
 
     # --- フッター ---
-    add("フッター共通リンク（16件）",
+    add("フッター共通リンク（23件）",
         per_site(lambda d, s: _footer_value(footer_block(d['html'] + d['js']))),
-        note="自己リンク4件（トップ / ブログ / 持ち物 / バケットリスト）＋ 外部11件（Instagram / Facebook / Googleマップ / 楽天トラベル / 食べログ / Retty / X / GitHub / LinkedIn / YOUTRUST / ラクマ）")
+        note="自己リンク12件（トップ / ブログ / 持ち物 / バケットリスト / 学习 / openapi-fetch / md2img / portfolio-treemap / dtgwt / node-qict / smtc / dtdt）＋ 外部11件（Instagram / Facebook / Googleマップ / 楽天トラベル / 食べログ / Retty / X / GitHub / LinkedIn / YOUTRUST / ラクマ）")
     add("フッター .foot-links gap",
         per_site(lambda d, s: decl(rule_block(d["css"], [".foot-links"]), "gap")))
     add("フッター .copy font-size",

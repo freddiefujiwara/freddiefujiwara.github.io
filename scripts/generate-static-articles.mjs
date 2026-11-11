@@ -623,6 +623,13 @@ const FOOTER_GROUPS = [
     title: "自作ツール",
     links: [
       ["https://freddiefujiwara.com/xuexi/", "学习（中国語の復習）"],
+      ["https://freddiefujiwara.com/openapi-fetch/", "openapi-fetch"],
+      ["https://freddiefujiwara.com/md2img/", "md2img（Markdown to Image）"],
+      ["https://freddiefujiwara.com/portfolio-treemap/", "portfolio-treemap（ポートフォリオ構成図）"],
+      ["https://freddiefujiwara.com/dtgwt/", "dtgwt（デシジョンテーブル→Given/When/Then）"],
+      ["https://freddiefujiwara.com/node-qict/", "node-qict（ペアワイズ法のテストケース生成）"],
+      ["https://freddiefujiwara.com/smtc/", "smtc（状態遷移のテストケース生成）"],
+      ["https://freddiefujiwara.com/dtdt/", "dtdt（デシジョンツリー→デシジョンテーブル）"],
     ],
   },
   {

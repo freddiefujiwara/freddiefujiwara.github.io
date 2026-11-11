@@ -280,11 +280,11 @@ a.hero-inner { /* ヒーローをリンクにする場合の共通指定 */
 ```
 
 - 著作権行の文言は3サイト共通: `© {年} 藤原史和（Fumikazu Fujiwara）— freddiefujiwara.com`
-- リンク集合（16件共通）: 5グループに分けて見出し付きで並べます（2026-11-11 にグループ化、2026-11-12 に「自作ツール」を追加）。
+- リンク集合（23件共通）: 5グループに分けて見出し付きで並べます（2026-11-11 にグループ化、2026-11-12 に「自作ツール」を追加）。
   - このサイト: トップ（https://freddiefujiwara.com/）/ ブログ（https://freddiefujiwara.com/blog/）/
     持ち物（https://freddiefujiwara.com/list-of-stuff/）/
     バケットリスト（https://freddiefujiwara.com/bucket-list/）
-  - 自作ツール: 学习（中国語の復習）（https://freddiefujiwara.com/xuexi/）
+  - 自作ツール: 学习（中国語の復習）（https://freddiefujiwara.com/xuexi/） / openapi-fetch（https://freddiefujiwara.com/openapi-fetch/） / md2img（Markdown to Image）（https://freddiefujiwara.com/md2img/） / portfolio-treemap（ポートフォリオ構成図）（https://freddiefujiwara.com/portfolio-treemap/） / dtgwt（デシジョンテーブル→Given/When/Then）（https://freddiefujiwara.com/dtgwt/） / node-qict（ペアワイズ法のテストケース生成）（https://freddiefujiwara.com/node-qict/） / smtc（状態遷移のテストケース生成）（https://freddiefujiwara.com/smtc/） / dtdt（デシジョンツリー→デシジョンテーブル）（https://freddiefujiwara.com/dtdt/）
   - SNS: Instagram / X / Facebook
   - 口コミ: Googleマップの口コミ / 楽天トラベルの口コミ / 食べログの口コミ / Rettyの口コミ
   - プロフィール・その他: GitHub / LinkedIn / YOUTRUST / ラクマ

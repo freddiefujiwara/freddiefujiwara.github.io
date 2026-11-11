@@ -655,7 +655,7 @@ describe('renderStaticArticlePage', () => {
     expect(musicLink.textContent).toContain('川口の歌 ♪');
     expect(musicLink.querySelector('.music-play-count')).not.toBeNull();
     expect(page).toContain('<script src="/js/music-count.js"></script>');
-    expect(document.querySelectorAll('footer .foot-links a')).toHaveLength(16);
+    expect(document.querySelectorAll('footer .foot-links a')).toHaveLength(23);
     expect(
       [...document.querySelectorAll('footer .foot-group-title')].map((el) => el.textContent),
     ).toEqual(['このサイト', '自作ツール', 'SNS', '口コミ', 'プロフィール・その他']);
