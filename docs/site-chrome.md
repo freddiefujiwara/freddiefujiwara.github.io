@@ -353,6 +353,12 @@ meta refresh は使いません。転送ページは noindex とし、計測タ�
 （gtag）は入れません。飛び先を変えるときは転送ページとこの表と
 テスト（tests/redirects.test.js）を一緒に直します。
 
+飛び先がサイト内の短縮URL（chinese / map / bucket-list / list-of-stuff /
+music）は、サイト内からの移動では案内ページを挟まず毎回即座に
+転送します（遷移元が freddiefujiwara.com かどうかで判定し、判定
+できない場合は従来の初回判定になります）。ブログ記事内のリンクも
+この5件は内部リンクとして同じタブで開きます。
+
 | 短縮URL | 飛び先 |
 |---|---|
 | https://freddiefujiwara.com/instagram | https://www.instagram.com/freddiefujiwara |
