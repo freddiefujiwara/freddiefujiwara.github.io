@@ -232,4 +232,48 @@ describe('短縮URLの転送ページ', () => {
       expect(html).not.toContain('document.referrer');
     },
   );
+
+  describe('ga（旧パス）', () => {
+    // /ga は ga → social への改名で残った旧パス。飛び先は /social/ で、
+    // 共有リンクの #share= やタブ指定の #tab= を落とさないよう、
+    // クエリとハッシュを引き継いで転送する例外仕様（site-chrome.md
+    // §8）。通常の短縮URLと違い、飛び先は dest の組み立てに分かれて
+    // 入っているため、ここで個別に固定する。
+    const DEST = 'https://freddiefujiwara.com/social/';
+    const html = readFileSync(
+      path.join(root, 'public', 'ga', 'index.html'),
+      'utf8',
+    );
+    const { document } = new JSDOM(html).window;
+
+    it('転送ページが存在し、飛び先が登録どおり', () => {
+      expect(
+        document.querySelector('link[rel="canonical"]')?.getAttribute('href'),
+      ).toBe(DEST);
+      expect(document.querySelector('a.go')?.getAttribute('href')).toBe(DEST);
+      expect(document.querySelector('a.home')?.getAttribute('href')).toBe(
+        'https://freddiefujiwara.com/',
+      );
+    });
+
+    it('クエリとハッシュを引き継ぎ、初回だけ自動で転送する', () => {
+      expect(html).toContain(`"${DEST}"`);
+      expect(html).toContain('window.location.search');
+      expect(html).toContain('window.location.hash');
+      expect(html).toContain('window.location.replace(dest)');
+      expect(html).toContain('pageshow');
+      expect(html).toContain('sessionStorage');
+      expect(document.querySelector('meta[http-equiv="refresh"]')).toBeNull();
+    });
+
+    it('検索対象外で、計測タグを持たない', () => {
+      expect(
+        document
+          .querySelector('meta[name="robots"]')
+          ?.getAttribute('content'),
+      ).toContain('noindex');
+      expect(html).not.toContain('googletagmanager.com');
+      expect(html).not.toContain('/js/gtag.js');
+    });
+  });
 });
