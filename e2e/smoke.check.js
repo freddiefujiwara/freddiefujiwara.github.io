@@ -64,6 +64,27 @@ for (const app of ["tweet", "alarm", "health", "asset"]) {
   });
 }
 
+// Regression guard for the 2026-11-13 incident: a stale-branch merge
+// in the blog repository rolled back the [[歌詞]] marker handling —
+// and its unit tests with it — so the song-summary article showed the
+// raw markers as text and lost its lyrics boxes. Tests inside that
+// repository cannot catch a rollback that rewrites the tests too, so
+// the rendered production page is checked from here instead.
+smokeTest("blog music article renders lyrics boxes, not raw markers", async ({
+  page,
+}) => {
+  const resp = await page.goto(
+    `${SITE}/blog/1V7cXplHKbsT48EhLarl-SPHfDV-lSEafEId2OMgExkg`,
+  );
+  expect(resp.status()).toBe(200);
+  const article = page.locator("article");
+  await expect(article.locator(".music-player")).toBeVisible({
+    timeout: 30 * 1000,
+  });
+  await expect(article.locator(".lyrics").first()).toBeVisible();
+  await expect(article).not.toContainText("[[歌詞]]");
+});
+
 // The GAS endpoint checks below use Playwright's anonymous request context
 // (no Google session). If a project's authorization lapses or its web app
 // access regresses, /exec answers with an HTML sign-in / Access Denied page
