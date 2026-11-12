@@ -372,11 +372,17 @@ music）は、サイト内からの移動では案内ページを挟まず毎回
 | https://freddiefujiwara.com/bucket-list | https://freddiefujiwara.com/blog/1WPrZI3RqXZcBIrVfrvY7Qn6AF-pFBHdNWXcK7PIwokM |
 | https://freddiefujiwara.com/list-of-stuff | https://freddiefujiwara.com/blog/1tn5P1vB1jnKHSay_FC2AEtNxH0gQZ3_jffRnHuz4YpM |
 | https://freddiefujiwara.com/music | https://freddiefujiwara.com/blog/1V7cXplHKbsT48EhLarl-SPHfDV-lSEafEId2OMgExkg |
+| https://freddiefujiwara.com/ga | https://freddiefujiwara.com/social/ |
 
 この4つ（map / bucket-list / list-of-stuff / music）は、2026年11月まで
 ブログ記事そのものを静的HTMLで表示する「静的記事ページ」でした。
 blog-gas のスナップショット化で記事の応答が数秒に収まったため、
 静的生成の仕組みは廃止し、他の短縮URLと同じ転送ページに戻しました。
+
+/ga は ga → social への改名で残った旧パスです。共有リンクの
+#share= やタブ指定の #tab= を落とさないよう、飛び先にクエリと
+ハッシュをそのまま付けて転送する例外仕様で、他の短縮URLと違い
+サイト内判定（即時転送）は持ちません。
 
 ---
 
