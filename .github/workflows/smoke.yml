@@ -58,6 +58,7 @@ jobs:
           SMOKE_PLAYWRIGHT_OUTCOME: ${{ steps.playwright.outcome }}
           SMOKE_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git fetch origin master
