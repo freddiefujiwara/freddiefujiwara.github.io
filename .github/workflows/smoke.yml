@@ -9,6 +9,9 @@ on:
 jobs:
   smoke:
     runs-on: ubuntu-latest
+    # The trend step commits the day's ledger line back to master.
+    permissions:
+      contents: write
     container:
       image: mcr.microsoft.com/playwright:v1.65.0-noble
     steps:
@@ -16,14 +19,26 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Run smoke tests
+        id: playwright
         env:
           HOME: /root
         run: npx playwright test
       - name: Measure pages, articles and endpoints
+        id: measure
         if: always()
         env:
           SMOKE_RECORD_TOKEN: ${{ secrets.SMOKE_RECORD_TOKEN }}
+          SMOKE_RESULTS_FILE: smoke-results.json
         run: node scripts/measure-smoke.mjs
+      - name: Probe GAS feature presence
+        if: always()
+        env:
+          SHARE_TOKEN_SOCIAL: ${{ secrets.SHARE_TOKEN_SOCIAL }}
+          SHARE_TOKEN_HEALTH: ${{ secrets.SHARE_TOKEN_HEALTH }}
+          SHARE_TOKEN_TWEET: ${{ secrets.SHARE_TOKEN_TWEET }}
+          SHARE_TOKEN_ASSET: ${{ secrets.SHARE_TOKEN_ASSET }}
+          SHARE_TOKEN_ALARM: ${{ secrets.SHARE_TOKEN_ALARM }}
+        run: node scripts/probe-features.mjs
       - name: Upload traces on failure
         if: failure()
         uses: actions/upload-artifact@v7
@@ -31,3 +46,23 @@ jobs:
           name: smoke-traces
           path: test-results/
           retention-days: 7
+      # Append the day's line to the trend ledger in this
+      # repository and commit it back. [skip ci] keeps the
+      # ledger commit from starting any workflow (deploy and
+      # staging included); the ref guard keeps a manual run
+      # from another branch from pushing into master.
+      - name: Record the smoke trend
+        if: always() && github.ref == 'refs/heads/master'
+        env:
+          HOME: /root
+          SMOKE_PLAYWRIGHT_OUTCOME: ${{ steps.playwright.outcome }}
+          SMOKE_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin master
+          git checkout origin/master -- docs/smoke-trend.md || true
+          node scripts/record-smoke-trend.mjs
+          git add docs/smoke-trend.md
+          git diff --cached --quiet && echo "trend unchanged" || git commit -m "docs: smoke trend (auto) [skip ci]"
+          git push origin HEAD:master
