@@ -1,4 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
+import { mkdtemp, readFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
 import {
   TARGETS,
   RECORD_URL,
@@ -6,6 +9,8 @@ import {
   judgeResult,
   measureOne,
   postRecords,
+  writeResultsFile,
+  run,
 } from '../scripts/measure-smoke.mjs';
 
 describe('measure-smoke targets', () => {
@@ -135,5 +140,47 @@ describe('postRecords', () => {
 
     const refused = vi.fn(async () => ({ json: async () => ({ ok: false }) }));
     await expect(postRecords(records, 'tok', refused)).resolves.toBe(false);
+  });
+});
+
+describe('writeResultsFile / run results output', () => {
+  it('writes the batch as { recordedAt, results } JSON', async () => {
+    const dir = await mkdtemp(path.join(tmpdir(), 'smoke-results-'));
+    const file = path.join(dir, 'smoke-results.json');
+    const results = [{ target: 'x', kind: 'page', ms: 1, ok: true }];
+    await writeResultsFile(results, file, new Date('2026-11-13T21:00:00.000Z'));
+    const payload = JSON.parse(await readFile(file, 'utf8'));
+    expect(payload).toEqual({ recordedAt: '2026-11-13T21:00:00.000Z', results });
+  });
+
+  it('run writes the results file the trend recorder reads', async () => {
+    const dir = await mkdtemp(path.join(tmpdir(), 'smoke-run-'));
+    const file = path.join(dir, 'smoke-results.json');
+    const fetchImpl = vi.fn(async (url) => ({
+      status: 200,
+      text: async () => (String(url).includes('script.google.com') ? '{"ok":true}' : '<html>ok</html>'),
+    }));
+    const code = await run({
+      fetchImpl,
+      env: { SMOKE_NO_POST: '1', SMOKE_RESULTS_FILE: file },
+      log: () => {},
+    });
+    expect(code).toBe(0);
+    const payload = JSON.parse(await readFile(file, 'utf8'));
+    expect(payload.results).toHaveLength(TARGETS.length);
+    expect(payload.results.every((r) => r.ok)).toBe(true);
+  });
+
+  it('run fails when the results file cannot be written', async () => {
+    const fetchImpl = vi.fn(async (url) => ({
+      status: 200,
+      text: async () => (String(url).includes('script.google.com') ? '{"ok":true}' : '<html>ok</html>'),
+    }));
+    const code = await run({
+      fetchImpl,
+      env: { SMOKE_NO_POST: '1', SMOKE_RESULTS_FILE: '/nonexistent-dir/x/results.json' },
+      log: () => {},
+    });
+    expect(code).toBe(1);
   });
 });
