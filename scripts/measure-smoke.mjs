@@ -17,7 +17,13 @@
 //     silently unrecorded morning is what this design exists
 //     to avoid.
 //   SMOKE_NO_POST=1 - measure and judge only (local checks).
+//   SMOKE_RESULTS_FILE - when set, the measured batch is also
+//     written to this path as JSON, for the trend recorder
+//     (scripts/record-smoke-trend.mjs). A failed write fails
+//     the run: a morning whose trend line silently never lands
+//     is the same failure as an unrecorded one.
 
+import { writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 
 const GAS = (id) => `https://script.google.com/macros/s/${id}/exec`;
@@ -192,6 +198,14 @@ export const postRecords = async (records, token, fetchImpl = fetch) => {
   return Boolean(data && data.ok);
 };
 
+// Writes the measured batch as JSON for the trend recorder:
+// { recordedAt, results } — the recorder needs the per-target
+// timings and judgements, which the sheet records flatten away.
+export const writeResultsFile = async (results, filePath, now = new Date()) => {
+  const payload = { recordedAt: now.toISOString(), results };
+  await writeFile(filePath, `${JSON.stringify(payload, null, 2)}\n`);
+};
+
 export const run = async ({
   fetchImpl = fetch,
   env = process.env,
@@ -203,6 +217,16 @@ export const run = async ({
   }
   for (const r of results) {
     log(`${r.ok ? "ok" : "NG"} ${r.target} ${r.ms == null ? "-" : `${r.ms}ms`}`);
+  }
+  let resultsWritten = !env.SMOKE_RESULTS_FILE;
+  if (env.SMOKE_RESULTS_FILE) {
+    try {
+      await writeResultsFile(results, env.SMOKE_RESULTS_FILE);
+      resultsWritten = true;
+      log(`results written to ${env.SMOKE_RESULTS_FILE}`);
+    } catch {
+      log(`FAILED to write results to ${env.SMOKE_RESULTS_FILE}`);
+    }
   }
   let recorded = false;
   if (env.SMOKE_NO_POST === "1") {
@@ -217,7 +241,7 @@ export const run = async ({
     log("SMOKE_RECORD_TOKEN is not set: nothing was recorded");
   }
   const abnormal = results.filter((r) => !r.ok).length;
-  return abnormal === 0 && recorded ? 0 : 1;
+  return abnormal === 0 && recorded && resultsWritten ? 0 : 1;
 };
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
