@@ -9,7 +9,8 @@ on:
 jobs:
   smoke:
     runs-on: ubuntu-latest
-    # The trend step commits the day's ledger line back to master.
+    # The trend step commits the day's ledger line to the
+    # smoke-trend branch (master itself is protected).
     permissions:
       contents: write
     container:
@@ -46,11 +47,20 @@ jobs:
           name: smoke-traces
           path: test-results/
           retention-days: 7
-      # Append the day's line to the trend ledger in this
-      # repository and commit it back. [skip ci] keeps the
+      # Append the day's line to the trend ledger and commit
+      # it to the dedicated smoke-trend branch. Committing to
+      # master itself is not an option: branch protection
+      # (required e2e check) rejects direct pushes there, as
+      # the 2026-11-14 manual run showed. The branch is
+      # unprotected, so no extra secret or bypass is needed.
+      # The base is always that branch's latest ledger, so
+      # lines keep accumulating there even if master's copy
+      # of the file is later edited or goes stale; on the
+      # first run the branch does not exist yet and is seeded
+      # from master's current file. [skip ci] keeps the
       # ledger commit from starting any workflow (deploy and
       # staging included); the ref guard keeps a manual run
-      # from another branch from pushing into master.
+      # from another branch from recording a line.
       - name: Record the smoke trend
         if: always() && github.ref == 'refs/heads/master'
         env:
@@ -58,12 +68,37 @@ jobs:
           SMOKE_PLAYWRIGHT_OUTCOME: ${{ steps.playwright.outcome }}
           SMOKE_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
+          # The workspace is bind-mounted from the host and owned
+          # by a different user than the one running this step, so
+          # git's dubious-ownership guard rejects the repository
+          # (a local git config write then dies instantly with
+          # "fatal: not in a git directory", exit 128). checkout
+          # registers safe.directory only under its own HOME, and
+          # this step pins HOME=/root, so register the workspace
+          # here, before any other git command.
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # Work in a scratch worktree rooted at the ledger's
+          # latest commit, so the commit created here descends
+          # from the smoke-trend tip and pushes as a fast-forward
+          # (or creates the branch, on the first run). The
+          # recorder itself runs from this master checkout, at
+          # master's current version; only the file it appends
+          # to lives in the worktree (TREND_FILE).
           git fetch origin master
-          git checkout origin/master -- docs/smoke-trend.md || true
-          node scripts/record-smoke-trend.mjs
-          git add docs/smoke-trend.md
-          git diff --cached --quiet && echo "trend unchanged" || git commit -m "docs: smoke trend (auto) [skip ci]"
-          git push origin HEAD:master
+          if git fetch origin +refs/heads/smoke-trend:refs/remotes/origin/smoke-trend; then
+            LEDGER_BASE=origin/smoke-trend
+          else
+            LEDGER_BASE=origin/master
+          fi
+          git config --global --add safe.directory /tmp/smoke-trend-ledger
+          git worktree add --detach /tmp/smoke-trend-ledger "$LEDGER_BASE"
+          TREND_FILE=/tmp/smoke-trend-ledger/docs/smoke-trend.md SMOKE_RESULTS_FILE="$GITHUB_WORKSPACE/smoke-results.json" node scripts/record-smoke-trend.mjs
+          git -C /tmp/smoke-trend-ledger add docs/smoke-trend.md
+          if git -C /tmp/smoke-trend-ledger diff --cached --quiet; then
+            echo "trend unchanged"
+          else
+            git -C /tmp/smoke-trend-ledger commit -m "docs: smoke trend (auto) [skip ci]"
+            git -C /tmp/smoke-trend-ledger push origin HEAD:refs/heads/smoke-trend
+          fi
