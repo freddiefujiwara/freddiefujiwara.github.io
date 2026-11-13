@@ -102,14 +102,14 @@ describe('ページ構造の不変条件', () => {
     expect(first.querySelector('.sns-total-label')).not.toBeNull();
     const total = first.querySelector('.sns-follower-total');
     expect(total).not.toBeNull();
-    expect(total.textContent).toBe('4,109');
+    expect(total.textContent).toBe('4,000');
     expect(first.querySelector('.num small').textContent).toBe('人');
   });
 
-  it('ヒーローの数字ブロックの下に、数字全体の時点の注記がある', () => {
+  it('ヒーローの数字ブロックの下に、数字の注記がある', () => {
     const note = document.querySelector('.stats-note.sns-stats-date');
     expect(note).not.toBeNull();
-    expect(note.textContent.trim()).toBe('数字は2026年11月9日時点');
+    expect(note.textContent.trim()).toBe('数字は自動更新しています');
   });
 
   it('ヒーローの残り3つの数字は時点表記なしのラベルと差し替え先を持つ', () => {
@@ -120,21 +120,21 @@ describe('ページ構造の不変条件', () => {
     expect(views.querySelector('.label').textContent.trim()).toBe(
       'Instagramの再生回数（過去30日）',
     );
-    expect(views.querySelector('.sns-views-30d').textContent).toBe('約82');
+    expect(views.querySelector('.sns-views-30d').textContent).toBe('約80');
     expect(views.querySelector('.sns-views-30d-unit').textContent).toBe('万回');
 
     const pct = stats[2];
     expect(pct.querySelector('.label').textContent.trim()).toBe(
       'リールの視聴のうちフォロワー以外（過去30日）',
     );
-    expect(pct.querySelector('.sns-non-follower-pct').textContent).toBe('96.3');
+    expect(pct.querySelector('.sns-non-follower-pct').textContent).toBe('95');
     expect(pct.querySelector('.num small').textContent).toBe('％');
 
     const media = stats[3];
     expect(media.querySelector('.label').textContent.trim()).toBe(
       'Instagramの投稿',
     );
-    expect(media.querySelector('.sns-media-count').textContent).toBe('2,404');
+    expect(media.querySelector('.sns-media-count').textContent).toBe('2,400');
     expect(media.querySelector('.num small').textContent).toBe('件');
   });
 });
