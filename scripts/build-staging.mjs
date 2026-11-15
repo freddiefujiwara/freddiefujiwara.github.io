@@ -32,6 +32,9 @@ export const STAGING_LINKS = [
   ["資産", "/asset/staging/"],
   ["SNS Analytics", "/social/staging/"],
   ["バケットリスト", "/bucket-list-admin/staging/"],
+  ["学习", "/xuexi/staging/"],
+  ["リーダー", "/reader/staging/"],
+  ["音楽管理", "/music-admin/staging/"],
 ];
 
 // The link back to production, appended after the staging links.
