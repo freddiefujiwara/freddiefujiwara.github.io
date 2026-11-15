@@ -16,10 +16,13 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 // the stub must not fire again — it shows its guide card (a big
 // button to the destination and a way back to the top page)
 // instead of a blank white page.
-// Four short URLs (map / bucket-list / list-of-stuff / music) point
+// Three short URLs (map / bucket-list / list-of-stuff) point
 // at blog articles. They used to serve generated static copies of
 // those articles; since the blog API grew a snapshot cache and the
 // articles answer in a few seconds, they are ordinary stubs again.
+// /music was the fourth, but it is a real page now: it renders
+// the podcast feed (?o=rss) as a playable track list, so it is
+// no longer part of this list.
 const REDIRECTS = [
   ['instagram', 'https://www.instagram.com/freddiefujiwara'],
   ['facebook', 'https://www.facebook.com/freddiefujiwara'],
@@ -31,7 +34,6 @@ const REDIRECTS = [
   ['map', 'https://freddiefujiwara.com/blog/1bNigXcTT-1LSXjUYAlfFQuJPX6U7U3ELeWAfG5XIb58'],
   ['bucket-list', 'https://freddiefujiwara.com/blog/1WPrZI3RqXZcBIrVfrvY7Qn6AF-pFBHdNWXcK7PIwokM'],
   ['list-of-stuff', 'https://freddiefujiwara.com/blog/1tn5P1vB1jnKHSay_FC2AEtNxH0gQZ3_jffRnHuz4YpM'],
-  ['music', 'https://freddiefujiwara.com/blog/1V7cXplHKbsT48EhLarl-SPHfDV-lSEafEId2OMgExkg'],
 ];
 
 describe('短縮URLの転送ページ', () => {
@@ -142,76 +144,7 @@ describe('短縮URLの転送ページ', () => {
     });
   });
 
-  describe('サイト内からの移動では案内ページを挟まない（music）', () => {
-    const musicHtml = readFileSync(
-      path.join(root, 'public', 'music', 'index.html'),
-      'utf8',
-    );
-    const musicScript = musicHtml.match(/<script>([\s\S]*?)<\/script>/)[1];
-    const MDEST =
-      'https://freddiefujiwara.com/blog/1V7cXplHKbsT48EhLarl-SPHfDV-lSEafEId2OMgExkg';
-
-    const runMusic = (referrer, stored) => {
-      const replaced = [];
-      const listeners = {};
-      const store = { ...(stored || {}) };
-      const fakeLocation = {
-        pathname: '/music',
-        hostname: 'freddiefujiwara.com',
-        replace: (url) => replaced.push(url),
-      };
-      const fakeWindow = {
-        addEventListener: (type, fn) => {
-          listeners[type] = fn;
-        },
-        location: fakeLocation,
-      };
-      const fakeSession = {
-        getItem: (k) => (k in store ? store[k] : null),
-        setItem: (k, v) => {
-          store[k] = v;
-        },
-      };
-      new Function(
-        'window',
-        'location',
-        'sessionStorage',
-        'document',
-        musicScript,
-      )(fakeWindow, fakeLocation, fakeSession, { referrer });
-      return { replaced, listeners, store };
-    };
-
-    it('サイト内から来たら、表示を待たず即座に転送する', () => {
-      const { replaced, store } = runMusic('https://freddiefujiwara.com/blog/');
-      expect(replaced).toEqual([MDEST]);
-      // 直接開いたときの初回判定のため、記録は残さない
-      expect(store['short-url-go:/music']).toBeUndefined();
-    });
-
-    it('サイト内からなら、同じタブで記録があっても転送する', () => {
-      const { replaced } = runMusic('https://freddiefujiwara.com/', {
-        'short-url-go:/music': '1',
-      });
-      expect(replaced).toEqual([MDEST]);
-    });
-
-    it('サイト外から来たら即座には転送せず、初回表示で転送する', () => {
-      const { replaced, listeners } = runMusic('https://example.com/');
-      expect(replaced).toEqual([]);
-      listeners.pageshow({ persisted: false });
-      expect(replaced).toEqual([MDEST]);
-    });
-
-    it('遷移元がなければ従来どおり初回表示で転送する', () => {
-      const { replaced, listeners } = runMusic('');
-      expect(replaced).toEqual([]);
-      listeners.pageshow({ persisted: false });
-      expect(replaced).toEqual([MDEST]);
-    });
-  });
-
-  it.each(['chinese', 'map', 'bucket-list', 'list-of-stuff', 'music'])(
+  it.each(['chinese', 'map', 'bucket-list', 'list-of-stuff'])(
     '%s の転送ページはサイト内判定を持つ',
     (name) => {
       const html = readFileSync(
