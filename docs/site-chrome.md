@@ -353,11 +353,11 @@ meta refresh は使いません。転送ページは noindex とし、計測タ�
 （gtag）は入れません。飛び先を変えるときは転送ページとこの表と
 テスト（tests/redirects.test.js）を一緒に直します。
 
-飛び先がサイト内の短縮URL（chinese / map / bucket-list / list-of-stuff）は、
-サイト内からの移動では案内ページを挟まず毎回即座に
+飛び先がサイト内の短縮URL（chinese / map / bucket-list / list-of-stuff /
+music）は、サイト内からの移動では案内ページを挟まず毎回即座に
 転送します（遷移元が freddiefujiwara.com かどうかで判定し、判定
 できない場合は従来の初回判定になります）。ブログ記事内のリンクも
-この4件は内部リンクとして同じタブで開きます。
+この5件は内部リンクとして同じタブで開きます。
 
 | 短縮URL | 飛び先 |
 |---|---|
@@ -371,17 +371,13 @@ meta refresh は使いません。転送ページは noindex とし、計測タ�
 | https://freddiefujiwara.com/map | https://freddiefujiwara.com/blog/1bNigXcTT-1LSXjUYAlfFQuJPX6U7U3ELeWAfG5XIb58 |
 | https://freddiefujiwara.com/bucket-list | https://freddiefujiwara.com/blog/1WPrZI3RqXZcBIrVfrvY7Qn6AF-pFBHdNWXcK7PIwokM |
 | https://freddiefujiwara.com/list-of-stuff | https://freddiefujiwara.com/blog/1tn5P1vB1jnKHSay_FC2AEtNxH0gQZ3_jffRnHuz4YpM |
+| https://freddiefujiwara.com/music | https://freddiefujiwara.com/blog/1V7cXplHKbsT48EhLarl-SPHfDV-lSEafEId2OMgExkg |
 | https://freddiefujiwara.com/ga | https://freddiefujiwara.com/social/ |
 
-この3つ（map / bucket-list / list-of-stuff）は、2026年11月まで
+この4つ（map / bucket-list / list-of-stuff / music）は、2026年11月まで
 ブログ記事そのものを静的HTMLで表示する「静的記事ページ」でした。
 blog-gas のスナップショット化で記事の応答が数秒に収まったため、
 静的生成の仕組みは廃止し、他の短縮URLと同じ転送ページに戻しました。
-
-/music は上記の3つと同型の転送ページでしたが、2026年11月に
-ポッドキャストフィード（music-gas の ?o=rss）から曲の一覧と
-再生を組み立てる実ページに切り替えたため、短縮URLの対象から
-外れました（曲のまとめ記事へのリンクはページ内に置きます）。
 
 /ga は ga → social への改名で残った旧パスです。共有リンクの
 #share= やタブ指定の #tab= を落とさないよう、飛び先にクエリと
