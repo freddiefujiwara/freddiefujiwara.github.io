@@ -42,6 +42,7 @@ export function buildSitemapXml({ ids, articleCache }) {
   const urls = [
     { loc: `${SITE_ORIGIN}/`, priority: "1.0" },
     { loc: `${SITE_ORIGIN}/blog/`, priority: "0.9" },
+    { loc: `${SITE_ORIGIN}/music/`, priority: "0.8" },
   ];
   const seen = new Set();
   for (const id of ids ?? []) {

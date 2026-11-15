@@ -1,121 +1,365 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="robots" content="noindex">
-    <link rel="canonical" href="https://freddiefujiwara.com/blog/1V7cXplHKbsT48EhLarl-SPHfDV-lSEafEId2OMgExkg">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="description" content="川口の景色や通りを歌にしたオリジナル曲「川口の歌」を、まとめました。走ったり歩いたりした映像に、歌詞とテロップを合わせたリリックVlogです。このページでそのまま聴けます。" />
+    <meta property="og:title" content="川口の歌を、まとめました｜藤原史和" />
+    <meta property="og:description" content="川口の景色や通りを歌にしたオリジナル曲「川口の歌」を、まとめました。走ったり歩いたりした映像に、歌詞とテロップを合わせたリリックVlogです。このページでそのまま聴けます。" />
+    <meta property="og:url" content="https://freddiefujiwara.com/music" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://freddiefujiwara.com/blog/ogp/1V7cXplHKbsT48EhLarl-SPHfDV-lSEafEId2OMgExkg.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="藤原史和｜川口を歩くQAエンジニア" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://freddiefujiwara.com/blog/ogp/1V7cXplHKbsT48EhLarl-SPHfDV-lSEafEId2OMgExkg.png" />
+    <link rel="canonical" href="https://freddiefujiwara.com/music" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <title>川口の歌を、まとめました｜藤原史和</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet" />
     <style>
       :root {
+        --bg: #fbfaf7;
+        --surface: #ffffff;
+        --ink: #221d16;
+        --ink-2: #5d5546;
+        --ink-3: #8a8071;
+        --line: #e3ddd0;
+        --accent: #b23a1f;
+        --accent-strong: #8f2a12;
+        --accent-soft: #f7e9e2;
+        --shadow: 0 18px 40px rgba(34, 29, 22, 0.14);
         color-scheme: light dark;
       }
-      * {
-        box-sizing: border-box;
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #17140f;
+          --surface: #211c15;
+          --ink: #f2ecdf;
+          --ink-2: #c2b8a4;
+          --ink-3: #948a77;
+          --line: #3a332a;
+          --accent: #ec7a52;
+          --accent-strong: #f0936f;
+          --accent-soft: #33231b;
+          --shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+        }
+      }
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; scrollbar-gutter: stable; }
+      @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
       }
       body {
         margin: 0;
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 24px;
-        background: #fbfaf7;
-        color: #221d16;
-        font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
-      }
-      .card {
-        width: 100%;
-        max-width: 420px;
-        padding: 32px 28px;
-        text-align: center;
-        background: #ffffff;
-        border: 1px solid #e3ddd0;
-        border-radius: 16px;
-        box-shadow: 0 18px 40px rgba(34, 29, 22, 0.14);
-      }
-      h1 {
-        margin: 0 0 8px;
-        font-size: 22px;
-      }
-      .sub {
-        margin: 0 0 24px;
-        color: #5d5546;
-        font-size: 14px;
-        line-height: 1.7;
-      }
-      .go {
-        display: block;
-        padding: 14px 20px;
-        border-radius: 999px;
-        background: #b23a1f;
-        color: #ffffff;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
         font-size: 16px;
-        font-weight: 700;
+        line-height: 1.85;
+        -webkit-font-smoothing: antialiased;
+        -webkit-text-size-adjust: 100%;
+      }
+      a { color: var(--accent); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+
+      /* ---------- nav ---------- */
+      .site-nav {
+        position: fixed; inset: 0 0 auto 0; z-index: 50;
+        display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+        padding: 0 clamp(16px, 4vw, 40px);
+        height: 56px;
+        background: color-mix(in srgb, var(--bg) 86%, transparent);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--line);
+      }
+      .site-nav .brand {
+        justify-self: start;
+        font-family: "Shippori Mincho B1", "Hiragino Mincho ProN", "Yu Mincho", serif;
+        font-weight: 700; font-size: 15px;
+        color: var(--ink); letter-spacing: 0.04em; white-space: nowrap;
         text-decoration: none;
       }
-      .home {
-        display: inline-block;
-        margin-top: 20px;
-        color: inherit;
-        font-size: 14px;
+      .site-nav ul { justify-self: center; display: flex; gap: clamp(14px, 3vw, 30px); list-style: none; margin: 0; padding: 0; }
+      .site-nav ul a {
+        color: var(--ink-2); font-size: 13.5px; font-weight: 500; letter-spacing: 0.05em;
+        padding: 4px 0; border-bottom: 2px solid transparent; white-space: nowrap;
+        text-decoration: none;
       }
-      @media (prefers-color-scheme: dark) {
-        body {
-          background: #17140f;
-          color: #f3efe6;
-        }
-        .card {
-          background: #221e17;
-          border-color: #3a352a;
-        }
-        .sub {
-          color: #b6ad9c;
-        }
+      .site-nav ul a:hover { color: var(--ink); }
+      .site-nav ul a.active { color: var(--accent); border-bottom-color: var(--accent); }
+      .music-play-count { color: var(--accent); font-size: 11px; font-weight: 700; margin-left: 5px; }
+      .music-play-count:empty { display: none; }
+      @media (max-width: 560px) {
+        .site-nav { grid-template-columns: 1fr; }
+        .site-nav .brand { display: none; }
+        .site-nav ul { justify-self: stretch; width: 100%; justify-content: space-between; gap: 6px; }
+        .site-nav ul a { font-size: 12px; letter-spacing: 0.02em; }
+        .site-nav li.nav-section { display: none; }
       }
+
+      /* ---------- layout ---------- */
+      .wrap { max-width: 1080px; margin: 0 auto; padding: 0 clamp(20px, 5vw, 48px); }
+      main.wrap { padding-top: 56px; }
+      .btn {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 12px 24px; border-radius: 999px; font-weight: 700; font-size: 14.5px;
+        letter-spacing: 0.04em; transition: transform 0.15s ease, background 0.15s ease;
+      }
+      .btn:hover { text-decoration: none; transform: translateY(-1px); }
+      .btn-solid { background: #c7431f; color: #fff; }
+      .btn-solid:hover { background: #a93615; }
+      .btn-outline { border: 1.5px solid var(--line); color: var(--ink); background: var(--surface); }
+      .btn-outline:hover { border-color: var(--ink-3); }
+      @media (prefers-reduced-motion: reduce) {
+        .btn:hover { transform: none; }
+      }
+
+      /* ---------- page head ---------- */
+      .page-head { padding: clamp(40px, 7vw, 72px) 0 8px; }
+      .page-head .place {
+        font-size: 13px; letter-spacing: 0.22em; font-weight: 700;
+        text-transform: uppercase; color: var(--accent); margin: 0 0 14px;
+      }
+      .page-head h1 {
+        font-family: "Shippori Mincho B1", "Hiragino Mincho ProN", "Yu Mincho", serif;
+        font-weight: 800; font-size: clamp(28px, 5.4vw, 42px);
+        line-height: 1.35; margin: 0 0 16px;
+      }
+      .page-head .lead { max-width: 640px; margin: 0; color: var(--ink-2); font-size: 15.5px; }
+      .page-head .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+
+      /* ---------- tracks ---------- */
+      .tracks { display: grid; gap: 18px; margin-top: 34px; }
+      .track {
+        background: var(--surface); border: 1px solid var(--line);
+        border-radius: 16px; padding: 22px clamp(18px, 3.4vw, 28px);
+        box-shadow: 0 6px 18px rgba(34, 29, 22, 0.05);
+      }
+      .track .meta {
+        display: flex; flex-wrap: wrap; gap: 6px 14px;
+        font-size: 12.5px; color: var(--ink-3); letter-spacing: 0.06em; margin: 0 0 6px;
+      }
+      .track h2 {
+        font-family: "Shippori Mincho B1", "Hiragino Mincho ProN", "Yu Mincho", serif;
+        font-weight: 700; font-size: 20px; line-height: 1.5; margin: 0 0 8px;
+      }
+      .track .desc { margin: 0 0 14px; font-size: 14.5px; color: var(--ink-2); white-space: pre-line; }
+      .track audio { width: 100%; display: block; }
+      .track .links { margin: 12px 0 0; font-size: 13.5px; }
+      .feed-status { margin-top: 34px; color: var(--ink-2); }
+
+      /* footer */
+      footer { margin-top: 56px; border-top: 1px solid var(--line); padding: 24px 0 46px; }
+      .foot-groups { display: flex; flex-wrap: wrap; gap: 16px 44px; margin-bottom: 22px; }
+      .foot-group-title { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em; color: var(--ink-3); margin: 0 0 8px; }
+      .foot-group .foot-links { margin-bottom: 0; }
+      .foot-links { display: flex; flex-wrap: wrap; gap: 10px 22px; margin-bottom: 22px; }
+      .foot-links a { color: var(--ink-2); font-size: 0.92rem; display: inline-flex; align-items: center; gap: 6px; }
+      .foot-links a:hover { color: var(--accent); text-decoration: none; }
+      .foot-links a .arr { font-size: 11px; color: var(--ink-3); }
+      footer .fine { font-size: 12px; color: var(--ink-3); line-height: 1.9; margin: 0; }
+      footer .copy { font-size: 0.85rem; color: var(--ink-2); margin: 0 0 6px; }
     </style>
-    <script>
-      // 初回だけ自動で転送する。アプリが開いてブラウザに戻ってきた
-      // とき（ページキャッシュからの復帰や、同じタブでの再読み込み）
-      // は転送を繰り返さず、この案内ページを表示する。
-      // サイト内（freddiefujiwara.com）からの移動では、案内ページを
-      // 挟まず毎回即座に転送する。
-      (function () {
-        var dest = "https://freddiefujiwara.com/blog/1V7cXplHKbsT48EhLarl-SPHfDV-lSEafEId2OMgExkg";
-        var key = "short-url-go:" + location.pathname;
-        var done = false;
-        try {
-          done = sessionStorage.getItem(key) === "1";
-        } catch (e) {}
-        var internal = false;
-        try {
-          internal =
-            document.referrer !== "" &&
-            new URL(document.referrer).hostname === location.hostname;
-        } catch (e) {}
-        if (internal) {
-          // フラグは立てない。あとから直接開いたときに通常の
-          // 初回判定が効くようにするため。
-          window.location.replace(dest);
-          return;
-        }
-        window.addEventListener("pageshow", function (event) {
-          if (event.persisted || done) return;
-          done = true;
-          try {
-            sessionStorage.setItem(key, "1");
-          } catch (e) {}
-          window.location.replace(dest);
-        });
-      })();
-    </script>
+      <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-W2C6FNCW86"></script>
+    <script src="/js/gtag.js"></script>
   </head>
   <body>
-    <main class="card">
-      <h1>川口の歌を、まとめました</h1>
-      <p class="sub">ブログの記事へ移動します。戻ってきた場合は、下のボタンから開き直せます。</p>
-      <a class="go" href="https://freddiefujiwara.com/blog/1V7cXplHKbsT48EhLarl-SPHfDV-lSEafEId2OMgExkg">記事を開く</a>
-      <a class="home" href="https://freddiefujiwara.com/">トップページへ戻る</a>
+    <nav class="site-nav">
+      <a class="brand" href="https://freddiefujiwara.com/">藤原史和｜川口を歩くQAエンジニア</a>
+      <ul>
+        <li><a href="https://freddiefujiwara.com/">トップ</a></li>
+        <li class="nav-section"><a href="https://freddiefujiwara.com/#about">プロフィール</a></li>
+        <li class="nav-section"><a href="https://freddiefujiwara.com/#activity">活動・発信</a></li>
+        <li class="nav-section"><a href="https://freddiefujiwara.com/#contact">情報交換</a></li>
+        <li><a href="/blog/">ブログ</a></li>
+        <li><a href="https://freddiefujiwara.com/list-of-stuff/">持ち物リスト</a></li>
+        <li><a href="https://freddiefujiwara.com/music" class="active" aria-current="page">川口の歌 ♪<span class="music-play-count"></span></a></li>
+      </ul>
+    </nav>
+
+    <main class="wrap">
+      <div class="page-head">
+        <p class="place">Kawaguchi — Music</p>
+        <h1>川口の歌を、まとめました</h1>
+        <p class="lead">
+          川口の景色や通りを歌にしたオリジナル曲のシリーズです。Sunoで作曲し、走ったり歩いたりした映像に歌詞とテロップを合わせたリリックVlogとして公開しています。このページでは、ポッドキャストの配信データからそのまま聴けます。
+        </p>
+        <div class="actions">
+          <a class="btn btn-solid" href="https://script.google.com/macros/s/AKfycbzhGqDJUY9qoyHx81sUiV2SSBAR1XzMQxdnqx-guYpIwhHikt8WlaN21PHcL9NkJA-Mbg/exec?o=rss">ポッドキャストのフィード</a>
+          <a class="btn btn-outline" href="https://freddiefujiwara.com/blog/1V7cXplHKbsT48EhLarl-SPHfDV-lSEafEId2OMgExkg">歌詞・解説はまとめ記事へ</a>
+        </div>
+      </div>
+
+      <p class="feed-status" id="feed-status" role="status">読み込み中…</p>
+      <div class="tracks" id="tracks"></div>
     </main>
+
+    <footer>
+      <div class="wrap" style="padding-top:0;padding-bottom:0">
+        <div class="foot-groups">
+          <div class="foot-group">
+            <p class="foot-group-title">このサイト</p>
+            <div class="foot-links">
+              <a href="https://freddiefujiwara.com/" target="_blank" rel="noopener">トップ <span class="arr">↗</span></a>
+              <a href="https://freddiefujiwara.com/blog/" target="_blank" rel="noopener">ブログ <span class="arr">↗</span></a>
+              <a href="https://freddiefujiwara.com/list-of-stuff/" target="_blank" rel="noopener">持ち物 <span class="arr">↗</span></a>
+              <a href="https://freddiefujiwara.com/bucket-list/" target="_blank" rel="noopener">バケットリスト <span class="arr">↗</span></a>
+            </div>
+          </div>
+          <div class="foot-group">
+            <p class="foot-group-title">SNS</p>
+            <div class="foot-links">
+              <a href="https://www.instagram.com/freddiefujiwara" target="_blank" rel="noopener">Instagram <span class="arr">↗</span></a>
+              <a href="https://x.com/freddiefujiwara" target="_blank" rel="noopener">X <span class="arr">↗</span></a>
+              <a href="https://www.facebook.com/freddiefujiwara" target="_blank" rel="noopener">Facebook <span class="arr">↗</span></a>
+            </div>
+          </div>
+          <div class="foot-group">
+            <p class="foot-group-title">口コミ</p>
+            <div class="foot-links">
+              <a href="https://www.google.com/maps/contrib/105456242747265663411/reviews" target="_blank" rel="noopener">Googleマップの口コミ <span class="arr">↗</span></a>
+              <a href="https://review.travel.rakuten.co.jp/reviewer/fumikazufujiwara" target="_blank" rel="noopener">楽天トラベルの口コミ <span class="arr">↗</span></a>
+              <a href="https://tabelog.com/rvwr/zegenvs/" target="_blank" rel="noopener">食べログの口コミ <span class="arr">↗</span></a>
+              <a href="https://retty.me/user/50281/" target="_blank" rel="noopener">Rettyの口コミ <span class="arr">↗</span></a>
+            </div>
+          </div>
+          <div class="foot-group">
+            <p class="foot-group-title">プロフィール・その他</p>
+            <div class="foot-links">
+              <a href="https://github.com/freddiefujiwara" target="_blank" rel="noopener">GitHub <span class="arr">↗</span></a>
+              <a href="https://linkedin.com/in/freddiefujiwara" target="_blank" rel="noopener">LinkedIn <span class="arr">↗</span></a>
+              <a href="https://youtrust.jp/users/freddiefujiwara" target="_blank" rel="noopener">YOUTRUST <span class="arr">↗</span></a>
+              <a href="https://fril.jp/shop/freddiefujiwara" target="_blank" rel="noopener">ラクマ <span class="arr">↗</span></a>
+            </div>
+          </div>
+          <div class="foot-group">
+            <p class="foot-group-title">自作ツール</p>
+            <div class="foot-links">
+              <a href="https://freddiefujiwara.com/xuexi/" target="_blank" rel="noopener">学习（中国語の復習） <span class="arr">↗</span></a>
+              <a href="https://freddiefujiwara.com/openapi-fetch/" target="_blank" rel="noopener">openapi-fetch <span class="arr">↗</span></a>
+              <a href="https://freddiefujiwara.com/md2img/" target="_blank" rel="noopener">md2img（Markdown to Image） <span class="arr">↗</span></a>
+              <a href="https://freddiefujiwara.com/portfolio-treemap/" target="_blank" rel="noopener">portfolio-treemap（ポートフォリオ構成図） <span class="arr">↗</span></a>
+              <a href="https://freddiefujiwara.com/dtgwt/" target="_blank" rel="noopener">dtgwt（デシジョンテーブル→Given/When/Then） <span class="arr">↗</span></a>
+              <a href="https://freddiefujiwara.com/node-qict/" target="_blank" rel="noopener">node-qict（ペアワイズ法のテストケース生成） <span class="arr">↗</span></a>
+              <a href="https://freddiefujiwara.com/smtc/" target="_blank" rel="noopener">smtc（状態遷移のテストケース生成） <span class="arr">↗</span></a>
+              <a href="https://freddiefujiwara.com/dtdt/" target="_blank" rel="noopener">dtdt（デシジョンツリー→デシジョンテーブル） <span class="arr">↗</span></a>
+            </div>
+          </div>
+        </div>
+        <p class="copy">© <span id="year">2026</span> 藤原史和（Fumikazu Fujiwara）— freddiefujiwara.com</p>
+        <p class="fine">
+          写真：このページの写真はすべて本人の撮影です。
+        </p>
+      </div>
+    </footer>
+
+    <script src="/js/main.js"></script>
+    <script src="/js/web-vitals.iife.js"></script>
+    <script src="/js/web-vitals-ga.js"></script>
+    <script src="/js/music-count.js"></script>
+    <script>
+      // 曲の一覧はポッドキャストの配信フィード（music-gas の
+      // ?o=rss）から組み立てる。各 item の enclosure が Internet
+      // Archive の MP3 で、そのまま <audio> で再生する。新曲を
+      // 公開すればフィードに増え、このページにも自動で載る。
+      (function () {
+        var FEED_URL = "https://script.google.com/macros/s/AKfycbzhGqDJUY9qoyHx81sUiV2SSBAR1XzMQxdnqx-guYpIwhHikt8WlaN21PHcL9NkJA-Mbg/exec?o=rss";
+        var ARTICLE_URL = "https://freddiefujiwara.com/blog/1V7cXplHKbsT48EhLarl-SPHfDV-lSEafEId2OMgExkg";
+        var statusEl = document.getElementById("feed-status");
+        var listEl = document.getElementById("tracks");
+
+        var text = function (parent, tag) {
+          var node = parent.getElementsByTagName(tag)[0];
+          return node ? node.textContent.trim() : "";
+        };
+        var dateLabel = function (pubDate) {
+          var d = new Date(pubDate);
+          if (isNaN(d.getTime())) return "";
+          var m = String(d.getMonth() + 1).padStart(2, "0");
+          var day = String(d.getDate()).padStart(2, "0");
+          return d.getFullYear() + "-" + m + "-" + day;
+        };
+        var el = function (tag, className, value) {
+          var node = document.createElement(tag);
+          if (className) node.className = className;
+          if (value != null) node.textContent = value;
+          return node;
+        };
+
+        fetch(FEED_URL)
+          .then(function (response) {
+            if (!response.ok) throw new Error("feed request failed");
+            return response.text();
+          })
+          .then(function (xml) {
+            var doc = new DOMParser().parseFromString(xml, "text/xml");
+            var items = doc.getElementsByTagName("item");
+            var audios = [];
+            for (var i = 0; i < items.length; i += 1) {
+              var item = items[i];
+              var enclosure = item.getElementsByTagName("enclosure")[0];
+              var src = enclosure ? enclosure.getAttribute("url") : "";
+              if (!src) continue;
+              var card = el("section", "track");
+              var meta = el("p", "meta");
+              var date = dateLabel(text(item, "pubDate"));
+              if (date) meta.appendChild(el("span", "", date));
+              var duration = text(item, "itunes:duration");
+              if (duration) meta.appendChild(el("span", "", duration));
+              card.appendChild(meta);
+              card.appendChild(el("h2", "", text(item, "title")));
+              var desc = text(item, "description");
+              if (desc) card.appendChild(el("p", "desc", desc));
+              var audio = document.createElement("audio");
+              audio.controls = true;
+              audio.preload = "none";
+              audio.src = src;
+              audios.push(audio);
+              card.appendChild(audio);
+              var suno = text(item, "link");
+              if (suno) {
+                var links = el("p", "links");
+                var a = el("a", "", "Sunoで聴く ↗");
+                a.href = suno;
+                a.target = "_blank";
+                a.rel = "noopener";
+                links.appendChild(a);
+                card.appendChild(links);
+              }
+              listEl.appendChild(card);
+            }
+            // 同時に鳴るのは1曲だけにする。
+            audios.forEach(function (audio) {
+              audio.addEventListener("play", function () {
+                audios.forEach(function (other) {
+                  if (other !== audio) other.pause();
+                });
+              });
+            });
+            statusEl.textContent = audios.length
+              ? "全" + audios.length + "曲"
+              : "曲がまだありません。";
+          })
+          .catch(function () {
+            statusEl.textContent = "";
+            var p = el("p", "feed-status", "曲の一覧を読み込めませんでした。");
+            var a = el("a", "", "まとめ記事で聴く");
+            a.href = ARTICLE_URL;
+            p.appendChild(document.createTextNode(" "));
+            p.appendChild(a);
+            listEl.appendChild(p);
+          });
+      })();
+    </script>
   </body>
 </html>
