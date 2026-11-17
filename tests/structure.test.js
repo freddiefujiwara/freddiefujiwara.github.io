@@ -36,9 +36,9 @@ describe('ページ構造の不変条件', () => {
     expect(span.textContent).toBe('');
   });
 
-  it('フッターのリンクは23件で、先頭がサイト内リンク4件', () => {
+  it('フッターのリンクは24件で、先頭がサイト内リンク4件', () => {
     const links = [...document.querySelectorAll('.foot-links a')];
-    expect(links).toHaveLength(23);
+    expect(links).toHaveLength(24);
     expect(links.slice(0, 4).map((a) => a.getAttribute('href'))).toEqual([
       'https://freddiefujiwara.com/',
       'https://freddiefujiwara.com/blog/',
@@ -56,7 +56,7 @@ describe('ページ構造の不変条件', () => {
       'プロフィール・その他',
       '自作ツール',
     ]);
-    expect(groups.map((g) => g.querySelectorAll('.foot-links a').length)).toEqual([4, 3, 4, 4, 8]);
+    expect(groups.map((g) => g.querySelectorAll('.foot-links a').length)).toEqual([4, 3, 4, 5, 8]);
   });
 
   it('JS が参照する id がすべて HTML に存在する', () => {
