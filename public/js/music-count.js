@@ -4,9 +4,25 @@
 // 叩かないので、表示は遅くならない）。ファイルが無い・壊れている・
 // 取得に失敗した場合は、回数の部分を出さないままにする。
 // この JSON はアクセス解析ではないため、ステージングでも読み込む。
+// 「N回再生」の型は UI 文言として i18n.js の言語に従う。
 (function () {
   var spans = document.querySelectorAll(".music-play-count");
   if (!spans.length || typeof window.fetch !== "function") return;
+
+  var i18n = window.SiteI18n || null;
+  var lastCount = null;
+
+  function render() {
+    if (lastCount === null) return;
+    var text = i18n
+      ? i18n.t("music.plays", { n: lastCount.toLocaleString(i18n.locale()) })
+      : lastCount.toLocaleString("ja-JP") + "回再生";
+    spans.forEach(function (el) {
+      el.textContent = text;
+    });
+  }
+
+  if (i18n) i18n.onChange(render);
 
   window
     .fetch("/music-count.json")
@@ -17,10 +33,8 @@
       if (!data || typeof data.count !== "number" || !isFinite(data.count)) {
         return;
       }
-      var text = data.count.toLocaleString("ja-JP") + "回再生";
-      spans.forEach(function (el) {
-        el.textContent = text;
-      });
+      lastCount = data.count;
+      render();
     })
     .catch(function () {
       // 回数が出ないだけなので、何もしない。

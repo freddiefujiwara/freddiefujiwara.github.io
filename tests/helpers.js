@@ -12,6 +12,7 @@ export const webVitalsGaJs = readFileSync(path.join(root, 'public/js/web-vitals-
 export const musicCountJs = readFileSync(path.join(root, 'public/js/music-count.js'), 'utf8');
 export const snsCountJs = readFileSync(path.join(root, 'public/js/sns-count.js'), 'utf8');
 export const popularArticlesJs = readFileSync(path.join(root, 'public/js/popular-articles.js'), 'utf8');
+export const i18nJs = readFileSync(path.join(root, 'public/js/i18n.js'), 'utf8');
 
 // IntersectionObserver のモック。生成されたインスタンスを保持し、
 // テスト側から交差イベントを発火できるようにする。
@@ -73,6 +74,10 @@ export function loadPage({ fetchImpl, withObserver = true, url = 'https://freddi
 
 export function runMain(window) {
   window.eval(mainJs);
+}
+
+export function runI18n(window) {
+  window.eval(i18nJs);
 }
 
 // fetch の Promise チェーンが落ち着くまで待つ

@@ -53,6 +53,14 @@ describe('transformHtml', () => {
     expect(out).toContain('src="/staging/js/popular-articles.js"');
   });
 
+  it('i18n 辞書スクリプトも GA ではないので残し、パスだけ付け替える', () => {
+    const withI18n = sample.replace(
+      '<script src="/js/main.js"></script>',
+      '<script src="/js/i18n.js"></script>\n    <script src="/js/main.js"></script>',
+    );
+    expect(transformHtml(withI18n)).toContain('src="/staging/js/i18n.js"');
+  });
+
   it('他ページへのリンクは本番のままにする', () => {
     expect(out).toContain('href="/blog/"');
   });

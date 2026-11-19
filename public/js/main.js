@@ -3,14 +3,31 @@
   var yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
+  // UI 言語（i18n.js が読み込まれていれば従い、無ければ日本語）。
+  var i18n = window.SiteI18n || null;
+  function tr(key, vars, jaText) {
+    return i18n ? i18n.t(key, vars) : jaText;
+  }
+
   // 持ち物リストの件数をAPIから取得して表示（取得できない場合は件数なしのまま）
   var stuffCount = document.getElementById("stuff-count");
+  var stuffTotal = null;
+  function renderStuffCount() {
+    if (stuffCount && stuffTotal !== null) {
+      stuffCount.textContent = tr(
+        "stuff.count",
+        { n: stuffTotal },
+        "全" + stuffTotal + "点を公開しています。"
+      );
+    }
+  }
   if (stuffCount && "fetch" in window) {
     fetch("https://script.google.com/macros/s/AKfycbwUMhAHJDzp_mtR12fbHJlzNTptpSH78LNJAr9i9SXBdn_BUAwWJTtb1g/exec")
       .then(function (r) { return r.json(); })
       .then(function (items) {
         if (Array.isArray(items) && items.length) {
-          stuffCount.textContent = "全" + items.length + "点を公開しています。";
+          stuffTotal = items.length;
+          renderStuffCount();
         }
       })
       .catch(function () {});
@@ -38,13 +55,28 @@
   });
 
   var links = document.querySelectorAll(".site-nav a[data-spy]");
-  var BASE_TITLE = document.title;
   var SECTION_TITLES = { about: "プロフィール", activity: "活動・発信", contact: "情報交換" };
+  var currentId = "top";
+  var STATIC_BASE_TITLE = document.title;
+  function baseTitle() {
+    return i18n ? i18n.t("title") : STATIC_BASE_TITLE;
+  }
   function setCurrent(id) {
+    currentId = id;
     links.forEach(function (l) {
       l.classList.toggle("active", l.getAttribute("data-spy") === id);
     });
-    document.title = SECTION_TITLES[id] ? SECTION_TITLES[id] + " | " + BASE_TITLE : BASE_TITLE;
+    var section = SECTION_TITLES[id]
+      ? tr("section." + id, null, SECTION_TITLES[id])
+      : null;
+    document.title = section ? section + " | " + baseTitle() : baseTitle();
+  }
+  if (i18n) {
+    // 言語が切り替わったら、現在のセクションのタイトルで付け直す。
+    i18n.onChange(function () {
+      setCurrent(currentId);
+      renderStuffCount();
+    });
   }
   var sections = ["top", "about", "activity", "contact"].map(function (id) {
     return document.getElementById(id);
