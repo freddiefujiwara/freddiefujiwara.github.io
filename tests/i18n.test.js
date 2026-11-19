@@ -14,9 +14,11 @@ import {
 
 // i18n.js（UI 多言語化：日本語 / English / 中文）の仕様。
 // 言語は URL が決める：日本語が /、英語が /en/、中国語が /zh/ で、
-// ページの html lang 属性から実行時の言語が決まる（localStorage や
-// クエリパラメータは使わない）。/en/ と /zh/ のページ自体は
-// scripts/generate-i18n-pages.mjs がビルド時に生成する。
+// ページの html lang 属性から実行時の言語が決まる（言語の決定には
+// localStorage やクエリパラメータを使わない。localStorage へは
+// ブログと共有するために表示中の言語を記録だけする）。/en/ と
+// /zh/ のページ自体は scripts/generate-i18n-pages.mjs がビルド時に
+// 生成する。
 // 記事タイトル等の動的コンテンツは翻訳せず、注記などの型だけを
 // 言語に合わせる。
 
@@ -75,8 +77,10 @@ describe('辞書の網羅性', () => {
     );
   });
 
-  it('言語は URL で決まるため、保存やパラメータ解釈を持たない', () => {
-    expect(i18nJs).not.toContain('localStorage');
+  it('言語は URL で決まるため、保存値の読み取りやパラメータ解釈を持たない', () => {
+    // localStorage へは表示中の言語を記録する（setItem）だけで、
+    // 読んで（getItem）言語を決めることはしない。
+    expect(i18nJs).not.toContain('getItem');
     expect(i18nJs).not.toContain('URLSearchParams');
   });
 });
@@ -116,6 +120,51 @@ describe('言語の決定', () => {
   it('対応外の lang 属性は日本語に倒れる', () => {
     const { window } = loadWithLang('fr');
     expect(window.SiteI18n.getLang()).toBe('ja');
+  });
+});
+
+describe('言語の記録（ブログとの共有）', () => {
+  // URL と html lang 属性を与えて i18n.js を読み込んだページ。
+  function loadAt(url, langAttr) {
+    const page = loadPage({ url });
+    if (langAttr) page.document.documentElement.lang = langAttr;
+    runI18n(page.window);
+    return page;
+  }
+
+  it('通常パスでは共有キー site:lang:v1 に表示中の言語が入る', () => {
+    const { window } = loadAt('https://freddiefujiwara.com/en/', 'en');
+    expect(window.localStorage.getItem('site:lang:v1')).toBe('en');
+    expect(window.localStorage.getItem('site:lang:v1:staging')).toBeNull();
+  });
+
+  it('日本語ページでは ja が記録される', () => {
+    const { window } = loadAt('https://freddiefujiwara.com/', null);
+    expect(window.localStorage.getItem('site:lang:v1')).toBe('ja');
+  });
+
+  it('/staging/ を含むパスではステージング用のキーに入る', () => {
+    const { window } = loadAt('https://freddiefujiwara.com/staging/', 'en');
+    expect(window.localStorage.getItem('site:lang:v1:staging')).toBe('en');
+    expect(window.localStorage.getItem('site:lang:v1')).toBeNull();
+  });
+
+  it('以前の記録は今見ているページの言語で上書きされる', () => {
+    const page = loadPage({ url: 'https://freddiefujiwara.com/en/' });
+    page.window.localStorage.setItem('site:lang:v1', 'zh');
+    page.document.documentElement.lang = 'en';
+    runI18n(page.window);
+    expect(page.window.localStorage.getItem('site:lang:v1')).toBe('en');
+  });
+
+  it('保存が例外を投げてもページは壊れない', () => {
+    const page = loadPage();
+    page.window.localStorage.setItem = () => {
+      throw new Error('QuotaExceededError');
+    };
+    expect(() => runI18n(page.window)).not.toThrow();
+    expect(page.window.SiteI18n.getLang()).toBe('ja');
+    expect(page.document.title).toBe('藤原史和｜川口を歩くQAエンジニア');
   });
 });
 
