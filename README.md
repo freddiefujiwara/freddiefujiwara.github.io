@@ -84,7 +84,7 @@ Currently, I work at Rakuten as a Senior Manager, where I lead a team focused on
 ### Utilities
 *   [bucket-list](https://github.com/freddiefujiwara/bucket-list) ![Vue.js](https://img.shields.io/badge/Vue.js-4FC08D?style=flat-square&logo=vuedotjs&logoColor=white)
     - A fun way to track and visualize your life goals.
-*   [list-of-stuff](https://github.com/freddiefujiwara/list-of-stuff) ![Vue.js](https://img.shields.io/badge/Vue.js-4FC08D?style=flat-square&logo=vuedotjs&logoColor=white)
+*   [everything-i-own](https://github.com/freddiefujiwara/everything-i-own) ![Vue.js](https://img.shields.io/badge/Vue.js-4FC08D?style=flat-square&logo=vuedotjs&logoColor=white)
     - A simple list to keep track of my minimalist belongings.
 *   [zenn.dev](https://github.com/freddiefujiwara/zenn.dev) ![Markdown](https://img.shields.io/badge/Markdown-000000?style=flat-square&logo=markdown&logoColor=white)
     - A collection of my technical articles and blog posts.

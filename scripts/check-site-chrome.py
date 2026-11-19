@@ -26,7 +26,7 @@ from urllib.parse import urljoin
 SITES = {
     "トップ": "https://freddiefujiwara.com/",
     "ブログ": "https://freddiefujiwara.com/blog/",
-    "持ち物": "https://freddiefujiwara.com/list-of-stuff/",
+    "持ち物": "https://freddiefujiwara.com/everything-i-own/",
 }
 
 UA = {"User-Agent": "check-site-chrome/1.0 (+https://freddiefujiwara.com/)"}
@@ -183,7 +183,7 @@ FOOTER_COMMON_LINKS = [
 FOOTER_SELF_LINKS = [
     "https://freddiefujiwara.com/",
     "https://freddiefujiwara.com/blog/",
-    "https://freddiefujiwara.com/list-of-stuff/",
+    "https://freddiefujiwara.com/everything-i-own/",
     "https://freddiefujiwara.com/bucket-list/",
     "https://freddiefujiwara.com/xuexi/",
     "https://freddiefujiwara.com/openapi-fetch/",
@@ -238,7 +238,7 @@ def footer_block(text):
 FOOTER_LINK_LABELS = {
     "https://freddiefujiwara.com/": "トップ",
     "https://freddiefujiwara.com/blog/": "ブログ",
-    "https://freddiefujiwara.com/list-of-stuff/": "持ち物",
+    "https://freddiefujiwara.com/everything-i-own/": "持ち物",
     "https://freddiefujiwara.com/bucket-list/": "バケットリスト",
     "https://freddiefujiwara.com/xuexi/": "学习",
     "https://freddiefujiwara.com/openapi-fetch/": "openapi-fetch",
@@ -275,7 +275,7 @@ def _footer_value(block):
 SITE_ORIGIN = "https://freddiefujiwara.com"
 
 # 全サイトのナビにそろえるリンク先（オリジンを除いたパス＋フラグメント）
-NAV_CANON_KEYS = ["/", "/#about", "/#activity", "/#contact", "/blog/", "/list-of-stuff/"]
+NAV_CANON_KEYS = ["/", "/#about", "/#activity", "/#contact", "/blog/", "/everything-i-own/"]
 
 
 def nav_link_keys(text, base_url):
@@ -312,7 +312,7 @@ def nav_link_keys(text, base_url):
 
 NAV_KEY_LABELS = {
     "/": "トップ", "/#about": "プロフィール", "/#activity": "活動・発信",
-    "/#contact": "情報交換", "/blog/": "ブログ", "/list-of-stuff/": "持ち物",
+    "/#contact": "情報交換", "/blog/": "ブログ", "/everything-i-own/": "持ち物",
 }
 
 

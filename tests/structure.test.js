@@ -25,7 +25,7 @@ describe('ページ構造の不変条件', () => {
       ['活動・発信', '#activity', 'activity'],
       ['情報交換', '#contact', 'contact'],
       ['ブログ', '/blog/', null],
-      ['持ち物リスト', '/list-of-stuff/', null],
+      ['持ち物リスト', '/everything-i-own/', null],
       ['川口の歌 ♪', '/music/', null],
     ]);
   });
@@ -42,7 +42,7 @@ describe('ページ構造の不変条件', () => {
     expect(links.slice(0, 4).map((a) => a.getAttribute('href'))).toEqual([
       'https://freddiefujiwara.com/',
       'https://freddiefujiwara.com/blog/',
-      'https://freddiefujiwara.com/list-of-stuff/',
+      'https://freddiefujiwara.com/everything-i-own/',
       'https://freddiefujiwara.com/bucket-list/',
     ]);
   });
@@ -158,7 +158,7 @@ describe('活動・発信の短いURLハブ', () => {
       ['/threads', 'https://freddiefujiwara.com/threads'],
       ['/chinese', 'https://freddiefujiwara.com/chinese'],
       ['/room', 'https://freddiefujiwara.com/room'],
-      ['/list-of-stuff', 'https://freddiefujiwara.com/list-of-stuff/'],
+      ['/everything-i-own', 'https://freddiefujiwara.com/everything-i-own/'],
       ['/map', 'https://freddiefujiwara.com/map'],
     ]);
   });

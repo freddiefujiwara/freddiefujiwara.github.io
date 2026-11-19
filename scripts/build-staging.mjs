@@ -28,7 +28,7 @@ import { generateI18nPages } from "./generate-i18n-pages.mjs";
 export const STAGING_LINKS = [
   ["トップ", "/staging/"],
   ["ブログ", "/blog/staging/"],
-  ["持ち物", "/list-of-stuff-admin/staging/"],
+  ["持ち物", "/everything-i-own-admin/staging/"],
   ["ツイート", "/tweet/staging/"],
   ["アラーム", "/alarm/staging/"],
   ["健康", "/health/staging/"],
@@ -131,7 +131,7 @@ export function buildStaging(srcDir, outDir) {
   const indexPath = join(outDir, "index.html");
   writeFileSync(indexPath, transformHtml(readFileSync(indexPath, "utf8")));
   // The generated static article pages (music/, map/, bucket-list/,
-  // list-of-stuff/, …) embed the same GA tag block and are copied
+  // everything-i-own/, …) embed the same GA tag block and are copied
   // verbatim; strip the tags from every subdirectory index.html that
   // carries them, so no staging page can send to the production
   // property. Pages without the block (redirect stubs) are untouched.
