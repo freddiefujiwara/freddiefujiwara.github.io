@@ -335,6 +335,8 @@
         font-size: clamp(90px, 18vw, 170px); line-height: 1; opacity: 0.09; pointer-events: none;
         letter-spacing: 0.05em;
       }
+      /* 英語の透かし（KAWAGUCHI）は文字数が多いぶん小さめにする */
+      html[lang^="en"] .contact .big { font-size: clamp(52px, 10vw, 96px); }
 
       /* footer */
       footer { margin-top: 56px; border-top: 1px solid var(--line); padding: 24px 0 46px; }
@@ -573,7 +575,7 @@
           <h2 data-i18n="contact.heading">Let's swap Kawaguchi tips</h2>
           <p data-i18n="contact.text">I would love to exchange tips with Kawaguchi shop owners and residents. If you know a new shop that opened or a street worth visiting, feel free to message me on Instagram. Walking companions are welcome too.</p>
           <a class="btn" href="https://www.instagram.com/freddiefujiwara" target="_blank" rel="noopener" data-i18n="contact.button">Message me on Instagram</a>
-          <span class="big" aria-hidden="true">川口</span>
+          <span class="big" aria-hidden="true" data-i18n="contact.big">KAWAGUCHI</span>
         </div>
       </section>
     </main>
