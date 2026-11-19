@@ -1,5 +1,5 @@
 // ヒーローの数字（SNS延べフォロワー数と、Instagram の再生回数・
-// フォロワー以外％・投稿数）を最新値に差し替えるための小さな
+// 届いた人数・保存数）を最新値に差し替えるための小さな
 // スクリプト。あわせて、フォロワー数の見出しには集計に含まれて
 // いるネットワーク名を、数字ブロックの下の注記には数字全体の
 // 時点を差し替える。数値は静的生成のタイミングで ga-gas の
@@ -16,15 +16,16 @@
   var totalEls = document.querySelectorAll(".sns-follower-total");
   var viewsEls = document.querySelectorAll(".sns-views-30d");
   var viewsUnitEls = document.querySelectorAll(".sns-views-30d-unit");
-  var pctEls = document.querySelectorAll(".sns-non-follower-pct");
-  var mediaEls = document.querySelectorAll(".sns-media-count");
+  var reachEls = document.querySelectorAll(".sns-reach-30d");
+  var reachUnitEls = document.querySelectorAll(".sns-reach-30d-unit");
+  var savesEls = document.querySelectorAll(".sns-saves-30d");
   var totalLabelEls = document.querySelectorAll(".sns-total-label");
   var dateEls = document.querySelectorAll(".sns-stats-date");
   if (
     !totalEls.length &&
     !viewsEls.length &&
-    !pctEls.length &&
-    !mediaEls.length &&
+    !reachEls.length &&
+    !savesEls.length &&
     !totalLabelEls.length &&
     !dateEls.length
   ) {
@@ -113,17 +114,38 @@
       });
     }
 
-    if (isNumber(data.non_follower_pct)) {
-      var pctText = data.non_follower_pct.toFixed(1);
-      pctEls.forEach(function (el) {
-        el.textContent = pctText;
+    // 届いた人数も再生回数と同じ丸め方にする。日本語・中国語は
+    // 万単位に丸めて「約N万人」、1万未満なら実数＋「人」。
+    // 英語は「≈132K people」の形にする（単位側の要素も一緒に差し替える）。
+    if (isNumber(data.reach_30d)) {
+      var reachText;
+      var reachUnit;
+      var rl = lang();
+      if (rl === "en") {
+        reachUnit = "people";
+        reachText =
+          data.reach_30d >= 10000
+            ? "≈" + compactEn(data.reach_30d)
+            : Math.round(data.reach_30d).toLocaleString(locale());
+      } else if (data.reach_30d >= 10000) {
+        reachText = (rl === "zh" ? "约" : "約") + Math.round(data.reach_30d / 10000);
+        reachUnit = "万人";
+      } else {
+        reachText = Math.round(data.reach_30d).toLocaleString(locale());
+        reachUnit = "人";
+      }
+      reachEls.forEach(function (el) {
+        el.textContent = reachText;
+      });
+      reachUnitEls.forEach(function (el) {
+        el.textContent = reachUnit;
       });
     }
 
-    if (isNumber(data.media_count)) {
-      var mediaText = data.media_count.toLocaleString(locale());
-      mediaEls.forEach(function (el) {
-        el.textContent = mediaText;
+    if (isNumber(data.saves_30d)) {
+      var savesText = data.saves_30d.toLocaleString(locale());
+      savesEls.forEach(function (el) {
+        el.textContent = savesText;
       });
     }
 
