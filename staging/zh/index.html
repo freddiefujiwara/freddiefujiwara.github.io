@@ -99,23 +99,12 @@
       }
       .site-nav ul a:hover { color: var(--ink); }
       .site-nav ul a.active { color: var(--accent); border-bottom-color: var(--accent); }
-      /* ---------- language switcher ---------- */
-      .lang-switch { justify-self: end; display: flex; align-items: center; gap: 2px; }
-      .lang-switch a {
-        font-size: 12.5px; font-weight: 500; letter-spacing: 0.04em;
-        color: var(--ink-3); padding: 4px 7px; border-radius: 999px; white-space: nowrap;
-        text-decoration: none;
-      }
-      .lang-switch a:hover { color: var(--ink); text-decoration: none; }
-      .lang-switch a.current { color: var(--accent); font-weight: 700; }
-      /* 中間幅ではブランド表記を畳む（ヒーローに名前が出ている）。
-         言語スイッチャーが加わった分、ナビ全体が収まるようにする */
+      /* 中間幅ではブランド表記を畳む（ヒーローに名前が出ている） */
       @media (max-width: 1024px) {
         .site-nav { grid-template-columns: 1fr auto; }
         .site-nav .brand { display: none; }
         .site-nav ul { justify-self: center; gap: 14px; }
         .site-nav ul a { font-size: 12.5px; }
-        .lang-switch a { padding: 4px 4px; }
       }
       /* 「川口の歌」の累計再生回数（/js/music-count.json から流し込む。
          取れなかった場合は空のままにして、余分な隙間も作らない） */
@@ -123,7 +112,6 @@
       .music-play-count:empty { display: none; }
       @media (max-width: 560px) {
         .site-nav { grid-template-columns: 1fr auto; }
-        .lang-switch a { font-size: 11px; padding: 4px 4px; }
         .site-nav .brand { display: none; }
         .site-nav ul { justify-self: stretch; width: 100%; justify-content: space-between; gap: 6px; }
         .site-nav ul a { font-size: 12px; letter-spacing: 0.02em; }
@@ -360,6 +348,15 @@
       .foot-links a .arr { font-size: 11px; color: var(--ink-3); }
       footer .fine { font-size: 12px; color: var(--ink-3); line-height: 1.9; margin: 0; }
       footer .copy { font-size: 0.85rem; color: var(--ink-2); margin: 0 0 6px; }
+      /* ---------- language switcher（フッター） ---------- */
+      .lang-switch { display: flex; align-items: center; gap: 2px; margin-bottom: 16px; }
+      .lang-switch a {
+        font-size: 12.5px; font-weight: 500; letter-spacing: 0.04em;
+        color: var(--ink-3); padding: 4px 7px; border-radius: 999px; white-space: nowrap;
+        text-decoration: none;
+      }
+      .lang-switch a:hover { color: var(--ink); text-decoration: none; }
+      .lang-switch a.current { color: var(--accent); font-weight: 700; }
 
       @media (prefers-reduced-motion: reduce) {
         .btn:hover, a.act:hover .go { transform: none; }
@@ -380,11 +377,6 @@
         <li><a href="/list-of-stuff/" data-i18n="nav.list">物品清单</a></li>
         <li><a href="/music/"><span data-i18n="nav.music">川口之歌</span> ♪<span class="music-play-count"></span></a></li>
       </ul>
-      <div class="lang-switch" role="group" aria-label="Language">
-        <a href="/staging/" data-lang-link="ja" class="">日本語</a>
-        <a href="/staging/en/" data-lang-link="en">English</a>
-        <a href="/staging/zh/" data-lang-link="zh" class="current" aria-current="page">中文</a>
-      </div>
     </nav>
 
     <header class="hero" id="top">
@@ -638,6 +630,11 @@
               <a href="https://freddiefujiwara.com/dtdt/" target="_blank" rel="noopener"><span data-i18n="foot.dtdt">dtdt（决策树→决策表）</span> <span class="arr">↗</span></a>
             </div>
           </div>
+        </div>
+        <div class="lang-switch" role="group" aria-label="Language">
+          <a href="/staging/" data-lang-link="ja" class="">日本語</a>
+          <a href="/staging/en/" data-lang-link="en">English</a>
+          <a href="/staging/zh/" data-lang-link="zh" class="current" aria-current="page">中文</a>
         </div>
         <p class="copy">© <span id="year">2026</span> 藤原史和（Fumikazu Fujiwara）— freddiefujiwara.com</p>
         <p class="fine" data-i18n="foot.fine">照片：本页所有照片均为本人拍摄。</p>
