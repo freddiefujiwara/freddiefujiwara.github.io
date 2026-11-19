@@ -10,6 +10,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import {
   buildPopularArticles,
+  fetchBlogTitles,
   fetchMusicCount,
   fetchSnsCounts,
   fetchTopArticles,
@@ -207,6 +208,82 @@ describe('popular-articles.json の生成', () => {
       TITLES,
     );
     expect(picked.map((a) => a.id)).toEqual(['idA', 'idC', 'idD']);
+  });
+
+  it('buildPopularArticles は翻訳タイトルを title_en / title_zh に付け、日付プレフィックスを外す', () => {
+    const picked = buildPopularArticles(
+      [
+        { id: 'idA', views: 100 },
+        { id: 'idB', views: 90 },
+        { id: 'idC', views: 80 },
+      ],
+      TITLES,
+      3,
+      {
+        en: {
+          idA: '2026-11-08 Article A in English',
+          idB: 'November 7, 2026: Article B in English',
+          idC: '2026-11-06 記事Cのタイトル',
+        },
+        zh: {
+          idA: '2026年11月8日：文章A的中文标题',
+          idB: '2026-11-07 文章B的中文标题',
+        },
+      },
+    );
+    expect(picked[0].title_en).toBe('Article A in English');
+    expect(picked[0].title_zh).toBe('文章A的中文标题');
+    expect(picked[1].title_en).toBe('Article B in English');
+    expect(picked[1].title_zh).toBe('文章B的中文标题');
+    // 日本語と同じ翻訳は付けない（表示側が日本語にフォールバックする）
+    expect(picked[2].title_en).toBeUndefined();
+    expect(picked[2].title_zh).toBeUndefined();
+  });
+
+  it('fetchBlogTitles は lang 指定で titles エンドポイントの言語別マップを引く', async () => {
+    const seen = [];
+    const fetchImpl = async (url) => {
+      seen.push(url);
+      return okResponse({ titles: { idA: '2026-11-08 Article A' } });
+    };
+    const en = await fetchBlogTitles(fetchImpl, 'en');
+    expect(seen[0]).toContain('?o=titles&lang=en');
+    expect(en).toEqual({ idA: '2026-11-08 Article A' });
+    const ja = await fetchBlogTitles(fetchImpl);
+    expect(seen[1]).not.toContain('lang=');
+    expect(ja).toEqual({ idA: '2026-11-08 Article A' });
+  });
+
+  it('refreshPopularArticlesJson は翻訳タイトルも JSON に書く', async () => {
+    const dir = mkdtempSync(path.join(tmpdir(), 'popular-'));
+    try {
+      const fetchImpl = async () =>
+        rankingResponse([
+          { id: 'idA', views: 300 },
+          { id: 'idB', views: 200 },
+          { id: 'idC', views: 100 },
+        ]);
+      const result = await refreshPopularArticlesJson({
+        outDir: dir,
+        apiUrl: 'https://example.invalid/exec',
+        titles: TITLES,
+        localizedTitles: {
+          en: { idA: '2026-11-08 Article A in English' },
+          zh: null,
+        },
+        fetchImpl,
+        log: () => {},
+      });
+      expect(result.refreshed).toBe(true);
+      const written = JSON.parse(
+        readFileSync(path.join(dir, 'popular-articles.json'), 'utf8'),
+      );
+      expect(written.articles[0].title_en).toBe('Article A in English');
+      expect(written.articles[0].title_zh).toBeUndefined();
+      expect(written.articles[1].title_en).toBeUndefined();
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
   });
 
   it('refreshPopularArticlesJson はカードが変わったときだけ書き直す', async () => {

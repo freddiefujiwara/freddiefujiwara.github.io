@@ -27,8 +27,12 @@ export const API_BASE =
 // The blog list's title map (id -> "YYYY-MM-DD <title>"), used to
 // label the popular-articles cards. Best-effort: any failure
 // yields null and the popular-articles refresh keeps its file.
-export const fetchBlogTitles = async (fetchImpl = fetch) => {
-  const response = await fetchImpl(API_BASE, {
+export const fetchBlogTitles = async (fetchImpl = fetch, lang = null) => {
+  const url =
+    lang === "en" || lang === "zh"
+      ? `${API_BASE}?o=titles&lang=${lang}`
+      : API_BASE;
+  const response = await fetchImpl(url, {
     redirect: "follow",
     signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
   });
@@ -142,6 +146,16 @@ export const fetchTopArticles = async (apiUrl, fetchImpl = fetch) => {
 // How many cards the top page's よく読まれている記事 section has.
 export const POPULAR_ARTICLES_LIMIT = 3;
 
+// The blog title maps carry the article's date as a prefix. The
+// Japanese map uses ISO form ("2026-11-18 "); the translated maps
+// keep it in the target language's own style ("November 18, 2026: "
+// / "2026年11月18日："). None of them is part of the display title.
+export const stripTitleDatePrefix = (raw) =>
+  raw
+    .replace(/^\d{4}-\d{2}-\d{2}\s*/, "")
+    .replace(/^[A-Z][a-z]+ \d{1,2}, \d{4}:\s*/, "")
+    .replace(/^\d{4}年\d{1,2}月\d{1,2}日[：:]?\s*/, "");
+
 // Join a top_articles ranking ([{ id, views }], best first) with
 // the blog's title map (id -> "YYYY-MM-DD <title>", the shape the
 // blog list endpoint returns) into the cards the top page shows.
@@ -152,7 +166,8 @@ export const POPULAR_ARTICLES_LIMIT = 3;
 export const buildPopularArticles = (
   ranking,
   titles,
-  limit = POPULAR_ARTICLES_LIMIT
+  limit = POPULAR_ARTICLES_LIMIT,
+  localizedTitles = null
 ) => {
   if (!Array.isArray(ranking) || !titles || typeof titles !== "object") {
     return [];
@@ -161,12 +176,28 @@ export const buildPopularArticles = (
   for (const entry of ranking) {
     const raw = titles[entry.id];
     if (typeof raw !== "string" || !raw) continue;
-    picked.push({
+    const pickedEntry = {
       id: entry.id,
-      title: raw.replace(/^\d{4}-\d{2}-\d{2}\s*/, ""),
+      title: stripTitleDatePrefix(raw),
       views: entry.views,
       href: `https://freddiefujiwara.com/blog/${entry.id}`,
-    });
+    };
+    // Translated titles ride along as title_en / title_zh when the
+    // blog has one on record that differs from the Japanese title;
+    // the top page's script falls back to `title` per card.
+    if (localizedTitles && typeof localizedTitles === "object") {
+      for (const lang of ["en", "zh"]) {
+        const map = localizedTitles[lang];
+        if (!map || typeof map !== "object") continue;
+        const rawLocalized = map[entry.id];
+        if (typeof rawLocalized !== "string" || !rawLocalized) continue;
+        const localized = stripTitleDatePrefix(rawLocalized);
+        if (localized && localized !== pickedEntry.title) {
+          pickedEntry[`title_${lang}`] = localized;
+        }
+      }
+    }
+    picked.push(pickedEntry);
     if (picked.length >= limit) break;
   }
   return picked;
@@ -182,6 +213,7 @@ export const refreshPopularArticlesJson = async ({
   outDir,
   apiUrl,
   titles,
+  localizedTitles = null,
   fetchImpl = fetch,
   log = console.log,
 } = {}) => {
@@ -195,7 +227,12 @@ export const refreshPopularArticlesJson = async ({
   let payload;
   try {
     const ranking = await fetchTopArticles(apiUrl, fetchImpl);
-    const articles = buildPopularArticles(ranking.articles, titles);
+    const articles = buildPopularArticles(
+      ranking.articles,
+      titles,
+      POPULAR_ARTICLES_LIMIT,
+      localizedTitles
+    );
     if (articles.length < POPULAR_ARTICLES_LIMIT) {
       throw new Error(
         `only ${articles.length} titled articles in the ranking`
@@ -481,12 +518,25 @@ export const refreshTopData = async ({
   } catch {
     blogTitles = null;
   }
+  let blogTitlesEn = null;
+  try {
+    blogTitlesEn = await fetchBlogTitles(fetchImpl, "en");
+  } catch {
+    blogTitlesEn = null;
+  }
+  let blogTitlesZh = null;
+  try {
+    blogTitlesZh = await fetchBlogTitles(fetchImpl, "zh");
+  } catch {
+    blogTitlesZh = null;
+  }
   await refreshMusicCountJson({ outDir, apiUrl, fetchImpl, log });
   await refreshSnsCountJson({ outDir, apiUrl, fetchImpl, log });
   await refreshPopularArticlesJson({
     outDir,
     apiUrl,
     titles: blogTitles,
+    localizedTitles: { en: blogTitlesEn, zh: blogTitlesZh },
     fetchImpl,
     log,
   });
