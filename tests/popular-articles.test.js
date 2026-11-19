@@ -90,6 +90,47 @@ describe('popular-articles.js（よく読まれている記事）', () => {
     expect(cards[2].href).toBe('https://freddiefujiwara.com/blog/c');
   });
 
+  it('英語ページでは title_en があればタイトルも英語になる', async () => {
+    const fetchImpl = async () => ({
+      ok: true,
+      json: async () => ({
+        days: 28,
+        articles: [
+          { id: 'a', title: '記事A', title_en: 'Article A in English', views: 10, href: 'https://freddiefujiwara.com/blog/a' },
+          { id: 'b', title: '記事B', views: 5, href: 'https://freddiefujiwara.com/blog/b' },
+          { id: 'c', title: '記事C', title_zh: '文章C', views: 1, href: 'https://freddiefujiwara.com/blog/c' },
+        ],
+      }),
+    });
+    const window = setup(fetchImpl, 'en');
+    await flush();
+    const cards = window.document.querySelectorAll('#articles .act');
+    expect(cards[0].querySelector('h3').textContent).toBe('Article A in English');
+    // title_en が無い記事は日本語のまま
+    expect(cards[1].querySelector('h3').textContent).toBe('記事B');
+    // title_zh しか無い記事も英語ページでは日本語のまま
+    expect(cards[2].querySelector('h3').textContent).toBe('記事C');
+  });
+
+  it('中国語ページでは title_zh があればタイトルも中国語になる', async () => {
+    const fetchImpl = async () => ({
+      ok: true,
+      json: async () => ({
+        days: 28,
+        articles: [
+          { id: 'a', title: '記事A', title_zh: '文章A的中文标题', views: 10, href: 'https://freddiefujiwara.com/blog/a' },
+          { id: 'b', title: '記事B', views: 5, href: 'https://freddiefujiwara.com/blog/b' },
+          { id: 'c', title: '記事C', views: 1, href: 'https://freddiefujiwara.com/blog/c' },
+        ],
+      }),
+    });
+    const window = setup(fetchImpl, 'zh-CN');
+    await flush();
+    const cards = window.document.querySelectorAll('#articles .act');
+    expect(cards[0].querySelector('h3').textContent).toBe('文章A的中文标题');
+    expect(cards[1].querySelector('h3').textContent).toBe('記事B');
+  });
+
   it('ファイルが無い（404）場合は静的なカードのままにする', async () => {
     const window = setup(async () => ({ ok: false, json: async () => ({}) }));
     await flush();
