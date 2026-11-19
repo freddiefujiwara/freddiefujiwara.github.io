@@ -15,6 +15,25 @@
   var i18n = window.SiteI18n || null;
   var lastData = null;
 
+  // 言語別ページ（/en/・/zh/）では、カードの飛び先もブログの言語別
+  // URL（/blog/en/…）にそろえる。言語の正本は html lang（生成時に
+  // 焼かれる）。日本語ページでは JSON の href をそのまま使う。
+  function blogHrefForPage(href) {
+    var lang = (document.documentElement.lang || "").toLowerCase();
+    var prefix = "";
+    if (lang.indexOf("en") === 0) prefix = "/en";
+    if (lang.indexOf("zh") === 0) prefix = "/zh";
+    if (!prefix) return href;
+    var abs = "https://freddiefujiwara.com/blog/";
+    if (href.indexOf(abs) === 0) {
+      return "https://freddiefujiwara.com/blog" + prefix + "/" + href.slice(abs.length);
+    }
+    if (href.indexOf("/blog/") === 0) {
+      return "/blog" + prefix + "/" + href.slice("/blog/".length);
+    }
+    return href;
+  }
+
   function render() {
     if (!lastData || !Array.isArray(lastData.articles)) return;
     var days = typeof lastData.days === "number" ? lastData.days : 28;
@@ -30,7 +49,7 @@
         return;
       }
       var card = cards[i];
-      card.href = article.href;
+      card.href = blogHrefForPage(article.href);
       var title = card.querySelector("h3");
       if (title) {
         title.textContent = article.title;

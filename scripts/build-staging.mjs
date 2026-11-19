@@ -151,10 +151,13 @@ export function buildStaging(srcDir, outDir) {
   // The /en/ and /zh/ variants of the staging top page, generated from
   // the staging Japanese page above (banner included, GA stripped),
   // with asset and language-switcher links kept under /staging/.
+  // Their blog links point at the staging blog's language paths
+  // (/blog/staging/en/…), mirroring the production rule.
   // Skipped silently when the source has no dictionary module.
   generateI18nPages(outDir, outDir, {
     assetBase: "/staging/",
     linkBase: "/staging",
+    blogBase: "/blog/staging",
   });
 }
 
