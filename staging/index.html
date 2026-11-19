@@ -100,12 +100,31 @@
       }
       .site-nav ul a:hover { color: var(--ink); }
       .site-nav ul a.active { color: var(--accent); border-bottom-color: var(--accent); }
+      /* ---------- language switcher ---------- */
+      .lang-switch { justify-self: end; display: flex; align-items: center; gap: 2px; }
+      .lang-switch button {
+        appearance: none; background: none; border: 0; cursor: pointer;
+        font: inherit; font-size: 12.5px; font-weight: 500; letter-spacing: 0.04em;
+        color: var(--ink-3); padding: 4px 7px; border-radius: 999px; white-space: nowrap;
+      }
+      .lang-switch button:hover { color: var(--ink); }
+      .lang-switch button.active { color: var(--accent); font-weight: 700; }
+      /* 中間幅ではブランド表記を畳む（ヒーローに名前が出ている）。
+         言語スイッチャーが加わった分、ナビ全体が収まるようにする */
+      @media (max-width: 1024px) {
+        .site-nav { grid-template-columns: 1fr auto; }
+        .site-nav .brand { display: none; }
+        .site-nav ul { justify-self: center; gap: 14px; }
+        .site-nav ul a { font-size: 12.5px; }
+        .lang-switch button { padding: 4px 4px; }
+      }
       /* 「川口の歌」の累計再生回数（/js/music-count.json から流し込む。
          取れなかった場合は空のままにして、余分な隙間も作らない） */
       .music-play-count { color: var(--accent); font-size: 11px; font-weight: 700; margin-left: 5px; }
       .music-play-count:empty { display: none; }
       @media (max-width: 560px) {
-        .site-nav { grid-template-columns: 1fr; }
+        .site-nav { grid-template-columns: 1fr auto; }
+        .lang-switch button { font-size: 11px; padding: 4px 4px; }
         .site-nav .brand { display: none; }
         .site-nav ul { justify-self: stretch; width: 100%; justify-content: space-between; gap: 6px; }
         .site-nav ul a { font-size: 12px; letter-spacing: 0.02em; }
@@ -352,80 +371,81 @@
   <body>
     <div style="background:#f7e9e2;color:#8f2a12;text-align:center;font-size:12px;line-height:2.2;letter-spacing:.06em;">STAGING｜<a href="/staging/" style="color:#8f2a12;text-decoration:underline;">トップ</a> ・ <a href="/blog/staging/" style="color:#8f2a12;text-decoration:underline;">ブログ</a> ・ <a href="/list-of-stuff-admin/staging/" style="color:#8f2a12;text-decoration:underline;">持ち物</a> ・ <a href="/tweet/staging/" style="color:#8f2a12;text-decoration:underline;">ツイート</a> ・ <a href="/alarm/staging/" style="color:#8f2a12;text-decoration:underline;">アラーム</a> ・ <a href="/health/staging/" style="color:#8f2a12;text-decoration:underline;">健康</a> ・ <a href="/asset/staging/" style="color:#8f2a12;text-decoration:underline;">資産</a> ・ <a href="/social/staging/" style="color:#8f2a12;text-decoration:underline;">SNS Analytics</a> ・ <a href="/bucket-list-admin/staging/" style="color:#8f2a12;text-decoration:underline;">バケットリスト</a> ・ <a href="/xuexi/staging/" style="color:#8f2a12;text-decoration:underline;">学习</a> ・ <a href="/reader/staging/" style="color:#8f2a12;text-decoration:underline;">リーダー</a> ・ <a href="/music-admin/staging/" style="color:#8f2a12;text-decoration:underline;">音楽管理</a> ｜ <a href="/" style="color:#c62828;font-weight:700;text-decoration:underline;">本番</a></div>
     <nav class="site-nav">
-      <a class="brand" href="https://freddiefujiwara.com/">藤原史和｜川口を歩くQAエンジニア</a>
+      <a class="brand" href="https://freddiefujiwara.com/"><span data-i18n="brandName">藤原史和</span>｜<span data-i18n="tagline">川口を歩くQAエンジニア</span></a>
       <ul>
-        <li><a href="#top" data-spy="top">トップ</a></li>
-        <li class="nav-section"><a href="#about" data-spy="about">プロフィール</a></li>
-        <li class="nav-section"><a href="#activity" data-spy="activity">活動・発信</a></li>
-        <li class="nav-section"><a href="#contact" data-spy="contact">情報交換</a></li>
-        <li><a href="/blog/">ブログ</a></li>
-        <li><a href="/list-of-stuff/">持ち物リスト</a></li>
-        <li><a href="/music/">川口の歌 ♪<span class="music-play-count"></span></a></li>
+        <li><a href="#top" data-spy="top" data-i18n="nav.top">トップ</a></li>
+        <li class="nav-section"><a href="#about" data-spy="about" data-i18n="section.about">プロフィール</a></li>
+        <li class="nav-section"><a href="#activity" data-spy="activity" data-i18n="section.activity">活動・発信</a></li>
+        <li class="nav-section"><a href="#contact" data-spy="contact" data-i18n="section.contact">情報交換</a></li>
+        <li><a href="/blog/" data-i18n="nav.blog">ブログ</a></li>
+        <li><a href="/list-of-stuff/" data-i18n="nav.list">持ち物リスト</a></li>
+        <li><a href="/music/"><span data-i18n="nav.music">川口の歌</span> ♪<span class="music-play-count"></span></a></li>
       </ul>
+      <div class="lang-switch" role="group" aria-label="Language">
+        <button type="button" data-lang-btn="ja">日本語</button>
+        <button type="button" data-lang-btn="en">English</button>
+        <button type="button" data-lang-btn="zh">中文</button>
+      </div>
     </nav>
 
     <header class="hero" id="top">
-      <picture><source srcset="assets/hero-koinobori.webp" type="image/webp" /><img class="bg" src="assets/hero-koinobori.jpg" alt="夜の芝川。川の上に色とりどりの鯉のぼりが架かり、両岸にマンションの灯りがともる" /></picture>
+      <picture><source srcset="assets/hero-koinobori.webp" type="image/webp" /><img class="bg" src="assets/hero-koinobori.jpg" data-i18n-alt="hero.imgAlt" alt="夜の芝川。川の上に色とりどりの鯉のぼりが架かり、両岸にマンションの灯りがともる" /></picture>
       <div class="hero-inner">
-        <p class="place">Kawaguchi, Saitama <span style="white-space:nowrap">— 埼玉県川口市</span></p>
-        <h1>藤原史和<span class="roman">FUMIKAZU FUJIWARA</span></h1>
-        <p class="catch">川口を歩くQAエンジニア</p>
-        <p class="lead">
-          川口の街を歩き、地元のお店の魅力をInstagramのリールで発信しています。
-          実際に足を運んだお店だけを紹介し、紹介したお店はGoogleマイマップにもまとめています。
-          平日はQAエンジニアとして働きながら、休日は川口歩き。街の日常を記録するのが私のスタイルです。
-        </p>
+        <p class="place">Kawaguchi, Saitama <span style="white-space:nowrap" data-i18n="hero.place">— 埼玉県川口市</span></p>
+        <h1><span data-i18n="brandName">藤原史和</span><span class="roman">FUMIKAZU FUJIWARA</span></h1>
+        <p class="catch" data-i18n="tagline">川口を歩くQAエンジニア</p>
+        <p class="lead" data-i18n="hero.lead">川口の街を歩き、地元のお店の魅力をInstagramのリールで発信しています。実際に足を運んだお店だけを紹介し、紹介したお店はGoogleマイマップにもまとめています。平日はQAエンジニアとして働きながら、休日は川口歩き。街の日常を記録するのが私のスタイルです。</p>
         <div class="cta">
-          <a class="btn btn-solid" href="https://www.instagram.com/freddiefujiwara" target="_blank" rel="noopener">Instagramを見る</a>
-          <a class="btn btn-ghost" href="#about">プロフィールへ</a>
+          <a class="btn btn-solid" href="https://www.instagram.com/freddiefujiwara" target="_blank" rel="noopener" data-i18n="hero.ctaInstagram">Instagramを見る</a>
+          <a class="btn btn-ghost" href="#about" data-i18n="hero.ctaAbout">プロフィールへ</a>
         </div>
       </div>
-      <span class="credit">芝川の鯉のぼり（本人撮影）</span>
+      <span class="credit" data-i18n="hero.credit">芝川の鯉のぼり（本人撮影）</span>
     </header>
 
     <main class="wrap">
-      <div class="stats rv" aria-label="数字で見る活動">
+      <div class="stats rv" data-i18n-aria="stats.aria" aria-label="数字で見る活動">
         <div class="stat">
-          <div class="num"><span class="sns-follower-total">4,000</span><small>人</small></div>
-          <div class="label sns-total-label">SNS（Instagram、YouTube、Threads、X）延べフォロワー数</div>
+          <div class="num"><span class="sns-follower-total">4,000</span><small data-i18n="stat.followers.unit">人</small></div>
+          <div class="label sns-total-label" data-i18n="stat.followers.label">SNS（Instagram、YouTube、Threads、X）延べフォロワー数</div>
         </div>
         <div class="stat">
-          <div class="num"><span class="sns-views-30d">約80</span><small class="sns-views-30d-unit">万回</small></div>
-          <div class="label">Instagramの再生回数<br />（過去30日）</div>
+          <div class="num"><span class="sns-views-30d" data-i18n="stat.views.num">約80</span><small class="sns-views-30d-unit" data-i18n="stat.views.unit">万回</small></div>
+          <div class="label" data-i18n-html="stat.views.label">Instagramの再生回数<br />（過去30日）</div>
         </div>
         <div class="stat">
-          <div class="num"><span class="sns-non-follower-pct">95</span><small>％</small></div>
-          <div class="label">リールの視聴のうちフォロワー以外<br />（過去30日）</div>
+          <div class="num"><span class="sns-non-follower-pct">95</span><small data-i18n="stat.pct.unit">％</small></div>
+          <div class="label" data-i18n-html="stat.pct.label">リールの視聴のうちフォロワー以外<br />（過去30日）</div>
         </div>
         <div class="stat">
-          <div class="num"><span class="sns-media-count">2,400</span><small>件</small></div>
-          <div class="label">Instagramの投稿</div>
+          <div class="num"><span class="sns-media-count">2,400</span><small data-i18n="stat.media.unit">件</small></div>
+          <div class="label" data-i18n="stat.media.label">Instagramの投稿</div>
         </div>
       </div>
-      <p class="stats-note sns-stats-date">数字は自動更新しています</p>
+      <p class="stats-note sns-stats-date" data-i18n="stats.note">数字は自動更新しています</p>
 
       <section id="about">
         <div class="sec-head rv">
           <span class="no">01</span>
-          <h2>プロフィール</h2>
+          <h2 data-i18n="section.about">プロフィール</h2>
           <span class="en">About</span>
         </div>
         <div class="about-grid">
           <div class="rv">
             <div class="face">
-              <h3><span class="tag">街歩き</span>川口の魅力を発信する、街の住人</h3>
-              <p>
+              <h3><span class="tag" data-i18n="face.walk.tag">街歩き</span><span data-i18n="face.walk.title">川口の魅力を発信する、街の住人</span></h3>
+              <p data-i18n-html="face.walk.p1">
                 暮らす街・<strong>川口市</strong>を歩いて回り、Instagram（@freddiefujiwara）で地元のお店を紹介するリールを投稿しています。
                 飲食店を中心に、理容店やリラクゼーションまで、実際に足を運んだお店だけを紹介するのがこだわりです。
               </p>
-              <p>
+              <p data-i18n-html="face.walk.p2">
                 紹介したお店はGoogleマイマップ「川口を歩くQAエンジニアマップ」にまとめ、誰でも巡れるように公開しています。
                 また楽天ROOMでは、実際に買ってよかったもの・使ってよかったものを置いています。
               </p>
             </div>
             <div class="face">
-              <h3><span class="tag">仕事</span>QAエンジニアとして働いています</h3>
-              <p>
+              <h3><span class="tag" data-i18n="face.work.tag">仕事</span><span data-i18n="face.work.title">QAエンジニアとして働いています</span></h3>
+              <p data-i18n-html="face.work.p1">
                 平日は、ソフトウェアの品質保証（QA）に携わるエンジニアとして働いています。
                 職歴・資格などの詳しいプロフィールは <a href="https://linkedin.com/in/freddiefujiwara" target="_blank" rel="noopener">LinkedIn</a> にまとめています。
               </p>
@@ -433,15 +453,15 @@
           </div>
           <div class="rv">
             <figure class="about-photo" style="margin:0">
-              <picture><source srcset="assets/alley.webp" type="image/webp" /><img src="assets/alley.jpg" alt="川口の住宅街の細い路地。草花が生い茂り、ブロック塀と古い家並みに挟まれた石段の小道" loading="lazy" /></picture>
-              <figcaption>川口の路地。歩いていると、こんな緑の小道に出会います。</figcaption>
+              <picture><source srcset="assets/alley.webp" type="image/webp" /><img src="assets/alley.jpg" data-i18n-alt="about.photoAlt" alt="川口の住宅街の細い路地。草花が生い茂り、ブロック塀と古い家並みに挟まれた石段の小道" loading="lazy" /></picture>
+              <figcaption data-i18n="about.caption">川口の路地。歩いていると、こんな緑の小道に出会います。</figcaption>
             </figure>
             <div class="profile-facts">
               <dl>
-                <dt>名前</dt><dd>藤原史和（ふじわら ふみかず）</dd>
-                <dt>拠点</dt><dd>埼玉県川口市</dd>
-                <dt>出身</dt><dd>山口県</dd>
-                <dt>関心</dt><dd>サイクリング／街歩き／グルメ／音楽／中国語学習</dd>
+                <dt data-i18n="facts.name">名前</dt><dd data-i18n="facts.nameValue">藤原史和（ふじわら ふみかず）</dd>
+                <dt data-i18n="facts.base">拠点</dt><dd data-i18n="facts.baseValue">埼玉県川口市</dd>
+                <dt data-i18n="facts.from">出身</dt><dd data-i18n="facts.fromValue">山口県</dd>
+                <dt data-i18n="facts.interests">関心</dt><dd data-i18n="facts.interestsValue">サイクリング／街歩き／グルメ／音楽／中国語学習</dd>
               </dl>
             </div>
           </div>
@@ -451,75 +471,75 @@
       <section id="activity">
         <div class="sec-head rv">
           <span class="no">02</span>
-          <h2>活動・発信</h2>
+          <h2 data-i18n="section.activity">活動・発信</h2>
           <span class="en">Activities</span>
         </div>
-        <p class="hub-lead rv">このサイトを起点に、発信している場所をまとめました。SNSや地図、楽天ROOMまで、それぞれ短いURLでつながります。</p>
+        <p class="hub-lead rv" data-i18n="activity.lead">このサイトを起点に、発信している場所をまとめました。SNSや地図、楽天ROOMまで、それぞれ短いURLでつながります。</p>
         <div class="hub rv">
           <div class="hub-root">
             <span class="hub-root-name">freddiefujiwara.com</span>
-            <span class="hub-root-sub">川口を歩くQAエンジニア</span>
+            <span class="hub-root-sub" data-i18n="tagline">川口を歩くQAエンジニア</span>
           </div>
           <div class="hub-trunk" aria-hidden="true"></div>
           <ul class="hub-branches">
 <li>
               <a class="hub-link" href="https://freddiefujiwara.com/instagram" target="_blank" rel="noopener" aria-label="Instagram">
                 <span class="hub-url"><span class="hub-slash">/</span>instagram</span>
-                <span class="hub-desc">シェアサイクルと街歩きで川口をめぐるリールが中心。訪れたお店の空気感を、自然体でそのまま届けます。</span>
+                <span class="hub-desc" data-i18n="hub.instagram">シェアサイクルと街歩きで川口をめぐるリールが中心。訪れたお店の空気感を、自然体でそのまま届けます。</span>
               </a>
             </li>
 <li>
               <a class="hub-link" href="https://freddiefujiwara.com/x" target="_blank" rel="noopener" aria-label="X">
                 <span class="hub-url"><span class="hub-slash">/</span>x</span>
-                <span class="hub-desc">QAやテスト、AI活用についての発信が中心。技術の気づきを短く書いています。</span>
+                <span class="hub-desc" data-i18n="hub.x">QAやテスト、AI活用についての発信が中心。技術の気づきを短く書いています。</span>
               </a>
             </li>
 <li>
               <a class="hub-link" href="https://freddiefujiwara.com/youtube" target="_blank" rel="noopener" aria-label="YouTube">
                 <span class="hub-url"><span class="hub-slash">/</span>youtube</span>
-                <span class="hub-desc">川口の景色にSunoのオリジナル曲を合わせた、リリックVlogのShortsを公開しています。</span>
+                <span class="hub-desc" data-i18n="hub.youtube">川口の景色にSunoのオリジナル曲を合わせた、リリックVlogのShortsを公開しています。</span>
               </a>
             </li>
 <li>
-              <a class="hub-link" href="https://freddiefujiwara.com/blog/" aria-label="ブログ">
+              <a class="hub-link" href="https://freddiefujiwara.com/blog/" data-i18n-aria="aria.blog" aria-label="ブログ">
                 <span class="hub-url"><span class="hub-slash">/</span>blog</span>
-                <span class="hub-desc">AIや自動化で、暮らしとサイト運営を軽くする実践記と、川口歩きの記録。中国語学習のメモも書いています。</span>
+                <span class="hub-desc" data-i18n="hub.blog">AIや自動化で、暮らしとサイト運営を軽くする実践記と、川口歩きの記録。中国語学習のメモも書いています。</span>
               </a>
             </li>
 <li>
-<a class="hub-link" href="https://freddiefujiwara.com/music" target="_blank" rel="noopener" aria-label="音楽">
+<a class="hub-link" href="https://freddiefujiwara.com/music" target="_blank" rel="noopener" data-i18n-aria="aria.music" aria-label="音楽">
 <span class="hub-url"><span class="hub-slash">/</span>music</span>
-<span class="hub-desc">川口の歌、全7曲。そのまま聴けます</span>
+<span class="hub-desc" data-i18n="hub.music">川口の歌、全7曲。そのまま聴けます</span>
 </a>
 </li>
 <li>
               <a class="hub-link" href="https://freddiefujiwara.com/threads" target="_blank" rel="noopener" aria-label="Threads">
                 <span class="hub-url"><span class="hub-slash">/</span>threads</span>
-                <span class="hub-desc">川口の暮らしのことを、気軽に書いています。</span>
+                <span class="hub-desc" data-i18n="hub.threads">川口の暮らしのことを、気軽に書いています。</span>
               </a>
             </li>
 <li>
-              <a class="hub-link" href="https://freddiefujiwara.com/chinese" aria-label="中国語">
+              <a class="hub-link" href="https://freddiefujiwara.com/chinese" data-i18n-aria="aria.chinese" aria-label="中国語">
                 <span class="hub-url"><span class="hub-slash">/</span>chinese</span>
-                <span class="hub-desc">中国語のレッスンや学習の記録を、ブログのタグでまとめました。</span>
+                <span class="hub-desc" data-i18n="hub.chinese">中国語のレッスンや学習の記録を、ブログのタグでまとめました。</span>
               </a>
             </li>
 <li>
-              <a class="hub-link" href="https://freddiefujiwara.com/room" target="_blank" rel="noopener" aria-label="楽天ROOM">
+              <a class="hub-link" href="https://freddiefujiwara.com/room" target="_blank" rel="noopener" data-i18n-aria="aria.room" aria-label="楽天ROOM">
                 <span class="hub-url"><span class="hub-slash">/</span>room</span>
-                <span class="hub-desc">楽天市場で購入したものを中心に、実際に買ってよかったもの、使ってよかったものだけを置いています。</span>
+                <span class="hub-desc" data-i18n="hub.room">楽天市場で購入したものを中心に、実際に買ってよかったもの、使ってよかったものだけを置いています。</span>
               </a>
             </li>
 <li>
-              <a class="hub-link" href="https://freddiefujiwara.com/list-of-stuff/" aria-label="持ち物リスト">
+              <a class="hub-link" href="https://freddiefujiwara.com/list-of-stuff/" data-i18n-aria="aria.list" aria-label="持ち物リスト">
                 <span class="hub-url"><span class="hub-slash">/</span>list-of-stuff</span>
-                <span class="hub-desc">ミニマリストの持ち物リストです。<span id="stuff-count"></span></span>
+                <span class="hub-desc"><span data-i18n="hub.list">ミニマリストの持ち物リストです。</span><span id="stuff-count"></span></span>
               </a>
             </li>
 <li>
-              <a class="hub-link" href="https://freddiefujiwara.com/map" aria-label="川口マップ">
+              <a class="hub-link" href="https://freddiefujiwara.com/map" data-i18n-aria="aria.map" aria-label="川口マップ">
                 <span class="hub-url"><span class="hub-slash">/</span>map</span>
-                <span class="hub-desc">リールで紹介した川口のお店を、ブログ記事に地図つきでまとめました。</span>
+                <span class="hub-desc" data-i18n="hub.map">リールで紹介した川口のお店を、ブログ記事に地図つきでまとめました。</span>
               </a>
             </li>
             </ul>
@@ -529,7 +549,7 @@
       <section id="articles">
         <div class="sec-head rv">
           <span class="no">03</span>
-          <h2>よく読まれている記事</h2>
+          <h2 data-i18n="articles.heading">よく読まれている記事</h2>
           <span class="en">Popular Articles</span>
         </div>
         <div class="act-list rv">
@@ -568,13 +588,13 @@
 
       <section id="contact" style="padding-top:0">
         <div class="contact rv">
-          <h2>川口市の情報交換</h2>
-          <p>
+          <h2 data-i18n="contact.heading">川口市の情報交換</h2>
+          <p data-i18n="contact.text">
             川口のお店の方や、川口に暮らす方と情報交換したいです。
             「こんなお店ができたよ」「この通りならここがおすすめ」といった川口の情報がありましたら、
             InstagramのDMからお気軽にご連絡ください。街歩きの仲間も歓迎です。
           </p>
-          <a class="btn" href="https://www.instagram.com/freddiefujiwara" target="_blank" rel="noopener">InstagramのDMで連絡する</a>
+          <a class="btn" href="https://www.instagram.com/freddiefujiwara" target="_blank" rel="noopener" data-i18n="contact.button">InstagramのDMで連絡する</a>
           <span class="big" aria-hidden="true">川口</span>
         </div>
       </section>
@@ -584,16 +604,16 @@
       <div class="wrap" style="padding-top:0;padding-bottom:0">
         <div class="foot-groups">
           <div class="foot-group">
-            <p class="foot-group-title">このサイト</p>
+            <p class="foot-group-title" data-i18n="foot.site">このサイト</p>
             <div class="foot-links">
-              <a href="https://freddiefujiwara.com/" target="_blank" rel="noopener">トップ <span class="arr">↗</span></a>
-              <a href="https://freddiefujiwara.com/blog/" target="_blank" rel="noopener">ブログ <span class="arr">↗</span></a>
-              <a href="https://freddiefujiwara.com/list-of-stuff/" target="_blank" rel="noopener">持ち物 <span class="arr">↗</span></a>
-              <a href="https://freddiefujiwara.com/bucket-list/" target="_blank" rel="noopener">バケットリスト <span class="arr">↗</span></a>
+              <a href="https://freddiefujiwara.com/" target="_blank" rel="noopener"><span data-i18n="nav.top">トップ</span> <span class="arr">↗</span></a>
+              <a href="https://freddiefujiwara.com/blog/" target="_blank" rel="noopener"><span data-i18n="nav.blog">ブログ</span> <span class="arr">↗</span></a>
+              <a href="https://freddiefujiwara.com/list-of-stuff/" target="_blank" rel="noopener"><span data-i18n="foot.list">持ち物</span> <span class="arr">↗</span></a>
+              <a href="https://freddiefujiwara.com/bucket-list/" target="_blank" rel="noopener"><span data-i18n="foot.bucket">バケットリスト</span> <span class="arr">↗</span></a>
             </div>
           </div>
           <div class="foot-group">
-            <p class="foot-group-title">SNS</p>
+            <p class="foot-group-title" data-i18n="foot.sns">SNS</p>
             <div class="foot-links">
               <a href="https://www.instagram.com/freddiefujiwara" target="_blank" rel="noopener">Instagram <span class="arr">↗</span></a>
               <a href="https://x.com/freddiefujiwara" target="_blank" rel="noopener">X <span class="arr">↗</span></a>
@@ -601,16 +621,16 @@
             </div>
           </div>
           <div class="foot-group">
-            <p class="foot-group-title">口コミ</p>
+            <p class="foot-group-title" data-i18n="foot.reviews">口コミ</p>
             <div class="foot-links">
-              <a href="https://www.google.com/maps/contrib/105456242747265663411/reviews" target="_blank" rel="noopener">Googleマップの口コミ <span class="arr">↗</span></a>
-              <a href="https://review.travel.rakuten.co.jp/reviewer/fumikazufujiwara" target="_blank" rel="noopener">楽天トラベルの口コミ <span class="arr">↗</span></a>
-              <a href="https://tabelog.com/rvwr/zegenvs/" target="_blank" rel="noopener">食べログの口コミ <span class="arr">↗</span></a>
-              <a href="https://retty.me/user/50281/" target="_blank" rel="noopener">Rettyの口コミ <span class="arr">↗</span></a>
+              <a href="https://www.google.com/maps/contrib/105456242747265663411/reviews" target="_blank" rel="noopener"><span data-i18n="foot.googleReviews">Googleマップの口コミ</span> <span class="arr">↗</span></a>
+              <a href="https://review.travel.rakuten.co.jp/reviewer/fumikazufujiwara" target="_blank" rel="noopener"><span data-i18n="foot.rakutenReviews">楽天トラベルの口コミ</span> <span class="arr">↗</span></a>
+              <a href="https://tabelog.com/rvwr/zegenvs/" target="_blank" rel="noopener"><span data-i18n="foot.tabelogReviews">食べログの口コミ</span> <span class="arr">↗</span></a>
+              <a href="https://retty.me/user/50281/" target="_blank" rel="noopener"><span data-i18n="foot.rettyReviews">Rettyの口コミ</span> <span class="arr">↗</span></a>
             </div>
           </div>
           <div class="foot-group">
-            <p class="foot-group-title">プロフィール・その他</p>
+            <p class="foot-group-title" data-i18n="foot.profile">プロフィール・その他</p>
             <div class="foot-links">
               <a href="https://github.com/freddiefujiwara" target="_blank" rel="noopener">GitHub <span class="arr">↗</span></a>
               <a href="https://linkedin.com/in/freddiefujiwara" target="_blank" rel="noopener">LinkedIn <span class="arr">↗</span></a>
@@ -620,26 +640,25 @@
             </div>
           </div>
           <div class="foot-group">
-            <p class="foot-group-title">自作ツール</p>
+            <p class="foot-group-title" data-i18n="foot.tools">自作ツール</p>
             <div class="foot-links">
-              <a href="https://freddiefujiwara.com/xuexi/" target="_blank" rel="noopener">学习（中国語の復習） <span class="arr">↗</span></a>
+              <a href="https://freddiefujiwara.com/xuexi/" target="_blank" rel="noopener"><span data-i18n="foot.xuexi">学习（中国語の復習）</span> <span class="arr">↗</span></a>
               <a href="https://freddiefujiwara.com/openapi-fetch/" target="_blank" rel="noopener">openapi-fetch <span class="arr">↗</span></a>
-              <a href="https://freddiefujiwara.com/md2img/" target="_blank" rel="noopener">md2img（Markdown to Image） <span class="arr">↗</span></a>
-              <a href="https://freddiefujiwara.com/portfolio-treemap/" target="_blank" rel="noopener">portfolio-treemap（ポートフォリオ構成図） <span class="arr">↗</span></a>
-              <a href="https://freddiefujiwara.com/dtgwt/" target="_blank" rel="noopener">dtgwt（デシジョンテーブル→Given/When/Then） <span class="arr">↗</span></a>
-              <a href="https://freddiefujiwara.com/node-qict/" target="_blank" rel="noopener">node-qict（ペアワイズ法のテストケース生成） <span class="arr">↗</span></a>
-              <a href="https://freddiefujiwara.com/smtc/" target="_blank" rel="noopener">smtc（状態遷移のテストケース生成） <span class="arr">↗</span></a>
-              <a href="https://freddiefujiwara.com/dtdt/" target="_blank" rel="noopener">dtdt（デシジョンツリー→デシジョンテーブル） <span class="arr">↗</span></a>
+              <a href="https://freddiefujiwara.com/md2img/" target="_blank" rel="noopener"><span data-i18n="foot.md2img">md2img（Markdown to Image）</span> <span class="arr">↗</span></a>
+              <a href="https://freddiefujiwara.com/portfolio-treemap/" target="_blank" rel="noopener"><span data-i18n="foot.treemap">portfolio-treemap（ポートフォリオ構成図）</span> <span class="arr">↗</span></a>
+              <a href="https://freddiefujiwara.com/dtgwt/" target="_blank" rel="noopener"><span data-i18n="foot.dtgwt">dtgwt（デシジョンテーブル→Given/When/Then）</span> <span class="arr">↗</span></a>
+              <a href="https://freddiefujiwara.com/node-qict/" target="_blank" rel="noopener"><span data-i18n="foot.qict">node-qict（ペアワイズ法のテストケース生成）</span> <span class="arr">↗</span></a>
+              <a href="https://freddiefujiwara.com/smtc/" target="_blank" rel="noopener"><span data-i18n="foot.smtc">smtc（状態遷移のテストケース生成）</span> <span class="arr">↗</span></a>
+              <a href="https://freddiefujiwara.com/dtdt/" target="_blank" rel="noopener"><span data-i18n="foot.dtdt">dtdt（デシジョンツリー→デシジョンテーブル）</span> <span class="arr">↗</span></a>
             </div>
           </div>
         </div>
         <p class="copy">© <span id="year">2026</span> 藤原史和（Fumikazu Fujiwara）— freddiefujiwara.com</p>
-        <p class="fine">
-          写真：このページの写真はすべて本人の撮影です。
-        </p>
+        <p class="fine" data-i18n="foot.fine">写真：このページの写真はすべて本人の撮影です。</p>
       </div>
     </footer>
 
+    <script src="/staging/js/i18n.js"></script>
     <script src="/staging/js/main.js"></script>
     <script src="/staging/js/web-vitals.iife.js"></script>
     <script src="/staging/js/web-vitals-ga.js"></script>
