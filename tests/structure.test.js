@@ -125,14 +125,14 @@ describe('ページ構造の不変条件', () => {
 
     const reach = stats[2];
     expect(reach.querySelector('.label').textContent.trim()).toBe(
-      '過去30日に届いた人数',
+      'Instagramで届いた人数（過去30日）',
     );
     expect(reach.querySelector('.sns-reach-30d').textContent).toBe('約13');
     expect(reach.querySelector('.num small').textContent).toBe('万人');
 
     const saves = stats[3];
     expect(saves.querySelector('.label').textContent.trim()).toBe(
-      '過去30日の保存数',
+      'Instagramの保存数（過去30日）',
     );
     expect(saves.querySelector('.sns-saves-30d').textContent).toBe('1,200');
     expect(saves.querySelector('.num small').textContent).toBe('回');
