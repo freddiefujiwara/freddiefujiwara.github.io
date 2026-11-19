@@ -5,6 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   generateI18nPages,
+  blogHrefForLang,
   fetchOgImages,
   ogImageTitle,
   OG_IMAGE_BY_LANG,
@@ -114,6 +115,62 @@ describe('generateI18nPages（本物の public から生成）', () => {
     }
   });
 
+  it('ブログへのリンクは言語別 URL になり、日本語ブログへの直リンクが残らない', () => {
+    for (const [page, lang] of [[en, 'en'], [zh, 'zh']]) {
+      expect(page).toContain(`href="/blog/${lang}/"`);
+      expect(page).toContain(`href="https://freddiefujiwara.com/blog/${lang}/"`);
+      // ナビ・ハブ・フッター・記事カードの全ブログリンクが対象
+      const blogHrefs = [...page.matchAll(/href="([^"]*\/blog[^"]*)"/g)].map((m) => m[1]);
+      expect(blogHrefs.length).toBeGreaterThanOrEqual(6);
+      for (const href of blogHrefs) {
+        expect(href).toContain(`/blog/${lang}/`);
+      }
+      expect(page).not.toContain('href="/blog/"');
+      expect(page).not.toContain('href="https://freddiefujiwara.com/blog/"');
+    }
+    // 記事カードも記事 ID の前に言語が入る
+    expect(en).toContain(
+      'href="https://freddiefujiwara.com/blog/en/1V7cXplHKbsT48EhLarl-SPHfDV-lSEafEId2OMgExkg"',
+    );
+    expect(zh).toContain(
+      'href="https://freddiefujiwara.com/blog/zh/1V7cXplHKbsT48EhLarl-SPHfDV-lSEafEId2OMgExkg"',
+    );
+  });
+
+  it('ブログ以外のリンクは書き換わらない', () => {
+    for (const page of [en, zh]) {
+      expect(page).toContain('href="https://freddiefujiwara.com/list-of-stuff/"');
+      expect(page).toContain('href="https://freddiefujiwara.com/music"');
+      expect(page).toContain('href="https://www.instagram.com/freddiefujiwara"');
+      expect(page).toContain('href="#about"');
+      expect(page).toContain('href="https://freddiefujiwara.com/"');
+    }
+  });
+
+  it('ステージング用オプションではブログリンクが /blog/staging/<言語>/ になる', () => {
+    const stagingOut = mkdtempSync(path.join(tmpdir(), 'i18n-pages-staging-blog-'));
+    try {
+      generateI18nPages(publicDir, stagingOut, {
+        assetBase: '/staging/',
+        linkBase: '/staging',
+        blogBase: '/blog/staging',
+      });
+      const stagingEn = readFileSync(
+        path.join(stagingOut, 'en', 'index.html'),
+        'utf8',
+      );
+      expect(stagingEn).toContain('href="/blog/staging/en/"');
+      expect(stagingEn).toContain('href="https://freddiefujiwara.com/blog/staging/en/"');
+      expect(stagingEn).toContain(
+        'href="https://freddiefujiwara.com/blog/staging/en/1V7cXplHKbsT48EhLarl-SPHfDV-lSEafEId2OMgExkg"',
+      );
+      expect(stagingEn).not.toContain('href="/blog/en/"');
+      expect(stagingEn).not.toContain('href="https://freddiefujiwara.com/blog/en/"');
+    } finally {
+      rmSync(stagingOut, { recursive: true, force: true });
+    }
+  });
+
   it('辞書モジュールが無いソースでは何も生成しない', () => {
     const bare = mkdtempSync(path.join(tmpdir(), 'i18n-pages-bare-'));
     try {
@@ -123,6 +180,45 @@ describe('generateI18nPages（本物の public から生成）', () => {
     } finally {
       rmSync(bare, { recursive: true, force: true });
     }
+  });
+});
+
+describe('blogHrefForLang（ブログリンクの言語別書き換え）', () => {
+  it('本番では /blog 配下に言語セグメントが入る', () => {
+    expect(blogHrefForLang('/blog/', 'en')).toBe('/blog/en/');
+    expect(blogHrefForLang('https://freddiefujiwara.com/blog/', 'zh')).toBe(
+      'https://freddiefujiwara.com/blog/zh/',
+    );
+    expect(blogHrefForLang('https://freddiefujiwara.com/blog/abc123', 'en')).toBe(
+      'https://freddiefujiwara.com/blog/en/abc123',
+    );
+  });
+
+  it('ステージングでは /blog/staging 配下に言語セグメントが入る', () => {
+    expect(blogHrefForLang('/blog/', 'en', '/blog/staging')).toBe('/blog/staging/en/');
+    expect(blogHrefForLang('https://freddiefujiwara.com/blog/abc123', 'zh', '/blog/staging')).toBe(
+      'https://freddiefujiwara.com/blog/staging/zh/abc123',
+    );
+    // バナーのリンクは既にステージングのベースを含むので二重にならない
+    expect(blogHrefForLang('/blog/staging/', 'en', '/blog/staging')).toBe('/blog/staging/en/');
+  });
+
+  it('ブログ以外の href はそのまま返す', () => {
+    expect(blogHrefForLang('/list-of-stuff/', 'en')).toBe('/list-of-stuff/');
+    expect(blogHrefForLang('https://freddiefujiwara.com/list-of-stuff/', 'en')).toBe(
+      'https://freddiefujiwara.com/list-of-stuff/',
+    );
+    expect(blogHrefForLang('https://freddiefujiwara.com/', 'en')).toBe(
+      'https://freddiefujiwara.com/',
+    );
+    expect(blogHrefForLang('#about', 'en')).toBe('#about');
+    expect(blogHrefForLang('https://www.instagram.com/freddiefujiwara', 'zh')).toBe(
+      'https://www.instagram.com/freddiefujiwara',
+    );
+    // /blog に似ただけの別パスも触らない
+    expect(blogHrefForLang('https://freddiefujiwara.com/blogroll/', 'en')).toBe(
+      'https://freddiefujiwara.com/blogroll/',
+    );
   });
 });
 

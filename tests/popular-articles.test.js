@@ -6,9 +6,9 @@ describe('popular-articles.js（よく読まれている記事）', () => {
   const card = (href, title, note) =>
     `<a class="act" href="${href}"><span><h3>${title}</h3><p>${note}</p></span></a>`;
 
-  function setup(fetchImpl) {
+  function setup(fetchImpl, lang) {
     const dom = new JSDOM(
-      '<!doctype html><html><head></head><body>' +
+      `<!doctype html><html${lang ? ` lang="${lang}"` : ''}><head></head><body>` +
         '<section id="articles"><div class="act-list">' +
         card('https://freddiefujiwara.com/blog/old1', '旧タイトル1', '旧紹介文1') +
         card('https://freddiefujiwara.com/blog/old2', '旧タイトル2', '旧紹介文2') +
@@ -51,6 +51,43 @@ describe('popular-articles.js（よく読まれている記事）', () => {
       '直近28日で1,234回読まれています',
     );
     expect(cards[2].querySelector('h3').textContent).toBe('新しい記事C');
+  });
+
+  const articlesFetch = async () => ({
+    ok: true,
+    json: async () => ({
+      days: 28,
+      articles: [
+        { id: 'a', title: '記事A', views: 10, href: 'https://freddiefujiwara.com/blog/a' },
+        { id: 'b', title: '記事B', views: 5, href: 'https://freddiefujiwara.com/blog/b' },
+        { id: 'c', title: '記事C', views: 1, href: '/blog/c' },
+      ],
+    }),
+  });
+
+  it('英語ページ（html lang=en）ではカードのリンクが /blog/en/ になる', async () => {
+    const window = setup(articlesFetch, 'en');
+    await flush();
+    const cards = window.document.querySelectorAll('#articles .act');
+    expect(cards[0].getAttribute('href')).toBe('https://freddiefujiwara.com/blog/en/a');
+    expect(cards[1].getAttribute('href')).toBe('https://freddiefujiwara.com/blog/en/b');
+    // ルート相対の href にも言語が入る（.href プロパティは絶対 URL に解決される）
+    expect(cards[2].href).toBe('https://freddiefujiwara.com/blog/en/c');
+  });
+
+  it('中国語ページ（html lang=zh-CN）ではカードのリンクが /blog/zh/ になる', async () => {
+    const window = setup(articlesFetch, 'zh-CN');
+    await flush();
+    const cards = window.document.querySelectorAll('#articles .act');
+    expect(cards[0].getAttribute('href')).toBe('https://freddiefujiwara.com/blog/zh/a');
+  });
+
+  it('日本語ページ（html lang=ja）ではリンクは従来どおり', async () => {
+    const window = setup(articlesFetch, 'ja');
+    await flush();
+    const cards = window.document.querySelectorAll('#articles .act');
+    expect(cards[0].getAttribute('href')).toBe('https://freddiefujiwara.com/blog/a');
+    expect(cards[2].href).toBe('https://freddiefujiwara.com/blog/c');
   });
 
   it('ファイルが無い（404）場合は静的なカードのままにする', async () => {

@@ -155,6 +155,8 @@ describe('buildStaging', () => {
       const en = readFileSync(path.join(out, 'en', 'index.html'), 'utf8');
       expect(en).toContain('<html lang="en">');
       expect(en).toContain('STAGING｜');
+      // バナーのブログリンクはステージングブログの言語別 URL になる
+      expect(en).toContain('href="/blog/staging/en/"');
       expect(en).not.toContain('googletagmanager');
       expect(en).toContain('<a href="/staging/en/" data-lang-link="en"');
       // スイッチャーはフッターの中にあり、それより前（ナビ側）には無い

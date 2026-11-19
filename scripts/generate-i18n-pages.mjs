@@ -13,6 +13,9 @@
 //   (ogp-en.png / ogp-zh.png, see fetchOgImages below),
 // - rewrites the hero/about photos' relative "assets/…" paths to
 //   root-absolute ones, so /en/ and /zh/ share the Japanese assets,
+// - points blog links at the blog's per-language URLs (/blog/en/…,
+//   /blog/zh/…), so a translated page does not drop the reader into
+//   the Japanese blog (see blogHrefForLang below),
 // - (staging only, via options) keeps asset and language-switcher
 //   links under a base path such as /staging/.
 //
@@ -46,7 +49,31 @@ export const OG_IMAGE_BY_LANG = {
 export const OGP_API_URL =
   "https://script.google.com/macros/s/AKfycbzbMAKxkzHlwN8SY7ygJA34xYESMNNdkGNt8vv1XMcZSksgHsUwOxCCdP-wgg6fv7M/exec";
 
-export function renderVariant(html, i18nJs, lang, { assetBase = "/", linkBase = "" } = {}) {
+// Rewrites one href so it targets the blog's page for `lang`
+// (/blog/en/…, /blog/zh/…). Only hrefs that target the blog are
+// touched: root-relative /blog/… and absolute
+// freddiefujiwara.com/blog/… — every other link (other apps, external
+// sites, anchors) is returned unchanged. `blogBase` is where the blog
+// lives as seen by the page being generated: "/blog" in production,
+// "/blog/staging" for the staging variants, whose blog links (the
+// staging banner's included) already point at the staging blog.
+export function blogHrefForLang(href, lang, blogBase = "/blog") {
+  const absBlog = "https://freddiefujiwara.com/blog";
+  if (href === absBlog || href.startsWith(`${absBlog}/`)) {
+    return `https://freddiefujiwara.com${blogBase}/${lang}${href.slice(absBlog.length)}`;
+  }
+  if (href === "/blog" || href.startsWith("/blog/")) {
+    // A link that already carries the blog base (the staging
+    // banner's /blog/staging/) only gains the language segment.
+    if (href === blogBase || href.startsWith(`${blogBase}/`)) {
+      return `${blogBase}/${lang}${href.slice(blogBase.length)}`;
+    }
+    return `${blogBase}/${lang}${href.slice("/blog".length)}`;
+  }
+  return href;
+}
+
+export function renderVariant(html, i18nJs, lang, { assetBase = "/", linkBase = "", blogBase = "/blog" } = {}) {
   const dom = new JSDOM(html, {
     runScripts: "outside-only",
     url: "https://freddiefujiwara.com/",
@@ -54,6 +81,10 @@ export function renderVariant(html, i18nJs, lang, { assetBase = "/", linkBase = 
   const { window } = dom;
   window.eval(i18nJs);
   window.SiteI18n.applyLang(lang);
+  for (const el of window.document.querySelectorAll("[href]")) {
+    const href = el.getAttribute("href");
+    if (href) el.setAttribute("href", blogHrefForLang(href, lang, blogBase));
+  }
   const ogImage = OG_IMAGE_BY_LANG[lang];
   if (ogImage) {
     for (const selector of ['meta[property="og:image"]', 'meta[name="twitter:image"]']) {
