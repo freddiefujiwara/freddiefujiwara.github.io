@@ -16,11 +16,14 @@
 // - The staging banner (with links to every staging environment) is
 //   injected right after <body>, so staging is never mistaken for
 //   production.
+// - The /en/ and /zh/ variants of the top page are generated from the
+//   staging page (see generate-i18n-pages.mjs).
 // CNAME and js/gtag.js are not copied.
 
 import { cpSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { generateI18nPages } from "./generate-i18n-pages.mjs";
 
 export const STAGING_LINKS = [
   ["トップ", "/staging/"],
@@ -145,6 +148,14 @@ export function buildStaging(srcDir, outDir) {
       writeFileSync(pagePath, stripGaTags(page));
     }
   }
+  // The /en/ and /zh/ variants of the staging top page, generated from
+  // the staging Japanese page above (banner included, GA stripped),
+  // with asset and language-switcher links kept under /staging/.
+  // Skipped silently when the source has no dictionary module.
+  generateI18nPages(outDir, outDir, {
+    assetBase: "/staging/",
+    linkBase: "/staging",
+  });
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

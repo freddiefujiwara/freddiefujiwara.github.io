@@ -3,6 +3,7 @@ import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'nod
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { transformHtml, stripGaTags, buildStaging, stagingBannerHtml, STAGING_LINKS, PROD_LINK } from '../scripts/build-staging.mjs';
+import { i18nJs } from './helpers.js';
 
 const sample = `<!doctype html>
 <html>
@@ -128,6 +129,37 @@ describe('buildStaging', () => {
       expect(music).toContain('曲のページです。');
       const top = readFileSync(path.join(out, 'index.html'), 'utf8');
       expect(top).not.toContain('googletagmanager');
+    } finally {
+      rmSync(work, { recursive: true, force: true });
+    }
+  });
+
+  it('/en/ と /zh/ のステージング版も生成し、バナーと /staging 配下のリンクを持つ', () => {
+    const work = mkdtempSync(path.join(tmpdir(), 'build-staging-i18n-'));
+    try {
+      const src = path.join(work, 'public');
+      const out = path.join(work, 'staging-dist');
+      mkdirSync(path.join(src, 'js'), { recursive: true });
+      writeFileSync(
+        path.join(src, 'index.html'),
+        sample
+          .replace('<html>', '<html lang="ja">')
+          .replace(
+            '<a href="/blog/">ブログ</a>',
+            `<div class="lang-switch"><a href="/" data-lang-link="ja">日本語</a><a href="/en/" data-lang-link="en">English</a><a href="/zh/" data-lang-link="zh">中文</a></div>`,
+          ),
+      );
+      writeFileSync(path.join(src, 'js', 'gtag.js'), '// gtag init');
+      writeFileSync(path.join(src, 'js', 'i18n.js'), i18nJs);
+      buildStaging(src, out);
+      const en = readFileSync(path.join(out, 'en', 'index.html'), 'utf8');
+      expect(en).toContain('<html lang="en">');
+      expect(en).toContain('STAGING｜');
+      expect(en).not.toContain('googletagmanager');
+      expect(en).toContain('<a href="/staging/en/" data-lang-link="en"');
+      const zh = readFileSync(path.join(out, 'zh', 'index.html'), 'utf8');
+      expect(zh).toContain('<html lang="zh-CN">');
+      expect(zh).toContain('STAGING｜');
     } finally {
       rmSync(work, { recursive: true, force: true });
     }

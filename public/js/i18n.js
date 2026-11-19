@@ -3,27 +3,30 @@
 // 完結する。翻訳対象はページ自身の UI 文言だけで、記事タイトル等の
 // 動的コンテンツは対象外（記事本文の翻訳は別フェーズ）。
 //
-// 言語の決め方：URL の ?lang=en / ?lang=zh が最優先（選んだ値は
-// localStorage に保存する）。次に localStorage の前回値、無ければ
-// 日本語。対応外の値は日本語に倒す。
+// 言語は URL が決める：日本語が /、英語が /en/、中国語が /zh/。
+// /en/ と /zh/ はビルド時に scripts/generate-i18n-pages.mjs が
+// 日本語ページとこの辞書から生成する（手で別々に保守はしない）。
+// 実行時は html 要素の lang 属性から自分の言語を知り、動的
+// スクリプトの注記テンプレート等をその言語で描く。静的文言は
+// 生成時に焼き込まれているが、同じ apply() を読み込み時にも
+// 通すので、生成結果と実行時表示がずれることはない。
 //
 // 使い方：
 // - 静的文言は HTML 側に data-i18n="キー" を付けると textContent が、
 //   data-i18n-html なら innerHTML が、data-i18n-alt / data-i18n-aria
 //   なら alt / aria-label 属性が差し替わる。
-// - 動的スクリプト（main.js など）は window.SiteI18n.t(key, vars) で
-//   テンプレートを引き、SiteI18n.onChange(fn) で言語切替時の
-//   再描画を登録する。SiteI18n が無い環境では各スクリプトが
+// - 動的スクリプト（main.js など）は window.SiteI18n.t(key, vars)
+//   でテンプレートを引く。SiteI18n が無い環境では各スクリプトが
 //   日本語のまま動く（従来どおり）。
 (function () {
   var LANGS = ["ja", "en", "zh"];
   var HTML_LANG = { ja: "ja", en: "en", zh: "zh-CN" };
   var LOCALES = { ja: "ja-JP", en: "en-US", zh: "zh-CN" };
-  var STORAGE_KEY = "site-lang";
 
   var STRINGS = {
     ja: {
       "title": "藤原史和｜川口を歩くQAエンジニア",
+      "ogImageTitle": "川口を、歩く。",
       "description": "藤原史和（Fumikazu Fujiwara）の公式サイト。埼玉県川口市の街を歩き、地元のお店の魅力をInstagramのリールで発信しています。",
       "brandName": "藤原史和",
       "tagline": "川口を歩くQAエンジニア",
@@ -116,6 +119,7 @@
     },
     en: {
       "title": "Fumikazu Fujiwara | A QA Engineer Walking Kawaguchi",
+      "ogImageTitle": "Walking Kawaguchi.",
       "description": "The official site of Fumikazu Fujiwara. I walk the streets of Kawaguchi, Saitama, and share the charm of local shops through Instagram Reels.",
       "brandName": "Fumikazu Fujiwara",
       "tagline": "A QA engineer walking Kawaguchi",
@@ -208,6 +212,7 @@
     },
     zh: {
       "title": "藤原史和｜行走川口的QA工程师",
+      "ogImageTitle": "行走川口。",
       "description": "藤原史和（Fumikazu Fujiwara）的官方网站。漫步埼玉县川口市的街头，通过 Instagram 短视频分享本地店铺的魅力。",
       "brandName": "藤原史和",
       "tagline": "行走川口的QA工程师",
@@ -299,54 +304,19 @@
       "music.plays": "播放 {n} 次"
     }
   };
-
   function isLang(value) {
     return LANGS.indexOf(value) >= 0;
   }
 
-  // ?lang= の値（zh-CN のような表記ゆれは zh に寄せる）。
-  function langFromParam(value) {
-    if (!value) return null;
-    var v = String(value).toLowerCase();
-    if (v === "zh-cn" || v === "zh-hans") v = "zh";
-    return isLang(v) ? v : null;
+  // html lang 属性（ja / en / zh-CN）から言語キーを決める。
+  function langFromHtml() {
+    var attr = (document.documentElement.lang || "ja").toLowerCase();
+    if (attr.indexOf("zh") === 0) return "zh";
+    if (attr.indexOf("en") === 0) return "en";
+    return "ja";
   }
 
-  function storedLang() {
-    try {
-      var v = window.localStorage.getItem(STORAGE_KEY);
-      return isLang(v) ? v : null;
-    } catch (e) {
-      return null;
-    }
-  }
-
-  function persist(lang) {
-    try {
-      window.localStorage.setItem(STORAGE_KEY, lang);
-    } catch (e) {
-      // 保存できない環境では今回の表示だけに効かせる。
-    }
-  }
-
-  function resolveLang() {
-    var fromParam = null;
-    try {
-      fromParam = langFromParam(
-        new URLSearchParams(window.location.search).get("lang")
-      );
-    } catch (e) {
-      fromParam = null;
-    }
-    if (fromParam) {
-      persist(fromParam);
-      return fromParam;
-    }
-    return storedLang() || "ja";
-  }
-
-  var current = resolveLang();
-  var listeners = [];
+  var current = langFromHtml();
 
   function t(key, vars) {
     var table = STRINGS[current] || {};
@@ -383,29 +353,21 @@
     document.querySelectorAll("[data-i18n-aria]").forEach(function (el) {
       el.setAttribute("aria-label", t(el.getAttribute("data-i18n-aria")));
     });
-    document.querySelectorAll("[data-lang-btn]").forEach(function (btn) {
-      var active = btn.getAttribute("data-lang-btn") === current;
-      btn.classList.toggle("active", active);
-      btn.setAttribute("aria-pressed", active ? "true" : "false");
-    });
-    listeners.forEach(function (fn) {
-      fn(current);
+    // 言語スイッチャーは実 URL へのリンク。現在の言語だけ印を付ける。
+    document.querySelectorAll("[data-lang-link]").forEach(function (link) {
+      var active = link.getAttribute("data-lang-link") === current;
+      link.classList.toggle("current", active);
+      if (active) link.setAttribute("aria-current", "page");
+      else link.removeAttribute("aria-current");
     });
   }
 
-  function setLang(lang) {
+  // ビルド時生成（generate-i18n-pages.mjs）用：言語を固定して描く。
+  function applyLang(lang) {
     if (!isLang(lang)) return;
-    persist(lang);
-    if (lang === current) return;
     current = lang;
     apply();
   }
-
-  document.querySelectorAll("[data-lang-btn]").forEach(function (btn) {
-    btn.addEventListener("click", function () {
-      setLang(btn.getAttribute("data-lang-btn"));
-    });
-  });
 
   window.SiteI18n = {
     langs: LANGS.slice(),
@@ -416,10 +378,7 @@
       return LOCALES[current];
     },
     t: t,
-    setLang: setLang,
-    onChange: function (fn) {
-      listeners.push(fn);
-    }
+    applyLang: applyLang
   };
 
   apply();

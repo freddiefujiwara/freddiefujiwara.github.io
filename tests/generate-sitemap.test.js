@@ -32,6 +32,11 @@ describe('buildSitemapXml', () => {
     expect(xml).toContain(`<loc>${SITE_ORIGIN}/blog/</loc>`);
   });
 
+  it('多言語版トップ（/en/ と /zh/）を含む', () => {
+    expect(xml).toContain(`<loc>${SITE_ORIGIN}/en/</loc>`);
+    expect(xml).toContain(`<loc>${SITE_ORIGIN}/zh/</loc>`);
+  });
+
   it('記事IDを /blog/<id> として並べ、重複は1回だけにする', () => {
     expect(xml).toContain(`<loc>${SITE_ORIGIN}/blog/abc123</loc>`);
     expect(xml).toContain(`<loc>${SITE_ORIGIN}/blog/def456</loc>`);

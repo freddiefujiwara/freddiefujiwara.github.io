@@ -41,6 +41,8 @@ export function buildSitemapXml({ ids, articleCache }) {
 
   const urls = [
     { loc: `${SITE_ORIGIN}/`, priority: "1.0" },
+    { loc: `${SITE_ORIGIN}/en/`, priority: "0.9" },
+    { loc: `${SITE_ORIGIN}/zh/`, priority: "0.9" },
     { loc: `${SITE_ORIGIN}/blog/`, priority: "0.9" },
   ];
   const seen = new Set();

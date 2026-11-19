@@ -5,6 +5,7 @@ import {
   runMain,
   flushPromises,
   indexHtml,
+  i18nJs,
   musicCountJs,
   snsCountJs,
   popularArticlesJs,
@@ -12,9 +13,12 @@ import {
 } from './helpers.js';
 
 // i18n.js（UI 多言語化：日本語 / English / 中文）の仕様。
-// 既定は日本語、?lang= が最優先で localStorage に保存され、
-// 対応外の値は日本語に倒れる。記事タイトル等の動的コンテンツは
-// 翻訳せず、注記などの型だけを言語に合わせる。
+// 言語は URL が決める：日本語が /、英語が /en/、中国語が /zh/ で、
+// ページの html lang 属性から実行時の言語が決まる（localStorage や
+// クエリパラメータは使わない）。/en/ と /zh/ のページ自体は
+// scripts/generate-i18n-pages.mjs がビルド時に生成する。
+// 記事タイトル等の動的コンテンツは翻訳せず、注記などの型だけを
+// 言語に合わせる。
 
 const htmlKeys = [
   ...indexHtml.matchAll(/data-i18n(?:-html|-alt|-aria)?="([^"]+)"/g),
@@ -22,6 +26,7 @@ const htmlKeys = [
 const jsKeys = [
   'title',
   'description',
+  'ogImageTitle',
   'section.about',
   'section.activity',
   'section.contact',
@@ -32,6 +37,14 @@ const jsKeys = [
   'sns.asOf',
 ];
 
+// html lang 属性を与えてから i18n.js を読み込んだページ。
+function loadWithLang(langAttr) {
+  const page = loadPage();
+  if (langAttr) page.document.documentElement.lang = langAttr;
+  runI18n(page.window);
+  return page;
+}
+
 describe('辞書の網羅性', () => {
   it('HTML が参照するキーが存在する', () => {
     expect(htmlKeys.length).toBeGreaterThan(50);
@@ -40,7 +53,7 @@ describe('辞書の網羅性', () => {
   it.each(['ja', 'en', 'zh'])('%s では全キーに訳がある', (lang) => {
     const { window } = loadPage();
     runI18n(window);
-    window.SiteI18n.setLang(lang);
+    window.SiteI18n.applyLang(lang);
     for (const key of [...new Set([...htmlKeys, ...jsKeys])]) {
       expect(window.SiteI18n.t(key), `${lang}: ${key}`).not.toBe(key);
     }
@@ -52,32 +65,33 @@ describe('辞書の網羅性', () => {
     expect(window.SiteI18n.t('popular.note', { d: 28, v: '1,234' })).toBe(
       '直近28日で1,234回読まれています',
     );
-    window.SiteI18n.setLang('en');
+    window.SiteI18n.applyLang('en');
     expect(window.SiteI18n.t('popular.note', { d: 28, v: '1,234' })).toBe(
       'Read 1,234 times in the last 28 days',
     );
-    window.SiteI18n.setLang('zh');
+    window.SiteI18n.applyLang('zh');
     expect(window.SiteI18n.t('popular.note', { d: 28, v: '1,234' })).toBe(
       '最近 28 天已被阅读 1,234 次',
     );
   });
+
+  it('言語は URL で決まるため、保存やパラメータ解釈を持たない', () => {
+    expect(i18nJs).not.toContain('localStorage');
+    expect(i18nJs).not.toContain('URLSearchParams');
+  });
 });
 
 describe('言語の決定', () => {
-  it('既定は日本語で、html lang とタイトルも日本語', () => {
-    const { window, document } = loadPage();
-    runI18n(window);
+  it('既定（lang="ja"）は日本語で、タイトルも日本語', () => {
+    const { window, document } = loadWithLang(null);
     expect(window.SiteI18n.getLang()).toBe('ja');
     expect(document.documentElement.lang).toBe('ja');
     expect(document.title).toBe('藤原史和｜川口を歩くQAエンジニア');
     expect(document.querySelector('[data-i18n="nav.top"]').textContent).toBe('トップ');
   });
 
-  it('?lang=en で英語になり、localStorage に保存される', () => {
-    const { window, document } = loadPage({
-      url: 'https://freddiefujiwara.com/?lang=en',
-    });
-    runI18n(window);
+  it('lang="en" のページでは英語になり、タイトルと説明も英語', () => {
+    const { window, document } = loadWithLang('en');
     expect(window.SiteI18n.getLang()).toBe('en');
     expect(document.documentElement.lang).toBe('en');
     expect(document.title).toBe(
@@ -87,83 +101,40 @@ describe('言語の決定', () => {
     expect(document.querySelector('meta[name="description"]').getAttribute('content')).toContain(
       'official site of Fumikazu Fujiwara',
     );
-    expect(window.localStorage.getItem('site-lang')).toBe('en');
+    expect(document.querySelector('meta[property="og:title"]').getAttribute('content')).toBe(
+      'Fumikazu Fujiwara | A QA Engineer Walking Kawaguchi',
+    );
   });
 
-  it('?lang=zh で中国語（簡体字）になり、html lang は zh-CN', () => {
-    const { window, document } = loadPage({
-      url: 'https://freddiefujiwara.com/?lang=zh',
-    });
-    runI18n(window);
+  it('lang="zh-CN" のページでは中国語（簡体字）になる', () => {
+    const { window, document } = loadWithLang('zh-CN');
     expect(window.SiteI18n.getLang()).toBe('zh');
     expect(document.documentElement.lang).toBe('zh-CN');
     expect(document.querySelector('[data-i18n="nav.top"]').textContent).toBe('首页');
   });
 
-  it('?lang= は localStorage の前回値より優先され、上書きする', () => {
-    const { window } = loadPage({
-      url: 'https://freddiefujiwara.com/?lang=zh',
-    });
-    window.localStorage.setItem('site-lang', 'en');
-    runI18n(window);
-    expect(window.SiteI18n.getLang()).toBe('zh');
-    expect(window.localStorage.getItem('site-lang')).toBe('zh');
-  });
-
-  it('パラメータが無ければ localStorage の前回値を使う', () => {
-    const { window, document } = loadPage();
-    window.localStorage.setItem('site-lang', 'en');
-    runI18n(window);
-    expect(window.SiteI18n.getLang()).toBe('en');
-    expect(document.querySelector('[data-i18n="nav.top"]').textContent).toBe('Home');
-  });
-
-  it('対応外のパラメータ・保存値は日本語に倒れる', () => {
-    const a = loadPage({ url: 'https://freddiefujiwara.com/?lang=fr' });
-    runI18n(a.window);
-    expect(a.window.SiteI18n.getLang()).toBe('ja');
-
-    const b = loadPage();
-    b.window.localStorage.setItem('site-lang', 'fr');
-    runI18n(b.window);
-    expect(b.window.SiteI18n.getLang()).toBe('ja');
+  it('対応外の lang 属性は日本語に倒れる', () => {
+    const { window } = loadWithLang('fr');
+    expect(window.SiteI18n.getLang()).toBe('ja');
   });
 });
 
 describe('スイッチャー', () => {
-  it('ヘッダーに3言語のボタンがあり、現在の言語が active になる', () => {
-    const { window, document } = loadPage();
-    runI18n(window);
-    const btns = [...document.querySelectorAll('[data-lang-btn]')];
-    expect(btns.map((b) => b.getAttribute('data-lang-btn'))).toEqual(['ja', 'en', 'zh']);
-    expect(btns.map((b) => b.textContent)).toEqual(['日本語', 'English', '中文']);
-    expect(document.querySelector('[data-lang-btn="ja"]').classList.contains('active')).toBe(true);
-    expect(document.querySelector('[data-lang-btn="en"]').classList.contains('active')).toBe(false);
+  it('ヘッダーに3言語への実リンクがあり、現在の言語が current になる', () => {
+    const { document } = loadWithLang(null);
+    const links = [...document.querySelectorAll('[data-lang-link]')];
+    expect(links.map((a) => a.getAttribute('data-lang-link'))).toEqual(['ja', 'en', 'zh']);
+    expect(links.map((a) => a.getAttribute('href'))).toEqual(['/', '/en/', '/zh/']);
+    expect(links.map((a) => a.textContent)).toEqual(['日本語', 'English', '中文']);
+    expect(document.querySelector('[data-lang-link="ja"]').classList.contains('current')).toBe(true);
+    expect(document.querySelector('[data-lang-link="ja"]').getAttribute('aria-current')).toBe('page');
+    expect(document.querySelector('[data-lang-link="en"]').classList.contains('current')).toBe(false);
   });
 
-  it('クリックで文言・タイトル・html lang が切り替わり、保存される', () => {
-    const { window, document } = loadPage();
-    runI18n(window);
-    document
-      .querySelector('[data-lang-btn="en"]')
-      .dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
-    expect(window.SiteI18n.getLang()).toBe('en');
-    expect(document.documentElement.lang).toBe('en');
-    expect(document.title).toBe(
-      'Fumikazu Fujiwara | A QA Engineer Walking Kawaguchi',
-    );
-    expect(document.querySelector('[data-i18n="nav.top"]').textContent).toBe('Home');
-    expect(document.querySelector('[data-i18n="articles.heading"]').textContent).toBe(
-      'Popular Articles',
-    );
-    expect(window.localStorage.getItem('site-lang')).toBe('en');
-    expect(document.querySelector('[data-lang-btn="en"]').classList.contains('active')).toBe(true);
-
-    document
-      .querySelector('[data-lang-btn="ja"]')
-      .dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
-    expect(document.querySelector('[data-i18n="nav.top"]').textContent).toBe('トップ');
-    expect(document.title).toBe('藤原史和｜川口を歩くQAエンジニア');
+  it('英語ページでは英語リンクが current になる', () => {
+    const { document } = loadWithLang('en');
+    expect(document.querySelector('[data-lang-link="en"]').classList.contains('current')).toBe(true);
+    expect(document.querySelector('[data-lang-link="ja"]').classList.contains('current')).toBe(false);
   });
 });
 
@@ -208,8 +179,9 @@ describe('動的スクリプトとの連携', () => {
     return Promise.resolve({ json: () => Promise.resolve([{}, {}, {}]) });
   };
 
-  function setup(url) {
-    const page = loadPage({ fetchImpl: fetchRouter, url });
+  function setup(langAttr) {
+    const page = loadPage({ fetchImpl: fetchRouter });
+    if (langAttr) page.document.documentElement.lang = langAttr;
     runI18n(page.window);
     runMain(page.window);
     page.window.eval(musicCountJs);
@@ -219,7 +191,7 @@ describe('動的スクリプトとの連携', () => {
   }
 
   it('英語では注記だけが英語になり、記事タイトルは日本語のまま', async () => {
-    const { document } = setup('https://freddiefujiwara.com/?lang=en');
+    const { document } = setup('en');
     await flushPromises();
     const card = document.querySelector('#articles .act-list .act');
     expect(card.querySelector('h3').textContent).toBe('記事A');
@@ -238,30 +210,25 @@ describe('動的スクリプトとの連携', () => {
     );
   });
 
-  it('読み込み後の言語切替で動的な注記も付け直される', async () => {
-    const { window, document } = setup('https://freddiefujiwara.com/?lang=en');
+  it('中国語では注記が中国語になる', async () => {
+    const { document } = setup('zh-CN');
     await flushPromises();
-    document
-      .querySelector('[data-lang-btn="ja"]')
-      .dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
     const card = document.querySelector('#articles .act-list .act');
-    expect(card.querySelector('p').textContent).toBe(
-      '直近28日で1,234回読まれています',
-    );
-    expect(document.querySelector('.music-play-count').textContent).toBe('1,234回再生');
-    expect(document.getElementById('stuff-count').textContent).toBe(
-      '全3点を公開しています。',
-    );
+    expect(card.querySelector('h3').textContent).toBe('記事A');
+    expect(card.querySelector('p').textContent).toBe('最近 28 天已被阅读 1,234 次');
+    expect(document.querySelector('.music-play-count').textContent).toBe('播放 1,234 次');
+    expect(document.getElementById('stuff-count').textContent).toBe('共公开 3 件物品。');
     expect(document.querySelector('.sns-total-label').textContent).toBe(
-      'SNS（Instagram、YouTube）延べフォロワー数',
+      '粉丝总数（Instagram、YouTube）',
     );
+    expect(document.querySelector('.sns-views-30d-unit').textContent).toBe('万次');
     expect(document.querySelector('.sns-stats-date').textContent).toBe(
-      '数字は2026年11月9日時点',
+      '数据截至2026年11月9日',
     );
   });
 
   it('英語でもスクロールスパイのタイトル切替が言語に追随する', async () => {
-    const { window, document } = setup('https://freddiefujiwara.com/?lang=en');
+    const { document } = setup('en');
     await flushPromises();
     expect(document.title).toBe(
       'Fumikazu Fujiwara | A QA Engineer Walking Kawaguchi',
@@ -273,9 +240,5 @@ describe('動的スクリプトとの連携', () => {
     expect(document.title).toBe(
       'Profile | Fumikazu Fujiwara | A QA Engineer Walking Kawaguchi',
     );
-    document
-      .querySelector('[data-lang-btn="ja"]')
-      .dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
-    expect(document.title).toBe('プロフィール | 藤原史和｜川口を歩くQAエンジニア');
   });
 });

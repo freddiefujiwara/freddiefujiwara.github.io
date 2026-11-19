@@ -22,8 +22,6 @@
     });
   }
 
-  if (i18n) i18n.onChange(render);
-
   window
     .fetch("/music-count.json")
     .then(function (res) {

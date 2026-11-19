@@ -45,8 +45,6 @@
     });
   }
 
-  if (i18n) i18n.onChange(render);
-
   window
     .fetch("/popular-articles.json")
     .then(function (res) {

@@ -170,8 +170,6 @@
     }
   }
 
-  if (i18n) i18n.onChange(render);
-
   window
     .fetch("/sns-count.json")
     .then(function (res) {
