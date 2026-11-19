@@ -79,8 +79,8 @@ describe('sns-count.js（Instagram の指標）', () => {
     '<!doctype html><html><head></head><body>' +
     '<div class="num"><span class="sns-follower-total">2,307</span><small>人</small></div>' +
     '<div class="num"><span class="sns-views-30d">約82</span><small class="sns-views-30d-unit">万回</small></div>' +
-    '<div class="num"><span class="sns-non-follower-pct">96.3</span><small>％</small></div>' +
-    '<div class="num"><span class="sns-media-count">2,404</span><small>件</small></div>' +
+    '<div class="num"><span class="sns-reach-30d">約13</span><small class="sns-reach-30d-unit">万人</small></div>' +
+    '<div class="num"><span class="sns-saves-30d">1,197</span><small>回</small></div>' +
     '</body></html>';
 
   function setupFull(fetchImpl) {
@@ -105,9 +105,9 @@ describe('sns-count.js（Instagram の指標）', () => {
       ok: true,
       json: async () => ({
         total: 2500,
-        media_count: 2501,
         views_30d: 823456,
-        non_follower_pct: 95.26,
+        reach_30d: 132312,
+        saves_30d: 1197,
         updated_at: 'x',
       }),
     }));
@@ -115,8 +115,9 @@ describe('sns-count.js（Instagram の指標）', () => {
     expect(text(window, '.sns-follower-total')).toBe('2,500');
     expect(text(window, '.sns-views-30d')).toBe('約82');
     expect(text(window, '.sns-views-30d-unit')).toBe('万回');
-    expect(text(window, '.sns-non-follower-pct')).toBe('95.3');
-    expect(text(window, '.sns-media-count')).toBe('2,501');
+    expect(text(window, '.sns-reach-30d')).toBe('約13');
+    expect(text(window, '.sns-reach-30d-unit')).toBe('万人');
+    expect(text(window, '.sns-saves-30d')).toBe('1,197');
   });
 
   it('再生回数が1万未満なら実数＋「回」にする', async () => {
@@ -129,17 +130,27 @@ describe('sns-count.js（Instagram の指標）', () => {
     expect(text(window, '.sns-views-30d-unit')).toBe('回');
   });
 
+  it('届いた人数が1万未満なら実数＋「人」にする', async () => {
+    const window = setupFull(async () => ({
+      ok: true,
+      json: async () => ({ reach_30d: 9999 }),
+    }));
+    await flush();
+    expect(text(window, '.sns-reach-30d')).toBe('9,999');
+    expect(text(window, '.sns-reach-30d-unit')).toBe('人');
+  });
+
   it('一部の項目だけある JSON ではその項目だけ差し替わる', async () => {
     const window = setupFull(async () => ({
       ok: true,
-      json: async () => ({ media_count: 3000 }),
+      json: async () => ({ saves_30d: 3000 }),
     }));
     await flush();
-    expect(text(window, '.sns-media-count')).toBe('3,000');
+    expect(text(window, '.sns-saves-30d')).toBe('3,000');
     expect(text(window, '.sns-follower-total')).toBe('2,307');
     expect(text(window, '.sns-views-30d')).toBe('約82');
     expect(text(window, '.sns-views-30d-unit')).toBe('万回');
-    expect(text(window, '.sns-non-follower-pct')).toBe('96.3');
+    expect(text(window, '.sns-reach-30d')).toBe('約13');
   });
 
   it('指標が数値でない場合はその数字だけ静的な初期値のままにする', async () => {
@@ -147,16 +158,16 @@ describe('sns-count.js（Instagram の指標）', () => {
       ok: true,
       json: async () => ({
         total: 2500,
-        media_count: '2501',
+        saves_30d: '1197',
         views_30d: null,
-        non_follower_pct: '95.3',
+        reach_30d: '132312',
       }),
     }));
     await flush();
     expect(text(window, '.sns-follower-total')).toBe('2,500');
-    expect(text(window, '.sns-media-count')).toBe('2,404');
+    expect(text(window, '.sns-saves-30d')).toBe('1,197');
     expect(text(window, '.sns-views-30d')).toBe('約82');
-    expect(text(window, '.sns-non-follower-pct')).toBe('96.3');
+    expect(text(window, '.sns-reach-30d')).toBe('約13');
   });
 });
 

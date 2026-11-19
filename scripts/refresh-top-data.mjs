@@ -243,10 +243,10 @@ const SNS_COUNT_KEYS = ["instagram", "instagram_anemone", "threads", "youtube", 
 // follower total and of each other: a missing or non-numeric value
 // stays null, so the caller omits it from sns-count.json and the
 // hero keeps its static fallback for that one stat.
-const SNS_INSTAGRAM_METRICS = ["media_count", "views_30d", "non_follower_pct"];
+const SNS_INSTAGRAM_METRICS = ["media_count", "views_30d", "non_follower_pct", "reach_30d", "saves_30d"];
 
 const extractInstagramMetrics = (data) => {
-  const metrics = { media_count: null, views_30d: null, non_follower_pct: null };
+  const metrics = { media_count: null, views_30d: null, non_follower_pct: null, reach_30d: null, saves_30d: null };
   const candidates = [];
   if (data.instagram && typeof data.instagram === "object") {
     candidates.push(data.instagram);
