@@ -120,7 +120,7 @@ describe('言語の決定', () => {
 });
 
 describe('スイッチャー', () => {
-  it('ヘッダーに3言語への実リンクがあり、現在の言語が current になる', () => {
+  it('フッターに3言語への実リンクがあり、現在の言語が current になる', () => {
     const { document } = loadWithLang(null);
     const links = [...document.querySelectorAll('[data-lang-link]')];
     expect(links.map((a) => a.getAttribute('data-lang-link'))).toEqual(['ja', 'en', 'zh']);
@@ -129,6 +129,13 @@ describe('スイッチャー', () => {
     expect(document.querySelector('[data-lang-link="ja"]').classList.contains('current')).toBe(true);
     expect(document.querySelector('[data-lang-link="ja"]').getAttribute('aria-current')).toBe('page');
     expect(document.querySelector('[data-lang-link="en"]').classList.contains('current')).toBe(false);
+  });
+
+  it('スイッチャーはフッターの中にだけあり、ヘッダー（ナビ）には無い', () => {
+    const { document } = loadWithLang(null);
+    expect(document.querySelectorAll('footer [data-lang-link]')).toHaveLength(3);
+    expect(document.querySelectorAll('.site-nav [data-lang-link]')).toHaveLength(0);
+    expect(document.querySelector('.site-nav .lang-switch')).toBeNull();
   });
 
   it('英語ページでは英語リンクが current になる', () => {
