@@ -6,8 +6,7 @@
 // 書かれたままのカードを表示する。
 // この JSON はアクセス解析ではないため、ステージングでも読み込む
 // （ステージングでは本番の /popular-articles.json を読む）。
-// 記事タイトルは、JSON に翻訳（title_en / title_zh）があれば
-// ページの言語で出し、無ければ日本語のままにする。注記の型
+// 記事タイトルは動的コンテンツなので翻訳しないが、注記の型
 // （直近N日で…）は UI 文言として i18n.js の言語に従う。
 (function () {
   var cards = document.querySelectorAll("#articles .act-list .act");
@@ -35,18 +34,6 @@
     return href;
   }
 
-  // ページの言語に合ったタイトル。翻訳が JSON に無い記事は
-  // 日本語タイトルにフォールバックする。
-  function titleForPage(article) {
-    var lang = (document.documentElement.lang || "").toLowerCase();
-    var localized = null;
-    if (lang.indexOf("en") === 0) localized = article.title_en;
-    if (lang.indexOf("zh") === 0) localized = article.title_zh;
-    return typeof localized === "string" && localized
-      ? localized
-      : article.title;
-  }
-
   function render() {
     if (!lastData || !Array.isArray(lastData.articles)) return;
     var days = typeof lastData.days === "number" ? lastData.days : 28;
@@ -65,7 +52,7 @@
       card.href = blogHrefForPage(article.href);
       var title = card.querySelector("h3");
       if (title) {
-        title.textContent = titleForPage(article);
+        title.textContent = article.title;
       }
       var note = card.querySelector("p");
       if (note) {
