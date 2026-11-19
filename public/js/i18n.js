@@ -11,6 +11,10 @@
 // 生成時に焼き込まれているが、同じ apply() を読み込み時にも
 // 通すので、生成結果と実行時表示がずれることはない。
 //
+// 読み込み時には、表示中の言語をブログと共有する localStorage
+// キーへ記録する（recordLang）。記録はブログ側が言語を引き継ぐ
+// ためのもので、トップ自身の言語の決定には保存値を一切使わない。
+//
 // 使い方：
 // - 静的文言は HTML 側に data-i18n="キー" を付けると textContent が、
 //   data-i18n-html なら innerHTML が、data-i18n-alt / data-i18n-aria
@@ -321,6 +325,22 @@
 
   var current = langFromHtml();
 
+  // 表示中の言語を、ブログと共有する localStorage キーへ記録する。
+  // 常に今見ているページの言語で上書きする（このページの言語こそが
+  // サイト全体の言語である）。本番とステージングは同一オリジンで
+  // 配信されるため、ステージングのパス（/staging/ を含む）では
+  // キーを分ける。保存できない環境（プライベートモード等）でも
+  // ページが壊れないよう、失敗は握りつぶす。
+  function recordLang() {
+    try {
+      var staging = window.location.pathname.indexOf("/staging/") >= 0;
+      var key = staging ? "site:lang:v1:staging" : "site:lang:v1";
+      window.localStorage.setItem(key, current);
+    } catch (e) {
+      // 記録できなくても表示には影響しない。
+    }
+  }
+
   function t(key, vars) {
     var table = STRINGS[current] || {};
     var text = key in table ? table[key] : STRINGS.ja[key];
@@ -384,5 +404,6 @@
     applyLang: applyLang
   };
 
+  recordLang();
   apply();
 })();
