@@ -339,6 +339,8 @@ describe('sns-count.json の生成', () => {
       media_count: null,
       views_30d: null,
       non_follower_pct: null,
+      reach_30d: null,
+      saves_30d: null,
       followers_breakdown: null,
       updated_at: '2026-11-08T12:45:00.000Z',
     });
@@ -369,6 +371,8 @@ describe('sns-count.json の生成', () => {
       media_count: 2420,
       views_30d: 576645,
       non_follower_pct: 94.5,
+      reach_30d: null,
+      saves_30d: null,
       followers_breakdown: { instagram: 1991, youtube: 9, threads: null, x: null },
       updated_at: '2026-11-08T19:25:52.088Z',
     });
@@ -400,6 +404,8 @@ describe('sns-count.json の生成', () => {
       media_count: 2420,
       views_30d: 580289,
       non_follower_pct: 94.5,
+      reach_30d: null,
+      saves_30d: null,
       followers_breakdown: { instagram: 1998, youtube: 10, threads: 252, x: null },
       updated_at: '2026-11-08T23:46:47.185Z',
     });
@@ -532,7 +538,7 @@ describe('sns-count.json の生成', () => {
     }
   });
 
-  it('fetchSnsCounts は instagram の指標（投稿数・30日の再生回数・フォロワー以外％）を取り出す', async () => {
+  it('fetchSnsCounts は instagram の指標（投稿数・30日の再生回数・フォロワー以外％・リーチ・保存数）を取り出す', async () => {
     const fetchImpl = async () =>
       okResponse({
         ok: true,
@@ -544,6 +550,8 @@ describe('sns-count.json の生成', () => {
           media_count: 2404,
           views_30d: 823456,
           non_follower_pct: 96.3,
+          reach_30d: 132312,
+          saves_30d: 1197,
         },
         fetched_at: 't1',
       });
@@ -553,6 +561,8 @@ describe('sns-count.json の生成', () => {
       media_count: 2404,
       views_30d: 823456,
       non_follower_pct: 96.3,
+      reach_30d: 132312,
+      saves_30d: 1197,
       followers_breakdown: { instagram: 1988, youtube: null, threads: null, x: null },
       updated_at: 't1',
     });
@@ -571,6 +581,8 @@ describe('sns-count.json の生成', () => {
     expect(payload.media_count).toBeNull();
     expect(payload.views_30d).toBe(512345);
     expect(payload.non_follower_pct).toBeNull();
+    expect(payload.reach_30d).toBeNull();
+    expect(payload.saves_30d).toBeNull();
   });
 
   it('fetchSnsCounts は counts.instagram がオブジェクトでも指標を取り出す', async () => {

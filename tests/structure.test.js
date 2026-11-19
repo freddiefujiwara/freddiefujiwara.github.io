@@ -123,19 +123,19 @@ describe('ページ構造の不変条件', () => {
     expect(views.querySelector('.sns-views-30d').textContent).toBe('約80');
     expect(views.querySelector('.sns-views-30d-unit').textContent).toBe('万回');
 
-    const pct = stats[2];
-    expect(pct.querySelector('.label').textContent.trim()).toBe(
-      'リールの視聴のうちフォロワー以外（過去30日）',
+    const reach = stats[2];
+    expect(reach.querySelector('.label').textContent.trim()).toBe(
+      '過去30日に届いた人数',
     );
-    expect(pct.querySelector('.sns-non-follower-pct').textContent).toBe('95');
-    expect(pct.querySelector('.num small').textContent).toBe('％');
+    expect(reach.querySelector('.sns-reach-30d').textContent).toBe('約13');
+    expect(reach.querySelector('.num small').textContent).toBe('万人');
 
-    const media = stats[3];
-    expect(media.querySelector('.label').textContent.trim()).toBe(
-      'Instagramの投稿',
+    const saves = stats[3];
+    expect(saves.querySelector('.label').textContent.trim()).toBe(
+      '過去30日の保存数',
     );
-    expect(media.querySelector('.sns-media-count').textContent).toBe('2,400');
-    expect(media.querySelector('.num small').textContent).toBe('件');
+    expect(saves.querySelector('.sns-saves-30d').textContent).toBe('1,200');
+    expect(saves.querySelector('.num small').textContent).toBe('回');
   });
 });
 

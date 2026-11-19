@@ -176,8 +176,8 @@ describe('動的スクリプトとの連携', () => {
           Promise.resolve({
             total: 4216,
             views_30d: 800000,
-            non_follower_pct: 95,
-            media_count: 2400,
+            reach_30d: 132312,
+            saves_30d: 1197,
             updated_at: '2026-11-09T00:00:00Z',
             followers_breakdown: { instagram: 2000, youtube: 12 },
           }),
@@ -212,6 +212,9 @@ describe('動的スクリプトとの連携', () => {
     );
     expect(document.querySelector('.sns-views-30d').textContent).toBe('≈800K');
     expect(document.querySelector('.sns-views-30d-unit').textContent).toBe('views');
+    expect(document.querySelector('.sns-reach-30d').textContent).toBe('≈132K');
+    expect(document.querySelector('.sns-reach-30d-unit').textContent).toBe('people');
+    expect(document.querySelector('.sns-saves-30d').textContent).toBe('1,197');
     expect(document.querySelector('.sns-stats-date').textContent).toBe(
       'Figures as of November 9, 2026',
     );
