@@ -146,7 +146,7 @@ describe('buildStaging', () => {
           .replace('<html>', '<html lang="ja">')
           .replace(
             '<a href="/blog/">ブログ</a>',
-            `<div class="lang-switch"><a href="/" data-lang-link="ja">日本語</a><a href="/en/" data-lang-link="en">English</a><a href="/zh/" data-lang-link="zh">中文</a></div>`,
+            `<footer><div class="lang-switch"><a href="/" data-lang-link="ja">日本語</a><a href="/en/" data-lang-link="en">English</a><a href="/zh/" data-lang-link="zh">中文</a></div></footer>`,
           ),
       );
       writeFileSync(path.join(src, 'js', 'gtag.js'), '// gtag init');
@@ -157,6 +157,9 @@ describe('buildStaging', () => {
       expect(en).toContain('STAGING｜');
       expect(en).not.toContain('googletagmanager');
       expect(en).toContain('<a href="/staging/en/" data-lang-link="en"');
+      // スイッチャーはフッターの中にあり、それより前（ナビ側）には無い
+      expect(en.indexOf('data-lang-link')).toBeGreaterThan(en.indexOf('<footer'));
+      expect(en.slice(0, en.indexOf('<footer'))).not.toContain('data-lang-link');
       const zh = readFileSync(path.join(out, 'zh', 'index.html'), 'utf8');
       expect(zh).toContain('<html lang="zh-CN">');
       expect(zh).toContain('STAGING｜');

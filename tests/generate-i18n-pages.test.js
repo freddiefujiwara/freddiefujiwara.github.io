@@ -77,6 +77,13 @@ describe('generateI18nPages（本物の public から生成）', () => {
     expect(zh).toContain('<a href="/zh/" data-lang-link="zh" class="current" aria-current="page">中文</a>');
   });
 
+  it('スイッチャーはフッターにあり、ヘッダー（ナビ）には無い', () => {
+    for (const page of [en, zh]) {
+      expect(page.indexOf('data-lang-link')).toBeGreaterThan(page.indexOf('<footer'));
+      expect(page.slice(0, page.indexOf('<header'))).not.toContain('data-lang-link');
+    }
+  });
+
   it('相対 assets パスがルート絶対に書き換わる（/en/ からでも共有できる）', () => {
     expect(en).toContain('srcset="/assets/hero-');
     expect(en).toContain('src="/assets/alley.jpg');
@@ -99,6 +106,9 @@ describe('generateI18nPages（本物の public から生成）', () => {
       expect(stagingEn).toContain('<a href="/staging/" data-lang-link="ja"');
       expect(stagingEn).toContain('<a href="/staging/en/" data-lang-link="en"');
       expect(stagingEn).toContain('<a href="/staging/zh/" data-lang-link="zh"');
+      // ステージングでもスイッチャーはフッターにあり、ナビには無い
+      expect(stagingEn.indexOf('data-lang-link')).toBeGreaterThan(stagingEn.indexOf('<footer'));
+      expect(stagingEn.slice(0, stagingEn.indexOf('<header'))).not.toContain('data-lang-link');
     } finally {
       rmSync(stagingOut, { recursive: true, force: true });
     }
