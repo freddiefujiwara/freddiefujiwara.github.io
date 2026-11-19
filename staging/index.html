@@ -102,13 +102,13 @@
       .site-nav ul a.active { color: var(--accent); border-bottom-color: var(--accent); }
       /* ---------- language switcher ---------- */
       .lang-switch { justify-self: end; display: flex; align-items: center; gap: 2px; }
-      .lang-switch button {
-        appearance: none; background: none; border: 0; cursor: pointer;
-        font: inherit; font-size: 12.5px; font-weight: 500; letter-spacing: 0.04em;
+      .lang-switch a {
+        font-size: 12.5px; font-weight: 500; letter-spacing: 0.04em;
         color: var(--ink-3); padding: 4px 7px; border-radius: 999px; white-space: nowrap;
+        text-decoration: none;
       }
-      .lang-switch button:hover { color: var(--ink); }
-      .lang-switch button.active { color: var(--accent); font-weight: 700; }
+      .lang-switch a:hover { color: var(--ink); text-decoration: none; }
+      .lang-switch a.current { color: var(--accent); font-weight: 700; }
       /* 中間幅ではブランド表記を畳む（ヒーローに名前が出ている）。
          言語スイッチャーが加わった分、ナビ全体が収まるようにする */
       @media (max-width: 1024px) {
@@ -116,7 +116,7 @@
         .site-nav .brand { display: none; }
         .site-nav ul { justify-self: center; gap: 14px; }
         .site-nav ul a { font-size: 12.5px; }
-        .lang-switch button { padding: 4px 4px; }
+        .lang-switch a { padding: 4px 4px; }
       }
       /* 「川口の歌」の累計再生回数（/js/music-count.json から流し込む。
          取れなかった場合は空のままにして、余分な隙間も作らない） */
@@ -124,7 +124,7 @@
       .music-play-count:empty { display: none; }
       @media (max-width: 560px) {
         .site-nav { grid-template-columns: 1fr auto; }
-        .lang-switch button { font-size: 11px; padding: 4px 4px; }
+        .lang-switch a { font-size: 11px; padding: 4px 4px; }
         .site-nav .brand { display: none; }
         .site-nav ul { justify-self: stretch; width: 100%; justify-content: space-between; gap: 6px; }
         .site-nav ul a { font-size: 12px; letter-spacing: 0.02em; }
@@ -382,9 +382,9 @@
         <li><a href="/music/"><span data-i18n="nav.music">川口の歌</span> ♪<span class="music-play-count"></span></a></li>
       </ul>
       <div class="lang-switch" role="group" aria-label="Language">
-        <button type="button" data-lang-btn="ja">日本語</button>
-        <button type="button" data-lang-btn="en">English</button>
-        <button type="button" data-lang-btn="zh">中文</button>
+        <a href="/" data-lang-link="ja" class="current" aria-current="page">日本語</a>
+        <a href="/en/" data-lang-link="en">English</a>
+        <a href="/zh/" data-lang-link="zh">中文</a>
       </div>
     </nav>
 

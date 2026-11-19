@@ -71,13 +71,7 @@
       : null;
     document.title = section ? section + " | " + baseTitle() : baseTitle();
   }
-  if (i18n) {
-    // 言語が切り替わったら、現在のセクションのタイトルで付け直す。
-    i18n.onChange(function () {
-      setCurrent(currentId);
-      renderStuffCount();
-    });
-  }
+
   var sections = ["top", "about", "activity", "contact"].map(function (id) {
     return document.getElementById(id);
   }).filter(Boolean);
