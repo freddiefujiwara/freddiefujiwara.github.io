@@ -139,7 +139,7 @@ describe('generateI18nPages（本物の public から生成）', () => {
 
   it('ブログ以外のリンクは書き換わらない', () => {
     for (const page of [en, zh]) {
-      expect(page).toContain('href="https://freddiefujiwara.com/list-of-stuff/"');
+      expect(page).toContain('href="https://freddiefujiwara.com/everything-i-own/"');
       expect(page).toContain('href="https://freddiefujiwara.com/music"');
       expect(page).toContain('href="https://www.instagram.com/freddiefujiwara"');
       expect(page).toContain('href="#about"');
@@ -204,9 +204,9 @@ describe('blogHrefForLang（ブログリンクの言語別書き換え）', () =
   });
 
   it('ブログ以外の href はそのまま返す', () => {
-    expect(blogHrefForLang('/list-of-stuff/', 'en')).toBe('/list-of-stuff/');
-    expect(blogHrefForLang('https://freddiefujiwara.com/list-of-stuff/', 'en')).toBe(
-      'https://freddiefujiwara.com/list-of-stuff/',
+    expect(blogHrefForLang('/everything-i-own/', 'en')).toBe('/everything-i-own/');
+    expect(blogHrefForLang('https://freddiefujiwara.com/everything-i-own/', 'en')).toBe(
+      'https://freddiefujiwara.com/everything-i-own/',
     );
     expect(blogHrefForLang('https://freddiefujiwara.com/', 'en')).toBe(
       'https://freddiefujiwara.com/',

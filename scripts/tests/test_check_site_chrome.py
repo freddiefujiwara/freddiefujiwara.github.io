@@ -33,15 +33,15 @@ NAV_HREFS_BLOG = [
     "https://freddiefujiwara.com/",
     "https://freddiefujiwara.com/#about", "https://freddiefujiwara.com/#activity",
     "https://freddiefujiwara.com/#contact", "/blog/",
-    "https://freddiefujiwara.com/list-of-stuff/",
+    "https://freddiefujiwara.com/everything-i-own/",
 ]
 NAV_HREFS_LIST = [
     "https://freddiefujiwara.com/",
     "https://freddiefujiwara.com/#about", "https://freddiefujiwara.com/#activity",
     "https://freddiefujiwara.com/#contact",
-    "https://freddiefujiwara.com/blog/", "https://freddiefujiwara.com/list-of-stuff/",
+    "https://freddiefujiwara.com/blog/", "https://freddiefujiwara.com/everything-i-own/",
 ]
-NAV_HREFS_TOP = ["#top", "#about", "#activity", "#contact", "/blog/", "/list-of-stuff/"]
+NAV_HREFS_TOP = ["#top", "#about", "#activity", "#contact", "/blog/", "/everything-i-own/"]
 
 
 def nav_markup(hrefs, nav_class="site-nav"):
@@ -342,9 +342,9 @@ class TestFooterSelfLinks(unittest.TestCase):
         self.assertNotIn("https://freddiefujiwara.com/", found)
 
     def test_self_link_in_escaped_js_string(self):
-        text = r'<a href=\"https://freddiefujiwara.com/list-of-stuff/\">持ち物</a>'
+        text = r'<a href=\"https://freddiefujiwara.com/everything-i-own/\">持ち物</a>'
         self.assertEqual(chrome.footer_links(text),
-                         {"https://freddiefujiwara.com/list-of-stuff/"})
+                         {"https://freddiefujiwara.com/everything-i-own/"})
 
     def test_non_href_occurrence_is_not_counted(self):
         # og:url などの href 以外の出現では数えない
@@ -363,7 +363,7 @@ class TestFooterSelfLinks(unittest.TestCase):
         # ブログのテキスト全体から持ち物への href を除き、自己リンク欠落を模す
         # （footer_links は html+js 全体から探すため、ナビ分も含めて除く）
         data["ブログ"]["js"] = data["ブログ"]["js"].replace(
-            'href="https://freddiefujiwara.com/list-of-stuff/"', "")
+            'href="https://freddiefujiwara.com/everything-i-own/"', "")
         rows = chrome.build_rows(data)
         row = rows_by_label(rows)["フッター共通リンク（24件）"]
         self.assertEqual(chrome.judge_row(row), "差異あり")
@@ -403,7 +403,7 @@ class TestNavLinkSet(unittest.TestCase):
     def test_missing_mochimono_link_is_detected(self):
         # 拡張前のブログの状態: ナビに持ち物リンクがない
         data = aligned_data()
-        hrefs = [h for h in NAV_HREFS_BLOG if "list-of-stuff" not in h]
+        hrefs = [h for h in NAV_HREFS_BLOG if "everything-i-own" not in h]
         data["ブログ"] = make_site(blog_names=True, nav_hrefs=hrefs)
         rows = chrome.build_rows(data)
         row = rows_by_label(rows)["ナビのリンク集合（6件）"]
@@ -423,7 +423,7 @@ class TestNavLinkSet(unittest.TestCase):
     def test_extraction_from_escaped_js_string(self):
         # SPA の JS バンドルでは静的文字列の引用符がエスケープされる
         markup = nav_markup(NAV_HREFS_LIST).replace('"', '\\"')
-        keys = chrome.nav_link_keys(markup, "https://freddiefujiwara.com/list-of-stuff/")
+        keys = chrome.nav_link_keys(markup, "https://freddiefujiwara.com/everything-i-own/")
         self.assertEqual(keys, set(chrome.NAV_CANON_KEYS))
 
     def test_relative_and_anchor_hrefs_are_normalized(self):
@@ -447,7 +447,7 @@ class TestNavLinkSet(unittest.TestCase):
     def test_brand_link_is_not_counted(self):
         # ブランドは <ul> の外にあるため、「トップ」リンクとして数えない
         keys = chrome.nav_link_keys(
-            nav_markup(NAV_HREFS_LIST[1:]), "https://freddiefujiwara.com/list-of-stuff/")
+            nav_markup(NAV_HREFS_LIST[1:]), "https://freddiefujiwara.com/everything-i-own/")
         self.assertNotIn("/", keys)
 
     def test_no_nav_returns_empty(self):

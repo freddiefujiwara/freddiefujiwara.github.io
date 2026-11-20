@@ -6,7 +6,7 @@ freddiefujiwara.com の3サイト（トップ / ブログ / 持ち物）は別�
 
 - トップ: freddiefujiwara/freddiefujiwara.github.io（`public/index.html`、CSS はインライン）
 - ブログ: freddiefujiwara/blog（`src/style.css` / `src/App.vue`）
-- 持ち物: freddiefujiwara/list-of-stuff（`src/App.vue` のスコープ付き CSS）
+- 持ち物: freddiefujiwara/everything-i-own（`src/App.vue` のスコープ付き CSS）
 
 値はいずれも 2026-11-02 に各サイトのソースと本番 CSS から実測したものです。
 「既知の未統一」は同日にブログ PR #31・トップ PR #25・持ち物 PR #35・トップ PR #27 のマージ後、
@@ -150,12 +150,12 @@ python3 -m unittest discover -s scripts/tests -v   # チェックスクリプト
   リンク先は https://freddiefujiwara.com/ です（トップも PR #34 で #top からルート URL に変更）。
 - リンク集合は全サイト7件（トップ / プロフィール / 活動・発信 / 情報交換 / ブログ / 持ち物リスト / 川口の歌）で統一です。
   多言語のラベルも全サイトで統一です（サイト共通の4件）:
-  トップ = Home / 首页、ブログ = Blog / 博客、持ち物リスト = My Belongings / 物品清单、
+  トップ = Home / 首页、ブログ = Blog / 博客、持ち物リスト = Everything I Own / 物品清单、
   川口の歌 = Songs of Kawaguchi / 川口之歌（英語 / 中国語の順）。
   - 「トップ」のリンク先は、トップページ上では #top アンカー、ブログ／持ち物では https://freddiefujiwara.com/ です。
   - プロフィール / 活動・発信 / 情報交換はトップページのセクション（#about / #activity / #contact）へのリンクで、
     ブログ／持ち物では絶対 URL、トップ自身ではページ内アンカーです（スクロールスパイ連動はトップの固有差分）。
-  - ブログ / 持ち物リストは /blog/、/list-of-stuff/ です。
+  - ブログ / 持ち物リストは /blog/、/everything-i-own/ です。
   - 「川口の歌」は https://freddiefujiwara.com/music へのリンクで、ラベルは「川口の歌 ♪」。
     その直後の `.music-play-count` スパンに、各サイトの小さなスクリプトが /music-count.json
     （トップの静的生成が social-gas の公開集計から作る小さな JSON）から累計再生回数を
@@ -286,7 +286,7 @@ a.hero-inner { /* ヒーローをリンクにする場合の共通指定 */
 - 著作権行の文言は3サイト共通: `© {年} 藤原史和（Fumikazu Fujiwara）— freddiefujiwara.com`
 - リンク集合（24件共通）: 5グループに分けて見出し付きで並べます（2026-11-11 にグループ化、2026-11-12 に「自作ツール」を追加）。
   - このサイト: トップ（https://freddiefujiwara.com/）/ ブログ（https://freddiefujiwara.com/blog/）/
-    持ち物（https://freddiefujiwara.com/list-of-stuff/）/
+    持ち物（https://freddiefujiwara.com/everything-i-own/）/
     バケットリスト（https://freddiefujiwara.com/bucket-list/）
   - 自作ツール: 学习（中国語の復習）（https://freddiefujiwara.com/xuexi/） / openapi-fetch（https://freddiefujiwara.com/openapi-fetch/） / md2img（Markdown to Image）（https://freddiefujiwara.com/md2img/） / portfolio-treemap（ポートフォリオ構成図）（https://freddiefujiwara.com/portfolio-treemap/） / dtgwt（デシジョンテーブル→Given/When/Then）（https://freddiefujiwara.com/dtgwt/） / node-qict（ペアワイズ法のテストケース生成）（https://freddiefujiwara.com/node-qict/） / smtc（状態遷移のテストケース生成）（https://freddiefujiwara.com/smtc/） / dtdt（デシジョンツリー→デシジョンテーブル）（https://freddiefujiwara.com/dtdt/）
   - SNS: Instagram / X / Facebook
@@ -357,7 +357,7 @@ meta refresh は使いません。転送ページは noindex とし、計測タ�
 （gtag）は入れません。飛び先を変えるときは転送ページとこの表と
 テスト（tests/redirects.test.js）を一緒に直します。
 
-飛び先がサイト内の短縮URL（chinese / map / bucket-list / list-of-stuff /
+飛び先がサイト内の短縮URL（chinese / map / bucket-list / everything-i-own /
 music）は、サイト内からの移動では案内ページを挟まず毎回即座に
 転送します（遷移元が freddiefujiwara.com かどうかで判定し、判定
 できない場合は従来の初回判定になります）。ブログ記事内のリンクも
@@ -374,11 +374,11 @@ music）は、サイト内からの移動では案内ページを挟まず毎回
 | https://freddiefujiwara.com/chinese | https://freddiefujiwara.com/blog/tag/中国語 |
 | https://freddiefujiwara.com/map | https://freddiefujiwara.com/blog/1bNigXcTT-1LSXjUYAlfFQuJPX6U7U3ELeWAfG5XIb58 |
 | https://freddiefujiwara.com/bucket-list | https://freddiefujiwara.com/blog/1WPrZI3RqXZcBIrVfrvY7Qn6AF-pFBHdNWXcK7PIwokM |
-| https://freddiefujiwara.com/list-of-stuff | https://freddiefujiwara.com/blog/1tn5P1vB1jnKHSay_FC2AEtNxH0gQZ3_jffRnHuz4YpM |
+| https://freddiefujiwara.com/everything-i-own | https://freddiefujiwara.com/blog/1tn5P1vB1jnKHSay_FC2AEtNxH0gQZ3_jffRnHuz4YpM |
 | https://freddiefujiwara.com/music | https://freddiefujiwara.com/blog/1V7cXplHKbsT48EhLarl-SPHfDV-lSEafEId2OMgExkg |
 | https://freddiefujiwara.com/ga | https://freddiefujiwara.com/social/ |
 
-この4つ（map / bucket-list / list-of-stuff / music）は、2026年11月まで
+この4つ（map / bucket-list / everything-i-own / music）は、2026年11月まで
 ブログ記事そのものを静的HTMLで表示する「静的記事ページ」でした。
 blog-gas のスナップショット化で記事の応答が数秒に収まったため、
 静的生成の仕組みは廃止し、他の短縮URLと同じ転送ページに戻しました。
@@ -399,7 +399,7 @@ blog-gas のスナップショット化で記事の応答が数秒に収まっ�
 | ナビの現在地表示 | スクロールスパイ（ページ内セクション連動、タイトルも切替） | 「ブログ」を active | 「持ち物」を active |
 | ナビのリンク | 6件共通（「トップ」は #top、セクションはページ内アンカー） | 6件共通（「トップ」はルート URL、セクションは絶対 URL） | ブログと同じ |
 | ヒーローのラベル | （.place、別書式） | KAWAGUCHI — BLOG | KAWAGUCHI — LIST OF STUFF |
-| ヒーローのクリック先 | —（リンクではない） | 最新記事 | フィルタ解除（/list-of-stuff/） |
+| ヒーローのクリック先 | —（リンクではない） | 最新記事 | フィルタ解除（/everything-i-own/） |
 | ヒーロー直下の要素 | CTA ボタン等（固有） | 記事一覧 | 統計行（全N点、フィルタの上に表示） |
 | フッター上の行 | 写真クレジットの注記（.fine） | 記事ページにユーティリティ行（トップへ戻る \| RSS \| コピー） | ユーティリティ行（トップへ戻る \| コピー） |
 | favicon の参照方式 | 自リポジトリのファイル | 自リポジトリのファイル（/blog/ 配下） | トップのファイルを絶対 URL で参照（バイナリを push できない制約のため） |

@@ -35,7 +35,7 @@ export const REPOS = [
   "tweet-gas",
   "bucket-list-gas",
   "alarm-gas",
-  "list-of-stuff-gas",
+  "everything-i-own-gas",
 ];
 
 const repoUrl = (repo) => `https://github.com/freddiefujiwara/${repo}.git`;
@@ -107,7 +107,7 @@ export const MARKERS = {
   "tweet-gas": [...SESSION_MARKERS],
   "bucket-list-gas": [...SESSION_MARKERS],
   "alarm-gas": [...SESSION_MARKERS],
-  "list-of-stuff-gas": [...SESSION_MARKERS],
+  "everything-i-own-gas": [...SESSION_MARKERS],
 };
 
 // Extracts the SHEET_NAMES list block, or null when the file

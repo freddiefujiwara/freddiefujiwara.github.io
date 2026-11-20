@@ -17,7 +17,7 @@ describe('audit-gas-markers coverage', () => {
       'tweet-gas',
       'bucket-list-gas',
       'alarm-gas',
-      'list-of-stuff-gas',
+      'everything-i-own-gas',
     ]);
     for (const repo of REPOS) {
       expect(MARKERS[repo].length).toBeGreaterThan(0);
