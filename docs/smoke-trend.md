@@ -11,3 +11,4 @@
 | 2026-11-17 | success | ○/○ | ○/○ | ○/○ | ○/○ | ○/○ | ○/○ | 特殊記事 map 2.30s / bucket 1.39s / stuff 2.42s / music 2.29s |
 | 2026-11-18 | success | ○/○ | ○/○ | ○/○ | ○/○ | ○/○ | ○/○ | 特殊記事 map 1.93s / bucket 1.87s / stuff 3.16s / music 1.32s |
 | 2026-11-19 | success | ○/○ | ○/○ | ○/○ | ○/○ | ○/○ | ○/○ | 特殊記事 map 1.45s / bucket 1.59s / stuff 2.79s / music 1.72s |
+| 2026-11-20 | failure | ○/○ | ○/○ | ○/○ | ○/○ | ○/○ | ○/○ | 特殊記事 map 3.38s / bucket 2.91s / stuff 3.98s / music 2.93s。ラン: https://github.com/freddiefujiwara/freddiefujiwara.github.io/actions/runs/44658841754 |
