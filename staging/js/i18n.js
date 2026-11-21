@@ -11,10 +11,9 @@
 // 生成時に焼き込まれているが、同じ apply() を読み込み時にも
 // 通すので、生成結果と実行時表示がずれることはない。
 //
-// ブログと共有する localStorage キーへ言語を記録するのは、読者が
-// 言語スイッチャーで明示的に選んだときだけ（recordLang）。記録は
-// ブログ側が言語を引き継ぐためのもので、トップ自身の言語の決定
-// には保存値を一切使わない。
+// 読み込み時には、表示中の言語をブログと共有する localStorage
+// キーへ記録する（recordLang）。記録はブログ側が言語を引き継ぐ
+// ためのもので、トップ自身の言語の決定には保存値を一切使わない。
 //
 // 使い方：
 // - 静的文言は HTML 側に data-i18n="キー" を付けると textContent が、
@@ -329,43 +328,13 @@
 
   var current = langFromHtml();
 
-  // ブログと共有する localStorage キーへの言語の記録。記録するのは、
-  // 読者が言語スイッチャーで明示的に言語を選んだときだけ（ブログ側
-  // のルールと同一）。共有リンク等で言語ページを直接開いただけでは
-  // 記録しない。スイッチャーは実ページへのリンクなので、クリック時
-  // に sessionStorage へ行き先の言語を印として残し、遷移先のページ
-  // が印と自分の言語の一致を確認して初めて記録する。印は1回で消す
-  // （残ると、後に関係ない訪問で記録されてしまう）。本番とステージ
-  // ングは同一オリジンで配信されるため、記録先のキーはステージン
-  // グのパス（/staging/ を含む）では分ける。保存できない環境
-  // （プライベートモード等）でもページが壊れないよう、失敗は
-  // 握りつぶす。
-  var PICK_KEY = "site:lang:pick:v1";
-
-  function markLangPick() {
-    document.querySelectorAll("[data-lang-link]").forEach(function (link) {
-      link.addEventListener("click", function () {
-        try {
-          window.sessionStorage.setItem(
-            PICK_KEY,
-            link.getAttribute("data-lang-link")
-          );
-        } catch (e) {
-          // 印が残せなくても遷移自体は通常どおり行われる。
-        }
-      });
-    });
-  }
-
+  // 表示中の言語を、ブログと共有する localStorage キーへ記録する。
+  // 常に今見ているページの言語で上書きする（このページの言語こそが
+  // サイト全体の言語である）。本番とステージングは同一オリジンで
+  // 配信されるため、ステージングのパス（/staging/ を含む）では
+  // キーを分ける。保存できない環境（プライベートモード等）でも
+  // ページが壊れないよう、失敗は握りつぶす。
   function recordLang() {
-    var pick = null;
-    try {
-      pick = window.sessionStorage.getItem(PICK_KEY);
-      window.sessionStorage.removeItem(PICK_KEY);
-    } catch (e) {
-      // 読めない環境では記録しない。
-    }
-    if (!isLang(pick) || pick !== current) return;
     try {
       var staging = window.location.pathname.indexOf("/staging/") >= 0;
       var key = staging ? "site:lang:v1:staging" : "site:lang:v1";
@@ -440,5 +409,4 @@
 
   recordLang();
   apply();
-  markLangPick();
 })();
