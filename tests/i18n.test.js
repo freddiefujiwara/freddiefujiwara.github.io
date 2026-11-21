@@ -15,8 +15,9 @@ import {
 // i18n.js（UI 多言語化：日本語 / English / 中文）の仕様。
 // 言語は URL が決める：日本語が /、英語が /en/、中国語が /zh/ で、
 // ページの html lang 属性から実行時の言語が決まる（言語の決定には
-// localStorage やクエリパラメータを使わない。localStorage へは
-// ブログと共有するために表示中の言語を記録だけする）。/en/ と
+// localStorage やクエリパラメータを使わない。localStorage へは、
+// 言語スイッチャーで明示的に選ばれた言語だけを、ブログと共有する
+// ために記録する）。/en/ と
 // /zh/ のページ自体は scripts/generate-i18n-pages.mjs がビルド時に
 // 生成する。
 // 記事タイトル等の動的コンテンツは翻訳せず、注記などの型だけを
@@ -78,9 +79,11 @@ describe('辞書の網羅性', () => {
   });
 
   it('言語は URL で決まるため、保存値の読み取りやパラメータ解釈を持たない', () => {
-    // localStorage へは表示中の言語を記録する（setItem）だけで、
-    // 読んで（getItem）言語を決めることはしない。
-    expect(i18nJs).not.toContain('getItem');
+    // localStorage（ブログと共有する言語の記録）は記録する
+    // （setItem）だけで、読んで言語を決めることはしない。読むのは
+    // sessionStorage の「スイッチャーで選んだ」印だけで、それも
+    // 記録するかどうかの判定にしか使わない。
+    expect(i18nJs).not.toContain('localStorage.getItem');
     expect(i18nJs).not.toContain('URLSearchParams');
   });
 });
@@ -132,29 +135,64 @@ describe('言語の記録（ブログとの共有）', () => {
     return page;
   }
 
-  it('通常パスでは共有キー site:lang:v1 に表示中の言語が入る', () => {
+  // スイッチャーのクリックが残した印（sessionStorage）を与えて
+  // i18n.js を読み込んだページ。
+  function loadPicked(url, langAttr, pick) {
+    const page = loadPage({ url });
+    if (pick) page.window.sessionStorage.setItem('site:lang:pick:v1', pick);
+    if (langAttr) page.document.documentElement.lang = langAttr;
+    runI18n(page.window);
+    return page;
+  }
+
+  it('スイッチャーを経由しない読み込みでは記録されない', () => {
     const { window } = loadAt('https://freddiefujiwara.com/en/', 'en');
+    expect(window.localStorage.getItem('site:lang:v1')).toBeNull();
+    expect(window.localStorage.getItem('site:lang:v1:staging')).toBeNull();
+  });
+
+  it('印があって言語が一致すれば共有キーに記録される', () => {
+    const { window } = loadPicked('https://freddiefujiwara.com/en/', 'en', 'en');
     expect(window.localStorage.getItem('site:lang:v1')).toBe('en');
     expect(window.localStorage.getItem('site:lang:v1:staging')).toBeNull();
   });
 
-  it('日本語ページでは ja が記録される', () => {
-    const { window } = loadAt('https://freddiefujiwara.com/', null);
+  it('日本語への印でも記録される', () => {
+    const { window } = loadPicked('https://freddiefujiwara.com/', null, 'ja');
     expect(window.localStorage.getItem('site:lang:v1')).toBe('ja');
   });
 
-  it('/staging/ を含むパスではステージング用のキーに入る', () => {
-    const { window } = loadAt('https://freddiefujiwara.com/staging/', 'en');
+  it('印は使われたら消える', () => {
+    const { window } = loadPicked('https://freddiefujiwara.com/en/', 'en', 'en');
+    expect(window.sessionStorage.getItem('site:lang:pick:v1')).toBeNull();
+  });
+
+  it('印と言語が食い違うと記録されず、印も消える', () => {
+    const { window } = loadPicked('https://freddiefujiwara.com/', null, 'en');
+    expect(window.localStorage.getItem('site:lang:v1')).toBeNull();
+    expect(window.sessionStorage.getItem('site:lang:pick:v1')).toBeNull();
+  });
+
+  it('/staging/ を含むパスでは印つきでステージング用のキーに入る', () => {
+    const { window } = loadPicked('https://freddiefujiwara.com/staging/', 'en', 'en');
     expect(window.localStorage.getItem('site:lang:v1:staging')).toBe('en');
     expect(window.localStorage.getItem('site:lang:v1')).toBeNull();
   });
 
-  it('以前の記録は今見ているページの言語で上書きされる', () => {
+  it('以前の記録は印なしでは上書きされない', () => {
     const page = loadPage({ url: 'https://freddiefujiwara.com/en/' });
     page.window.localStorage.setItem('site:lang:v1', 'zh');
     page.document.documentElement.lang = 'en';
     runI18n(page.window);
-    expect(page.window.localStorage.getItem('site:lang:v1')).toBe('en');
+    expect(page.window.localStorage.getItem('site:lang:v1')).toBe('zh');
+  });
+
+  it('スイッチャーのクリックで行き先の言語が印として残る', () => {
+    const { window, document } = loadWithLang(null);
+    const link = document.querySelector('[data-lang-link="en"]');
+    link.addEventListener('click', (e) => e.preventDefault());
+    link.click();
+    expect(window.sessionStorage.getItem('site:lang:pick:v1')).toBe('en');
   });
 
   it('保存が例外を投げてもページは壊れない', () => {
@@ -165,6 +203,15 @@ describe('言語の記録（ブログとの共有）', () => {
     expect(() => runI18n(page.window)).not.toThrow();
     expect(page.window.SiteI18n.getLang()).toBe('ja');
     expect(page.document.title).toBe('藤原史和｜川口を歩くQAエンジニア');
+  });
+
+  it('印の読み取りが例外を投げてもページは壊れない', () => {
+    const page = loadPage();
+    page.window.sessionStorage.getItem = () => {
+      throw new Error('SecurityError');
+    };
+    expect(() => runI18n(page.window)).not.toThrow();
+    expect(page.window.SiteI18n.getLang()).toBe('ja');
   });
 });
 
