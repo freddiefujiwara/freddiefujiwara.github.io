@@ -4,14 +4,12 @@
   "private": true,
   "homepage": "https://freddiefujiwara.github.io",
   "scripts": {
-    "deploy": "gh-pages -d public",
     "build:staging": "node scripts/build-staging.mjs public staging-dist && node scripts/generate-i18n-pages.mjs public public",
     "test": "vitest run",
     "test:staging": "playwright test"
   },
   "devDependencies": {
     "@playwright/test": "^1.65.0",
-    "gh-pages": "^6.3.0",
     "jsdom": "^31.0.0",
     "vitest": "^5.1.0"
   }
