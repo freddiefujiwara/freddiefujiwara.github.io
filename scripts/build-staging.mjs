@@ -38,6 +38,7 @@ export const STAGING_LINKS = [
   ["学习", "/xuexi/staging/"],
   ["リーダー", "/reader/staging/"],
   ["音楽管理", "/music-admin/staging/"],
+  ["Muse", "/muse/staging/"],
 ];
 
 // The link back to production, appended after the staging links.
