@@ -481,7 +481,7 @@ export const refreshSnsCountJson = async ({
     obj && typeof obj.followers_breakdown === "object"
       ? obj.followers_breakdown
       : null;
-  const breakdownKeys = ["instagram", "youtube", "threads"];
+  const breakdownKeys = ["instagram", "youtube", "threads", "x"];
   const nextBreakdown = breakdownOf(values);
   const previousBreakdown = breakdownOf(previous);
   const breakdownUnchanged =
