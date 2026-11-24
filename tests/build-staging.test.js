@@ -177,7 +177,7 @@ describe('stagingBannerHtml', () => {
     for (const [, href] of STAGING_LINKS) {
       expect(html).toContain(`href="${href}"`);
     }
-    expect(STAGING_LINKS).toHaveLength(12);
+    expect(STAGING_LINKS).toHaveLength(13);
   });
 
   it('リンクに下線を指定する（トップ側の a の下線なし指定に打ち消されないため）', () => {
