@@ -1,5 +1,5 @@
 // ヒーローの数字（SNS延べフォロワー数と、Instagram の再生回数・
-// 届いた人数・保存数）を最新値に差し替えるための小さな
+// 届いた人数、サイト表示回数）を最新値に差し替えるための小さな
 // スクリプト。あわせて、フォロワー数の見出しには集計に含まれて
 // いるネットワーク名を、数字ブロックの下の注記には数字全体の
 // 時点を差し替える。数値は静的生成のタイミングで ga-gas の
@@ -18,14 +18,14 @@
   var viewsUnitEls = document.querySelectorAll(".sns-views-30d-unit");
   var reachEls = document.querySelectorAll(".sns-reach-30d");
   var reachUnitEls = document.querySelectorAll(".sns-reach-30d-unit");
-  var savesEls = document.querySelectorAll(".sns-saves-30d");
+  var siteViewsEls = document.querySelectorAll(".sns-site-views-28d");
   var totalLabelEls = document.querySelectorAll(".sns-total-label");
   var dateEls = document.querySelectorAll(".sns-stats-date");
   if (
     !totalEls.length &&
     !viewsEls.length &&
     !reachEls.length &&
-    !savesEls.length &&
+    !siteViewsEls.length &&
     !totalLabelEls.length &&
     !dateEls.length
   ) {
@@ -142,10 +142,13 @@
       });
     }
 
-    if (isNumber(data.saves_30d)) {
-      var savesText = data.saves_30d.toLocaleString(locale());
-      savesEls.forEach(function (el) {
-        el.textContent = savesText;
+    // サイト表示回数（過去28日）。GA の総計（トップページや
+    // ツールも含むサイト全体）で、Instagram の指標ではない。
+    // JSON に無い間は静的な初期値のまま残る。
+    if (isNumber(data.site_views_28d)) {
+      var siteViewsText = data.site_views_28d.toLocaleString(locale());
+      siteViewsEls.forEach(function (el) {
+        el.textContent = siteViewsText;
       });
     }
 
