@@ -520,6 +520,15 @@ export const refreshSnsCountJson = async ({
       values[key] = payload[key];
     }
   }
+  // The site-views figure is not an Instagram metric, so it is
+  // not in SNS_INSTAGRAM_METRICS; carry it explicitly or the
+  // written file silently drops it.
+  if (
+    typeof payload.site_views_28d === "number" &&
+    Number.isFinite(payload.site_views_28d)
+  ) {
+    values.site_views_28d = payload.site_views_28d;
+  }
   if (payload.followers_breakdown) {
     values.followers_breakdown = payload.followers_breakdown;
   }
@@ -532,7 +541,7 @@ export const refreshSnsCountJson = async ({
       previous = null;
     }
   }
-  const numberKeys = ["total", ...SNS_INSTAGRAM_METRICS];
+  const numberKeys = ["total", ...SNS_INSTAGRAM_METRICS, "site_views_28d"];
   const breakdownOf = (obj) =>
     obj && typeof obj.followers_breakdown === "object"
       ? obj.followers_breakdown
