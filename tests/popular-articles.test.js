@@ -13,7 +13,10 @@ describe('popular-articles.js（よく読まれている記事）', () => {
         card('https://freddiefujiwara.com/blog/old1', '旧タイトル1', '旧紹介文1') +
         card('https://freddiefujiwara.com/blog/old2', '旧タイトル2', '旧紹介文2') +
         card('https://freddiefujiwara.com/blog/old3', '旧タイトル3', '旧紹介文3') +
-        '</div></section>' +
+        '</div>' +
+        '<div class="series"><ul class="series-list">' +
+        '<li><a href="https://freddiefujiwara.com/blog/olds"><span class="series-date">2026-11-01</span><span class="series-title">旧シリーズ記事</span></a></li>' +
+        '</ul></div></section>' +
         '</body></html>',
       { url: 'https://freddiefujiwara.com/', runScripts: 'outside-only' },
     );
@@ -51,6 +54,53 @@ describe('popular-articles.js（よく読まれている記事）', () => {
       '直近28日で1,234回読まれています',
     );
     expect(cards[2].querySelector('h3').textContent).toBe('新しい記事C');
+  });
+
+  it('シリーズ一覧を JSON の series で組み直す', async () => {
+    const fetchImpl = vi.fn(async () => ({
+      ok: true,
+      json: async () => ({
+        days: 28,
+        articles: [
+          { id: 'a', title: '新しい記事A', views: 1234, href: 'https://freddiefujiwara.com/blog/a' },
+        ],
+        series: [
+          { id: 's2', title: 'サイト運営の裏側：その2', date: '2026-11-16', href: 'https://freddiefujiwara.com/blog/s2' },
+          { id: 's1', title: 'サイト運営の裏側：その1', date: '2026-11-01', href: 'https://freddiefujiwara.com/blog/s1' },
+        ],
+      }),
+    }));
+    const window = setup(fetchImpl);
+    await flush();
+    const items = window.document.querySelectorAll('#articles .series-list li');
+    expect(items).toHaveLength(2);
+    expect(items[0].querySelector('a').getAttribute('href')).toBe(
+      'https://freddiefujiwara.com/blog/s2',
+    );
+    expect(items[0].querySelector('.series-date').textContent).toBe('2026年11月16日');
+    expect(items[0].querySelector('.series-title').textContent).toBe(
+      'サイト運営の裏側：その2',
+    );
+    expect(items[1].querySelector('.series-title').textContent).toBe(
+      'サイト運営の裏側：その1',
+    );
+  });
+
+  it('series が無い JSON では静的なシリーズ一覧のままにする', async () => {
+    const fetchImpl = vi.fn(async () => ({
+      ok: true,
+      json: async () => ({
+        days: 28,
+        articles: [
+          { id: 'a', title: '新しい記事A', views: 1234, href: 'https://freddiefujiwara.com/blog/a' },
+        ],
+      }),
+    }));
+    const window = setup(fetchImpl);
+    await flush();
+    const items = window.document.querySelectorAll('#articles .series-list li');
+    expect(items).toHaveLength(1);
+    expect(items[0].querySelector('.series-title').textContent).toBe('旧シリーズ記事');
   });
 
   const articlesFetch = async () => ({
