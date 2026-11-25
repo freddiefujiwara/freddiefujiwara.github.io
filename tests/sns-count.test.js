@@ -80,7 +80,7 @@ describe('sns-count.js（Instagram の指標）', () => {
     '<div class="num"><span class="sns-follower-total">2,307</span><small>人</small></div>' +
     '<div class="num"><span class="sns-views-30d">約82</span><small class="sns-views-30d-unit">万回</small></div>' +
     '<div class="num"><span class="sns-reach-30d">約13</span><small class="sns-reach-30d-unit">万人</small></div>' +
-    '<div class="num"><span class="sns-saves-30d">1,197</span><small>回</small></div>' +
+    '<div class="num"><span class="sns-site-views-28d">7,521</span><small>回</small></div>' +
     '</body></html>';
 
   function setupFull(fetchImpl) {
@@ -107,7 +107,7 @@ describe('sns-count.js（Instagram の指標）', () => {
         total: 2500,
         views_30d: 823456,
         reach_30d: 132312,
-        saves_30d: 1197,
+        site_views_28d: 7521,
         updated_at: 'x',
       }),
     }));
@@ -117,7 +117,7 @@ describe('sns-count.js（Instagram の指標）', () => {
     expect(text(window, '.sns-views-30d-unit')).toBe('万回');
     expect(text(window, '.sns-reach-30d')).toBe('約13');
     expect(text(window, '.sns-reach-30d-unit')).toBe('万人');
-    expect(text(window, '.sns-saves-30d')).toBe('1,197');
+    expect(text(window, '.sns-site-views-28d')).toBe('7,521');
   });
 
   it('再生回数が1万未満なら実数＋「回」にする', async () => {
@@ -143,10 +143,10 @@ describe('sns-count.js（Instagram の指標）', () => {
   it('一部の項目だけある JSON ではその項目だけ差し替わる', async () => {
     const window = setupFull(async () => ({
       ok: true,
-      json: async () => ({ saves_30d: 3000 }),
+      json: async () => ({ site_views_28d: 3000 }),
     }));
     await flush();
-    expect(text(window, '.sns-saves-30d')).toBe('3,000');
+    expect(text(window, '.sns-site-views-28d')).toBe('3,000');
     expect(text(window, '.sns-follower-total')).toBe('2,307');
     expect(text(window, '.sns-views-30d')).toBe('約82');
     expect(text(window, '.sns-views-30d-unit')).toBe('万回');
@@ -158,14 +158,14 @@ describe('sns-count.js（Instagram の指標）', () => {
       ok: true,
       json: async () => ({
         total: 2500,
-        saves_30d: '1197',
+        site_views_28d: '7521',
         views_30d: null,
         reach_30d: '132312',
       }),
     }));
     await flush();
     expect(text(window, '.sns-follower-total')).toBe('2,500');
-    expect(text(window, '.sns-saves-30d')).toBe('1,197');
+    expect(text(window, '.sns-site-views-28d')).toBe('7,521');
     expect(text(window, '.sns-views-30d')).toBe('約82');
     expect(text(window, '.sns-reach-30d')).toBe('約13');
   });

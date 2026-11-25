@@ -130,12 +130,12 @@ describe('ページ構造の不変条件', () => {
     expect(reach.querySelector('.sns-reach-30d').textContent).toBe('約13');
     expect(reach.querySelector('.num small').textContent).toBe('万人');
 
-    const saves = stats[3];
-    expect(saves.querySelector('.label').textContent.trim()).toBe(
-      'Instagramの保存数（過去30日）',
+    const siteViews = stats[3];
+    expect(siteViews.querySelector('.label').textContent.trim()).toBe(
+      'サイト表示回数（過去28日）',
     );
-    expect(saves.querySelector('.sns-saves-30d').textContent).toBe('1,200');
-    expect(saves.querySelector('.num small').textContent).toBe('回');
+    expect(siteViews.querySelector('.sns-site-views-28d').textContent).toBe('7,521');
+    expect(siteViews.querySelector('.num small').textContent).toBe('回');
   });
 });
 
