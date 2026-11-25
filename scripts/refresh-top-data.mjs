@@ -144,7 +144,12 @@ export const fetchTopArticles = async (apiUrl, fetchImpl = fetch) => {
 };
 
 // How many cards the top page's よく読まれている記事 section has.
-export const POPULAR_ARTICLES_LIMIT = 3;
+export const POPULAR_ARTICLES_LIMIT = 5;
+
+// How many entries the series list under the popular cards has,
+// and the title marker that makes an article part of the series.
+export const SERIES_ARTICLES_LIMIT = 5;
+export const SERIES_TITLE_MARKER = "サイト運営の裏側";
 
 // The blog title maps carry the article's date as a prefix. The
 // Japanese map uses ISO form ("2026-11-18 "); the translated maps
@@ -155,6 +160,23 @@ export const stripTitleDatePrefix = (raw) =>
     .replace(/^\d{4}-\d{2}-\d{2}\s*/, "")
     .replace(/^[A-Z][a-z]+ \d{1,2}, \d{4}:\s*/, "")
     .replace(/^\d{4}年\d{1,2}月\d{1,2}日[：:]?\s*/, "");
+
+// Translated titles ride along as title_en / title_zh when the
+// blog has one on record that differs from the Japanese title;
+// the top page's script falls back to `title` per entry.
+const attachLocalizedTitles_ = (pickedEntry, localizedTitles) => {
+  if (!localizedTitles || typeof localizedTitles !== "object") return;
+  for (const lang of ["en", "zh"]) {
+    const map = localizedTitles[lang];
+    if (!map || typeof map !== "object") continue;
+    const rawLocalized = map[pickedEntry.id];
+    if (typeof rawLocalized !== "string" || !rawLocalized) continue;
+    const localized = stripTitleDatePrefix(rawLocalized);
+    if (localized && localized !== pickedEntry.title) {
+      pickedEntry[`title_${lang}`] = localized;
+    }
+  }
+};
 
 // Join a top_articles ranking ([{ id, views }], best first) with
 // the blog's title map (id -> "YYYY-MM-DD <title>", the shape the
@@ -182,25 +204,45 @@ export const buildPopularArticles = (
       views: entry.views,
       href: `https://freddiefujiwara.com/blog/${entry.id}`,
     };
-    // Translated titles ride along as title_en / title_zh when the
-    // blog has one on record that differs from the Japanese title;
-    // the top page's script falls back to `title` per card.
-    if (localizedTitles && typeof localizedTitles === "object") {
-      for (const lang of ["en", "zh"]) {
-        const map = localizedTitles[lang];
-        if (!map || typeof map !== "object") continue;
-        const rawLocalized = map[entry.id];
-        if (typeof rawLocalized !== "string" || !rawLocalized) continue;
-        const localized = stripTitleDatePrefix(rawLocalized);
-        if (localized && localized !== pickedEntry.title) {
-          pickedEntry[`title_${lang}`] = localized;
-        }
-      }
-    }
+    attachLocalizedTitles_(pickedEntry, localizedTitles);
     picked.push(pickedEntry);
     if (picked.length >= limit) break;
   }
   return picked;
+};
+
+// The series list shown under the popular cards: every article
+// whose title carries the series marker, newest first. The date
+// is the title map's "YYYY-MM-DD" prefix — the same prefix the
+// card builder strips for display — kept here as `date` so the
+// list can show when each entry was published.
+export const buildSeriesArticles = (
+  titles,
+  localizedTitles = null,
+  limit = SERIES_ARTICLES_LIMIT
+) => {
+  if (!titles || typeof titles !== "object") {
+    return [];
+  }
+  const entries = [];
+  for (const [id, raw] of Object.entries(titles)) {
+    if (typeof raw !== "string" || !raw) continue;
+    const title = stripTitleDatePrefix(raw);
+    if (!title.includes(SERIES_TITLE_MARKER)) continue;
+    const dateMatch = raw.match(/^(\d{4}-\d{2}-\d{2})/);
+    const entry = {
+      id,
+      title,
+      date: dateMatch ? dateMatch[1] : null,
+      href: `https://freddiefujiwara.com/blog/${id}`,
+    };
+    attachLocalizedTitles_(entry, localizedTitles);
+    entries.push(entry);
+  }
+  entries.sort((a, b) =>
+    (b.date || "").localeCompare(a.date || "") || b.id.localeCompare(a.id)
+  );
+  return entries.slice(0, limit);
 };
 
 // Refreshes <outDir>/popular-articles.json, the tiny file the top
@@ -241,6 +283,7 @@ export const refreshPopularArticlesJson = async ({
     payload = {
       days: ranking.days,
       articles,
+      series: buildSeriesArticles(titles, localizedTitles),
       updated_at: ranking.updated_at,
     };
   } catch (error) {
@@ -258,7 +301,8 @@ export const refreshPopularArticlesJson = async ({
   }
   if (
     previous &&
-    JSON.stringify(previous.articles) === JSON.stringify(payload.articles)
+    JSON.stringify(previous.articles) === JSON.stringify(payload.articles) &&
+    JSON.stringify(previous.series || []) === JSON.stringify(payload.series)
   ) {
     log("unchanged: popular-articles.json");
     return { refreshed: false, reason: "articles unchanged" };

@@ -10,6 +10,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import {
   buildPopularArticles,
+  buildSeriesArticles,
   fetchBlogTitles,
   fetchMusicCount,
   fetchSnsCounts,
@@ -123,6 +124,8 @@ describe('popular-articles.json の生成', () => {
     idB: '2026-11-07 記事Bのタイトル',
     idC: '2026-11-06 記事Cのタイトル',
     idD: '2026-11-05 記事Dのタイトル',
+    idE: '2026-11-04 記事Eのタイトル',
+    idF: '2026-11-03 記事Fのタイトル',
   };
   const rankingResponse = (articles) =>
     okResponse({ ok: true, days: 28, articles, updated_at: 't1' });
@@ -182,6 +185,12 @@ describe('popular-articles.json の生成', () => {
         views: 50,
         href: 'https://freddiefujiwara.com/blog/idC',
       },
+      {
+        id: 'idD',
+        title: '記事Dのタイトル',
+        views: 10,
+        href: 'https://freddiefujiwara.com/blog/idD',
+      },
     ]);
   });
 
@@ -240,6 +249,41 @@ describe('popular-articles.json の生成', () => {
     expect(picked[2].title_zh).toBeUndefined();
   });
 
+  it('buildSeriesArticles はシリーズ名を含む記事を新しい順に並べる', () => {
+    const picked = buildSeriesArticles(
+      {
+        idA: '2026-11-08 記事Aのタイトル',
+        idS1: '2026-11-01 サイト運営の裏側：サーバー代ゼロ',
+        idS2: '2026-11-16 サイト運営の裏側：リンクカードが文字化けした日',
+        idS3: '2026-11-03 サイト運営の裏側、数字編',
+      },
+      {
+        en: { idS2: 'November 16, 2026: Behind the Scenes: The Day the Link Cards Broke' },
+        zh: null,
+      },
+    );
+    expect(picked.map((a) => a.id)).toEqual(['idS2', 'idS3', 'idS1']);
+    expect(picked[0]).toEqual({
+      id: 'idS2',
+      title: 'サイト運営の裏側：リンクカードが文字化けした日',
+      date: '2026-11-16',
+      href: 'https://freddiefujiwara.com/blog/idS2',
+      title_en: 'Behind the Scenes: The Day the Link Cards Broke',
+    });
+    expect(picked[1].date).toBe('2026-11-03');
+    expect(picked[2].title_en).toBeUndefined();
+  });
+
+  it('buildSeriesArticles は上限で切り、タイトルが無ければ空を返す', () => {
+    const titles = {};
+    for (let i = 1; i <= 7; i += 1) {
+      titles[`idS${i}`] = `2026-11-0${i} サイト運営の裏側：その${i}`;
+    }
+    expect(buildSeriesArticles(titles)).toHaveLength(5);
+    expect(buildSeriesArticles(null)).toEqual([]);
+    expect(buildSeriesArticles({ idA: '2026-11-08 記事Aのタイトル' })).toEqual([]);
+  });
+
   it('fetchBlogTitles は lang 指定で titles エンドポイントの言語別マップを引く', async () => {
     const seen = [];
     const fetchImpl = async (url) => {
@@ -262,6 +306,8 @@ describe('popular-articles.json の生成', () => {
           { id: 'idA', views: 300 },
           { id: 'idB', views: 200 },
           { id: 'idC', views: 100 },
+          { id: 'idD', views: 50 },
+          { id: 'idE', views: 10 },
         ]);
       const result = await refreshPopularArticlesJson({
         outDir: dir,
@@ -294,6 +340,8 @@ describe('popular-articles.json の生成', () => {
           { id: 'idA', views: 300 },
           { id: 'idB', views: 200 },
           { id: 'idC', views: 100 },
+          { id: 'idD', views: 50 },
+          { id: 'idE', views: 10 },
         ]);
       const first = await refreshPopularArticlesJson({
         outDir: dir,
@@ -306,7 +354,7 @@ describe('popular-articles.json の生成', () => {
       const file = path.join(dir, 'popular-articles.json');
       const written = JSON.parse(readFileSync(file, 'utf8'));
       expect(written.days).toBe(28);
-      expect(written.articles.map((a) => a.id)).toEqual(['idA', 'idB', 'idC']);
+      expect(written.articles.map((a) => a.id)).toEqual(['idA', 'idB', 'idC', 'idD', 'idE']);
       expect(written.articles[0].title).toBe('記事Aのタイトル');
       const second = await refreshPopularArticlesJson({
         outDir: dir,
@@ -343,7 +391,7 @@ describe('popular-articles.json の生成', () => {
     }
   });
 
-  it('refreshPopularArticlesJson は3枚そろわないランキングでは書き換えない', async () => {
+  it('refreshPopularArticlesJson は5枚そろわないランキングでは書き換えない', async () => {
     const dir = mkdtempSync(path.join(tmpdir(), 'popular-'));
     try {
       const fetchImpl = async () =>
