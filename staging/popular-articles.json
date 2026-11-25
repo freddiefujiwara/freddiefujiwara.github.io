@@ -24,6 +24,64 @@
       "href": "https://freddiefujiwara.com/blog/1ORcobKE3DfRrSUV6yMUodfVQgiL1ouKaCTWKTEFUR6A",
       "title_en": "I've compiled a list of shops and spots I want to visit in Kawaguchi.",
       "title_zh": "我整理了一份我想在川口市参观的商店和景点的清单。"
+    },
+    {
+      "id": "1ugO7JmY8cmxQ34E9sPLrYArHHw03ZySj-PvGG5FQX-U",
+      "title": "サイト運営の裏側：ホームページを壊さない仕組み。1,000本のテストと毎朝の見回り",
+      "views": 323,
+      "href": "https://freddiefujiwara.com/blog/1ugO7JmY8cmxQ34E9sPLrYArHHw03ZySj-PvGG5FQX-U",
+      "title_en": "Behind the Scenes of Website Operation: A System to Prevent Website Breakage. 1,000 Tests and Daily Checks",
+      "title_zh": "网站运营幕后揭秘：防止网站崩溃的系统。1000次测试和每日检查"
+    },
+    {
+      "id": "1BN4Ll8GRE3Yiy1qYUizP_1xEQ78Tn8ayYonJi-eewps",
+      "title": "全持ち物リスト、大公開！！",
+      "views": 247,
+      "href": "https://freddiefujiwara.com/blog/1BN4Ll8GRE3Yiy1qYUizP_1xEQ78Tn8ayYonJi-eewps",
+      "title_en": "My complete packing list revealed!!",
+      "title_zh": "全部物品清单，大公开！！"
+    }
+  ],
+  "series": [
+    {
+      "id": "1CNyvZ-ONsWRG3TNKOMCmqvx8VeXVbuDHzGr-6n1GjTI",
+      "title": "サイト運営の裏側：リンクカードが文字化けした日",
+      "date": "2026-11-16",
+      "href": "https://freddiefujiwara.com/blog/1CNyvZ-ONsWRG3TNKOMCmqvx8VeXVbuDHzGr-6n1GjTI",
+      "title_en": "Behind the Scenes of Website Management: The Day Link Cards Became Garbled",
+      "title_zh": "网站管理幕后：链接卡片显示混乱的那一天"
+    },
+    {
+      "id": "12UK_jWjxRWRwFwkt-h19kKKCkA38YsyBQeoKdTPKiqs",
+      "title": "サイト運営の裏側：JavaScriptで描くブログは、Googleに見つけてもらえるのか",
+      "date": "2026-11-15",
+      "href": "https://freddiefujiwara.com/blog/12UK_jWjxRWRwFwkt-h19kKKCkA38YsyBQeoKdTPKiqs",
+      "title_en": "Behind the Scenes of Website Management: Can a blog written with JavaScript be found by Google?",
+      "title_zh": "网站管理幕后揭​​秘：用 JavaScript 编写的博客能被 Google 搜索到吗？"
+    },
+    {
+      "id": "1NnFXJaSPSOSS-lzGZDXPMHFySXNI4LYM_jMq31r-QOU",
+      "title": "サイト運営の裏側：テストは全部通ったのに、本番へ届かなかった話",
+      "date": "2026-11-14",
+      "href": "https://freddiefujiwara.com/blog/1NnFXJaSPSOSS-lzGZDXPMHFySXNI4LYM_jMq31r-QOU",
+      "title_en": "Behind the Scenes of Website Operation: The Story of How We Passed All the Tests But Couldn't Make It to the Live Stream",
+      "title_zh": "网站运营幕后：我们如何通过所有测试却最终未能上线直播"
+    },
+    {
+      "id": "10czzsDKE8poqEk-1sQzqQSn8zXFDPPTLyC9V_TzyxoQ",
+      "title": "サイト運営の裏側：ダッシュボード（数字をまとめた画面）、お見せします",
+      "date": "2026-11-14",
+      "href": "https://freddiefujiwara.com/blog/10czzsDKE8poqEk-1sQzqQSn8zXFDPPTLyC9V_TzyxoQ",
+      "title_en": "Behind the Scenes of Website Operation: We'll show you the dashboard (a screen that summarizes the numbers).",
+      "title_zh": "网站运营幕后：我们将向您展示仪表盘（一个汇总数字的屏幕）。"
+    },
+    {
+      "id": "1egcvG9FvC232mYN--ZYr7nH65uVPDT5QgUlNhAGAm-w",
+      "title": "サイト運営の裏側：ホームページの運用費、月いくら払っていますか？",
+      "date": "2026-11-07",
+      "href": "https://freddiefujiwara.com/blog/1egcvG9FvC232mYN--ZYr7nH65uVPDT5QgUlNhAGAm-w",
+      "title_en": "Behind the Scenes of Website Management: How much do you pay per month for website maintenance?",
+      "title_zh": "网站运营的幕后：主页的运营费，每月要付多少？"
     }
   ],
   "updated_at": "2026-11-25T19:42:32.449Z"
