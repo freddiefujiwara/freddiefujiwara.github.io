@@ -418,6 +418,7 @@ describe('sns-count.json の生成', () => {
       non_follower_pct: null,
       reach_30d: null,
       saves_30d: null,
+      site_views_28d: null,
       followers_breakdown: null,
       updated_at: '2026-11-08T12:45:00.000Z',
     });
@@ -450,6 +451,7 @@ describe('sns-count.json の生成', () => {
       non_follower_pct: 94.5,
       reach_30d: null,
       saves_30d: null,
+      site_views_28d: null,
       followers_breakdown: { instagram: 1991, youtube: 9, threads: null, x: null },
       updated_at: '2026-11-08T19:25:52.088Z',
     });
@@ -483,6 +485,7 @@ describe('sns-count.json の生成', () => {
       non_follower_pct: 94.5,
       reach_30d: null,
       saves_30d: null,
+      site_views_28d: null,
       followers_breakdown: { instagram: 1998, youtube: 10, threads: 252, x: null },
       updated_at: '2026-11-08T23:46:47.185Z',
     });
@@ -630,6 +633,7 @@ describe('sns-count.json の生成', () => {
           reach_30d: 132312,
           saves_30d: 1197,
         },
+        site_views_28d: 7521,
         fetched_at: 't1',
       });
     const payload = await fetchSnsCounts('https://example.invalid/exec', fetchImpl);
@@ -640,6 +644,7 @@ describe('sns-count.json の生成', () => {
       non_follower_pct: 96.3,
       reach_30d: 132312,
       saves_30d: 1197,
+      site_views_28d: 7521,
       followers_breakdown: { instagram: 1988, youtube: null, threads: null, x: null },
       updated_at: 't1',
     });
@@ -660,6 +665,7 @@ describe('sns-count.json の生成', () => {
     expect(payload.non_follower_pct).toBeNull();
     expect(payload.reach_30d).toBeNull();
     expect(payload.saves_30d).toBeNull();
+    expect(payload.site_views_28d).toBeNull();
   });
 
   it('fetchSnsCounts は counts.instagram がオブジェクトでも指標を取り出す', async () => {

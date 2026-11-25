@@ -421,9 +421,21 @@ export const fetchSnsCounts = async (apiUrl, fetchImpl = fetch) => {
         : typeof data.collected_at === "string"
           ? data.collected_at
           : null;
+  // The site's total page views over the last 28 days, from the
+  // GA totals the GAS side collects (its blog_totals figure: a
+  // property-wide screenPageViews total with no page filter, so
+  // it covers the top page and the tools as well as the blog).
+  // Not an Instagram metric, so it rides on the top level of the
+  // response; missing or non-numeric stays null and the hero
+  // keeps its static fallback for this stat.
+  const siteViews28d =
+    typeof data.site_views_28d === "number" && Number.isFinite(data.site_views_28d)
+      ? data.site_views_28d
+      : null;
   return {
     total,
     ...extractInstagramMetrics(data),
+    site_views_28d: siteViews28d,
     followers_breakdown: extractFollowersBreakdown(data),
     updated_at: updatedAt,
   };
