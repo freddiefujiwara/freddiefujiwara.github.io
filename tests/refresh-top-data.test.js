@@ -629,6 +629,42 @@ describe('sns-count.json の生成', () => {
     }
   });
 
+  it('refreshSnsCountJson は site_views_28d をファイルに書き、この値だけの変化でも書き直す', async () => {
+    const dir = mkdtempSync(path.join(tmpdir(), 'sns-count-'));
+    try {
+      const file = path.join(dir, 'sns-count.json');
+      const responseWith = (views) => async () =>
+        okResponse({
+          ok: true,
+          counts: { instagram: 2000, threads: 300 },
+          site_views_28d: views,
+          fetched_at: 't1',
+        });
+      const first = await refreshSnsCountJson({
+        outDir: dir,
+        apiUrl: 'https://example.invalid/exec',
+        fetchImpl: responseWith(7521),
+        log: () => {},
+      });
+      expect(first.refreshed).toBe(true);
+      expect(JSON.parse(readFileSync(file, 'utf8'))).toEqual({
+        total: 2300,
+        site_views_28d: 7521,
+        updated_at: 't1',
+      });
+      const second = await refreshSnsCountJson({
+        outDir: dir,
+        apiUrl: 'https://example.invalid/exec',
+        fetchImpl: responseWith(7600),
+        log: () => {},
+      });
+      expect(second.refreshed).toBe(true);
+      expect(JSON.parse(readFileSync(file, 'utf8')).site_views_28d).toBe(7600);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
   it('refreshSnsCountJson は取得失敗時に既存ファイルを保持する', async () => {
     const dir = mkdtempSync(path.join(tmpdir(), 'sns-count-'));
     try {
