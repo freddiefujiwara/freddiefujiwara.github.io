@@ -64,13 +64,11 @@ for (const app of ["tweet", "alarm", "health", "asset"]) {
   });
 }
 
-// Regression guard for the 2026-11-13 incident: a stale-branch merge
-// in the blog repository rolled back the [[歌詞]] marker handling —
-// and its unit tests with it — so the song-summary article showed the
-// raw markers as text and lost its lyrics boxes. Tests inside that
-// repository cannot catch a rollback that rewrites the tests too, so
-// the rendered production page is checked from here instead.
-smokeTest("blog music article renders lyrics boxes, not raw markers", async ({
+// Keep this regression check outside the blog repository so a rollback
+// of the renderer and its own tests cannot hide a production regression.
+// The song article now renders lyrics in standard Markdown fences, not
+// the retired custom lyrics boxes.
+smokeTest("blog music article renders fenced lyrics, not raw markers", async ({
   page,
 }) => {
   const resp = await page.goto(
@@ -81,7 +79,9 @@ smokeTest("blog music article renders lyrics boxes, not raw markers", async ({
   await expect(article.locator(".music-player")).toBeVisible({
     timeout: 30 * 1000,
   });
-  await expect(article.locator(".lyrics").first()).toBeVisible();
+  // Match a known line from the East of Kawaguchi song, not just any code block.
+  const lyrics = article.locator("pre > code").filter({ hasText: "武南警察署" });
+  await expect(lyrics).toBeVisible();
   await expect(article).not.toContainText("[[歌詞]]");
 });
 
