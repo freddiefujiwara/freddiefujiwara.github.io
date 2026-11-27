@@ -11,6 +11,8 @@ const redirects = [
   ["x", "https://x.com/freddiefujiwara", "X", "X（@freddiefujiwara）へ移動します。アプリから戻ってきた場合は、下のボタンから開き直せます。", "Xを開く"],
   ["threads", "https://www.threads.com/@freddiefujiwara", "Threads", "Threads（@freddiefujiwara）へ移動します。アプリから戻ってきた場合は、下のボタンから開き直せます。", "Threadsを開く"],
   ["youtube", "https://www.youtube.com/@freddiefujiwara", "YouTube", "YouTube（@freddiefujiwara）へ移動します。アプリから戻ってきた場合は、下のボタンから開き直せます。", "YouTubeを開く"],
+  ["tiktok", "https://www.tiktok.com/@freddiefujiwara", "TikTok", "TikTok（@freddiefujiwara）へ移動します。アプリから戻ってきた場合は、下のボタンから開き直せます。", "TikTokを開く"],
+  ["xiaohongshu", "https://xhslink.cn/m/AuUUDYvFdOI", "小红书", "小红书（@freddiefujiwara）へ移動します。アプリから戻ってきた場合は、下のボタンから開き直せます。", "小红书を開く"],
   ["room", "https://room.rakuten.co.jp/freddiefujiwara/items", "楽天ROOM", "楽天ROOM（freddiefujiwara）へ移動します。アプリから戻ってきた場合は、下のボタンから開き直せます。", "楽天ROOMを開く"],
   ["chinese", "https://freddiefujiwara.com/blog/tag/中国語", "中国語", "ブログの中国語タグページへ移動します。アプリから戻ってきた場合は、下のボタンから開き直せます。", "中国語の記事一覧を開く", "internal", "中国語の記事一覧"],
   ["map", "https://freddiefujiwara.com/blog/1bNigXcTT-1LSXjUYAlfFQuJPX6U7U3ELeWAfG5XIb58", "川口のリールを、地図にまとめました", "ブログの記事へ移動します。戻ってきた場合は、下のボタンから開き直せます。", "記事を開く", "internal"],
