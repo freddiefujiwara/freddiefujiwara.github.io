@@ -127,6 +127,42 @@ const issueOwnerSession_ = () =>
     expect(unreadable.missing[0]).toContain('gone');
   });
 
+  it('requires each moved social marker in its owning module', async () => {
+    const sources = {
+      'src/auth.js': "const OWNER_SESSIONS_PROPERTY = 'OWNER_SESSIONS';\nconst OWNER_SESSIONS_MAX = 10;",
+      'src/blogHistory.js': "const BLOG_RENDER_SLOW_METRIC = 'customEvent:render_slow_count';",
+      'src/sheetRead.js': "const metrics = BLOG_RENDER_METRIC + ',eventCount,' + BLOG_RENDER_SLOW_METRIC;",
+    };
+    const readImpl = async (_repo, source) => {
+      if (!(source in sources)) throw new Error('not found');
+      return sources[source];
+    };
+    const reader = { readImpl };
+    expect(await auditRepo('social-gas', reader)).toEqual({ repo: 'social-gas', ok: true, missing: [] });
+
+    // A marker copied into an unrelated module must not hide a regression.
+    sources['src/blogHistory.js'] += sources['src/sheetRead.js'];
+    sources['src/sheetRead.js'] = 'const metrics = BLOG_RENDER_METRIC;';
+    expect((await auditRepo('social-gas', reader)).missing).toEqual([
+      'the blog report shape accepts the three-metric speed report',
+    ]);
+
+    delete sources['src/auth.js'];
+    expect((await auditRepo('social-gas', reader)).missing).toEqual([
+      'could not read src/auth.js: not found',
+      'the blog report shape accepts the three-metric speed report',
+    ]);
+  });
+
+  it('reads the moved owner-session checks in everything-i-own-gas from auth.js', async () => {
+    const readImpl = async (_repo, source) => {
+      expect(source).toBe('src/auth.js');
+      return `const issue = ({ revokePrevious = true } = {}) => {};
+issue({ revokePrevious: false });`;
+    };
+    expect((await auditRepo('everything-i-own-gas', { readImpl })).ok).toBe(true);
+  });
+
   it('exits non-zero when any repository is missing a marker', async () => {
     const auditImpl = async (repo) =>
       repo === 'alarm-gas'
