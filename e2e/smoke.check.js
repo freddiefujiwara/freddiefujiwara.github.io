@@ -148,10 +148,10 @@ smokeDescribe("GAS endpoints", () => {
     expect(items.length).toBeLessThanOrEqual(5);
   });
 
-  smokeTest("blog staging returns the dummy article list", async ({ request }) => {
+  smokeTest("blog staging is auth-gated", async ({ request }) => {
     const r = await request.get(execUrl(GAS.blog.staging));
     const data = await r.json();
-    expect(data.ids.length).toBeGreaterThanOrEqual(1);
+    expect(data.error).toBe("unauthorized");
   });
 
   smokeTest("health staging is auth-gated", async ({ request }) => {
