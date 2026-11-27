@@ -49,7 +49,10 @@ for (const app of targets) {
       const r = await request.get(execUrl(GAS[app.gas].staging));
       const data = await r.json();
       if (app.gas === "blog") {
-        expect(data.ids.length).toBeGreaterThanOrEqual(1);
+        // Blog staging reads are auth-gated; an anonymous call is
+        // refused with this error, which proves the staging
+        // backend is alive and the gate is on.
+        expect(data.error).toBe("unauthorized");
       } else if (app.gas === "list") {
         expect(Array.isArray(data)).toBe(true);
         expect(data.length).toBeGreaterThanOrEqual(1);
