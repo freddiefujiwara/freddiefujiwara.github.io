@@ -15,7 +15,7 @@
 // see without signing in, such as the session issuance code.
 //
 // Environment:
-//   GAS_AUDIT_SRC_DIR — when set, read <dir>/<repo>/src/Code.js
+//   GAS_AUDIT_SRC_DIR — when set, read configured source files in <dir>/<repo>
 //     instead of cloning (local dry runs against existing
 //     checkouts). Unset in the workflow.
 
@@ -46,42 +46,50 @@ const repoUrl = (repo) => `https://github.com/freddiefujiwara/${repo}.git`;
 // path passes revokePrevious: false. A rollback to the
 // pre-option code removes both strings; a change of the owner
 // path back to revoking removes the second.
-const SESSION_MARKERS = [
+const DEFAULT_SOURCE = "src/Code.js";
+const SESSION_MARKERS = (source = DEFAULT_SOURCE) => [
   {
+    source,
     label: "owner sessions coexist (revokePrevious: false on the owner path)",
     includes: "revokePrevious: false",
   },
   {
+    source,
     label: "the revokePrevious option exists (defaults to true)",
     includes: "revokePrevious = true",
   },
 ];
 
 // Marker kinds:
-//   { label, includes } — the file must contain the string.
-//   { label, sheetNames: { present, absent } } — the quoted
+//   { label, source?, includes } — the file must contain the string.
+//   { label, source?, sheetNames: { present, absent } } — the quoted
 //     names must / must not appear in the SHEET_NAMES list.
+// Markers without a source are checked in src/Code.js.
 export const MARKERS = {
   "social-gas": [
     {
+      source: "src/auth.js",
       label: "owner sessions live in the OWNER_SESSIONS map",
       includes: "const OWNER_SESSIONS_PROPERTY = 'OWNER_SESSIONS';",
     },
     {
+      source: "src/auth.js",
       label: "the owner session map is capped, not single-slot",
       includes: "const OWNER_SESSIONS_MAX = 10;",
     },
     {
+      source: "src/blogHistory.js",
       label: "blog_speed knows the slow-count metric",
       includes: "const BLOG_RENDER_SLOW_METRIC = 'customEvent:render_slow_count';",
     },
     {
+      source: "src/sheetRead.js",
       label: "the blog report shape accepts the three-metric speed report",
       includes: "BLOG_RENDER_METRIC + ',eventCount,' + BLOG_RENDER_SLOW_METRIC",
     },
   ],
   "health-gas": [
-    ...SESSION_MARKERS,
+    ...SESSION_MARKERS(),
     {
       label: "the public sheet list serves the activity and sleep sheets",
       sheetNames: {
@@ -103,11 +111,11 @@ export const MARKERS = {
       includes: "readSheetObjects_",
     },
   ],
-  "asset-gas": [...SESSION_MARKERS],
-  "tweet-gas": [...SESSION_MARKERS],
-  "bucket-list-gas": [...SESSION_MARKERS],
-  "alarm-gas": [...SESSION_MARKERS],
-  "everything-i-own-gas": [...SESSION_MARKERS],
+  "asset-gas": SESSION_MARKERS(),
+  "tweet-gas": SESSION_MARKERS(),
+  "bucket-list-gas": SESSION_MARKERS(),
+  "alarm-gas": SESSION_MARKERS(),
+  "everything-i-own-gas": SESSION_MARKERS("src/auth.js"),
 };
 
 // Extracts the SHEET_NAMES list block, or null when the file
@@ -145,26 +153,39 @@ export const missingMarkers = (code, markers) => {
   return missing;
 };
 
-const fetchCode = async (repo, srcDir) => {
+const readCheckout = async (repo, srcDir, inspect) => {
   if (srcDir) {
-    return readFile(path.join(srcDir, repo, "src", "Code.js"), "utf8");
+    return inspect(path.join(srcDir, repo));
   }
   const dir = await mkdtemp(path.join(tmpdir(), `gas-audit-${repo}-`));
   try {
     await execFileAsync("git", ["clone", "--depth", "1", "--quiet", repoUrl(repo), dir]);
-    return await readFile(path.join(dir, "src", "Code.js"), "utf8");
+    return await inspect(dir);
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
 };
 
 export const auditRepo = async (repo, { srcDir = null, readImpl = null } = {}) => {
-  try {
-    const code = readImpl ? await readImpl(repo) : await fetchCode(repo, srcDir);
-    const missing = missingMarkers(code, MARKERS[repo] || []);
+  const markersBySource = Map.groupBy(MARKERS[repo] || [], (marker) => marker.source ?? DEFAULT_SOURCE);
+  const inspect = async (read) => {
+    const missing = [];
+    for (const [source, markers] of markersBySource) {
+      try {
+        missing.push(...missingMarkers(await read(source), markers));
+      } catch (error) {
+        missing.push(`could not read ${source}: ${error.message}`);
+      }
+    }
     return { repo, ok: missing.length === 0, missing };
+  };
+  try {
+    if (readImpl) return await inspect((source) => readImpl(repo, source));
+    return await readCheckout(repo, srcDir, (dir) =>
+      inspect((source) => readFile(path.join(dir, source), "utf8")),
+    );
   } catch (error) {
-    return { repo, ok: false, missing: [`could not read main's src/Code.js: ${error.message}`] };
+    return { repo, ok: false, missing: [`could not open repository: ${error.message}`] };
   }
 };
 
