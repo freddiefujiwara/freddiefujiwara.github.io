@@ -354,8 +354,11 @@ a.hero-inner { /* ヒーローをリンクにする場合の共通指定 */
 行き先のボタンとトップページへ戻るリンクを持つ案内カードを
 表示します（真っ白なページで離脱させないため）。このため
 meta refresh は使いません。転送ページは noindex とし、計測タグ
-（gtag）は入れません。飛び先を変えるときは転送ページとこの表と
-テスト（tests/redirects.test.js）を一緒に直します。
+（gtag）は入れません。転送先・文言・共通テンプレートは
+`scripts/generate-short-urls.mjs` にあります。変更後は
+`node scripts/generate-short-urls.mjs` を実行し、生成された HTML も
+コミットします。転送先を変える場合は下表とテストの期待値も更新します。
+`npm test` は生成結果と公開用 HTML の一致を確認します。
 
 飛び先がサイト内の短縮URL（chinese / map / bucket-list / everything-i-own /
 music）は、サイト内からの移動では案内ページを挟まず毎回即座に
