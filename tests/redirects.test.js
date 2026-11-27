@@ -28,6 +28,8 @@ const REDIRECTS = [
   ['x', 'https://x.com/freddiefujiwara'],
   ['threads', 'https://www.threads.com/@freddiefujiwara'],
   ['youtube', 'https://www.youtube.com/@freddiefujiwara'],
+  ['tiktok', 'https://www.tiktok.com/@freddiefujiwara'],
+  ['xiaohongshu', 'https://xhslink.cn/m/AuUUDYvFdOI'],
   ['room', 'https://room.rakuten.co.jp/freddiefujiwara/items'],
   ['chinese', 'https://freddiefujiwara.com/blog/tag/中国語'],
   ['map', 'https://freddiefujiwara.com/blog/1bNigXcTT-1LSXjUYAlfFQuJPX6U7U3ELeWAfG5XIb58'],
@@ -37,7 +39,7 @@ const REDIRECTS = [
 ];
 
 describe('短縮URLの転送ページ', () => {
-  it('共通テンプレートの生成結果と公開用の12ページが一致する', () => {
+  it('共通テンプレートの生成結果と公開用の14ページが一致する', () => {
     const output = mkdtempSync(path.join(tmpdir(), 'short-urls-'));
     try {
       generateShortUrls(output);

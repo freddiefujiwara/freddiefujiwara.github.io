@@ -167,6 +167,7 @@ def canon_tokens(css, site, dark=False):
 FOOTER_COMMON_LINKS = [
     "https://www.instagram.com/freddiefujiwara",
     "https://www.facebook.com/freddiefujiwara",
+    "https://www.tiktok.com/@freddiefujiwara",
     "https://xhslink.cn/m/AuUUDYvFdOI",
     "https://www.google.com/maps/contrib/105456242747265663411/reviews",
     "https://review.travel.rakuten.co.jp/reviewer/fumikazufujiwara",
@@ -180,7 +181,7 @@ FOOTER_COMMON_LINKS = [
     "https://fril.jp/shop/freddiefujiwara",
 ]
 
-# フッターの自己リンク（サイト間の相互リンク）。外部リンクと合わせて25件が正本。
+# フッターの自己リンク（サイト間の相互リンク）。外部リンクと合わせて26件が正本。
 FOOTER_SELF_LINKS = [
     "https://freddiefujiwara.com/",
     "https://freddiefujiwara.com/blog/",
@@ -211,9 +212,9 @@ def _href_present(text, url):
 
 
 def footer_links(text):
-    """フッターのリンク集合（25件）のうちテキストに含まれるものの集合。
+    """フッターのリンク集合（26件）のうちテキストに含まれるものの集合。
 
-    外部リンク12件は URL の部分一致で数える。自己リンク12件は、トップの URL が
+    外部リンク14件は URL の部分一致で数える。自己リンク12件は、トップの URL が
     ブログ／持ち物の URL の接頭辞になるため、href の完全一致で数える。
     """
     found = {u for u in FOOTER_COMMON_LINKS if u in text}
@@ -251,6 +252,7 @@ FOOTER_LINK_LABELS = {
     "https://freddiefujiwara.com/dtdt/": "dtdt",
     "https://www.instagram.com/freddiefujiwara": "Instagram",
     "https://www.facebook.com/freddiefujiwara": "Facebook",
+    "https://www.tiktok.com/@freddiefujiwara": "TikTok",
     "https://xhslink.cn/m/AuUUDYvFdOI": "小红书",
     "https://www.google.com/maps/contrib/105456242747265663411/reviews": "Googleマップ",
     "https://review.travel.rakuten.co.jp/reviewer/fumikazufujiwara": "楽天トラベル",
@@ -271,7 +273,7 @@ def _footer_value(block):
     missing = [FOOTER_LINK_LABELS[u] for u in FOOTER_LINKS if u not in found]
     if not missing:
         return "25/25 件"
-    return f"{len(found)}/25 件（不足: {'、'.join(missing)}）"
+    return f"{len(found)}/{len(FOOTER_LINKS)} 件（不足: {'、'.join(missing)}）"
 
 
 SITE_ORIGIN = "https://freddiefujiwara.com"
@@ -450,9 +452,9 @@ def build_rows(data):
         compare=("ブログ", "持ち物"), note="トップは固有デザイン")
 
     # --- フッター ---
-    add("フッター共通リンク（25件）",
+    add("フッター共通リンク（26件）",
         per_site(lambda d, s: _footer_value(footer_block(d['html'] + d['js']))),
-        note="自己リンク12件（トップ / ブログ / 持ち物 / バケットリスト / 学习 / openapi-fetch / md2img / portfolio-treemap / dtgwt / node-qict / smtc / dtdt）＋ 外部12件（Instagram / Facebook / Googleマップ / 楽天トラベル / 食べログ / Retty / X / GitHub / LinkedIn / YOUTRUST / ANGEL PORT / ラクマ）")
+        note="自己リンク12件（トップ / ブログ / 持ち物 / バケットリスト / 学习 / openapi-fetch / md2img / portfolio-treemap / dtgwt / node-qict / smtc / dtdt）＋ 外部14件（Instagram / Facebook / TikTok / 小红书 / Googleマップ / 楽天トラベル / 食べログ / Retty / X / GitHub / LinkedIn / YOUTRUST / ANGEL PORT / ラクマ）")
     add("フッター .foot-links gap",
         per_site(lambda d, s: decl(rule_block(d["css"], [".foot-links"]), "gap")))
     add("フッター .copy font-size",
