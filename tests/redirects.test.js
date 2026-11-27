@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { generateShortUrls } from '../scripts/generate-short-urls.mjs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { JSDOM } from 'jsdom';
@@ -35,6 +37,22 @@ const REDIRECTS = [
 ];
 
 describe('短縮URLの転送ページ', () => {
+  it('共通テンプレートの生成結果と公開用の12ページが一致する', () => {
+    const output = mkdtempSync(path.join(tmpdir(), 'short-urls-'));
+    try {
+      generateShortUrls(output);
+      const expected = [...REDIRECTS.map(([name]) => name), 'ga'].sort();
+      expect(readdirSync(output).sort()).toEqual(expected);
+      for (const name of expected) {
+        const relative = path.join(name, 'index.html');
+        expect(readFileSync(path.join(output, relative), 'utf8'), relative)
+          .toBe(readFileSync(path.join(root, 'public', relative), 'utf8'));
+      }
+    } finally {
+      rmSync(output, { recursive: true, force: true });
+    }
+  });
+
   it.each(REDIRECTS)('%s の転送ページが存在する', (name) => {
     expect(
       existsSync(path.join(root, 'public', name, 'index.html')),
@@ -265,6 +283,41 @@ describe('短縮URLの転送ページ', () => {
       expect(html).toContain('sessionStorage');
       expect(document.querySelector('meta[http-equiv="refresh"]')).toBeNull();
     });
+
+    it.each(['#share=abc%2B123', '#tab=instagram'])(
+      '同一サイトからでも、初回表示でのみクエリと %s をそのまま転送する',
+      (hash) => {
+        const replaced = [];
+        const listeners = {};
+        const store = new Map();
+        const location = {
+          pathname: '/ga/',
+          hostname: 'freddiefujiwara.com',
+          search: '?utm_source=a%2Bb',
+          hash,
+          replace: (url) => replaced.push(url),
+        };
+        const window = {
+          location,
+          addEventListener: (event, listener) => { listeners[event] = listener; },
+        };
+        const sessionStorage = {
+          getItem: (key) => store.get(key),
+          setItem: (key, value) => store.set(key, value),
+        };
+        new Function('window', 'location', 'sessionStorage', 'document',
+          document.querySelector('script').textContent)(
+          window, location, sessionStorage, { referrer: DEST },
+        );
+        expect(replaced).toEqual([]);
+        listeners.pageshow({ persisted: true });
+        expect(replaced).toEqual([]);
+        listeners.pageshow({ persisted: false });
+        listeners.pageshow({ persisted: false });
+        expect(replaced).toEqual([DEST + location.search + hash]);
+        expect(store.get('short-url-go:/ga/')).toBe('1');
+      },
+    );
 
     it('検索対象外で、計測タグを持たない', () => {
       expect(
