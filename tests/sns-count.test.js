@@ -243,6 +243,21 @@ describe('sns-count.js（見出しの集計対象と全体の時点注記）', (
     );
   });
 
+  it('TikTok に数値が入れば見出しに自動で加わる', async () => {
+    const window = setupNote(async () => ({
+      ok: true,
+      json: async () => ({
+        total: 2653,
+        followers_breakdown: { instagram: 1991, youtube: 9, threads: 252, x: 321, tiktok: 80 },
+        updated_at: '2026-11-08T19:25:52.088Z',
+      }),
+    }));
+    await flush();
+    expect(label(window)).toBe(
+      'SNS（Instagram、YouTube、Threads、X、TikTok）延べフォロワー数',
+    );
+  });
+
   it('時点の注記は updated_at を日本時間の日付に差し替える', async () => {
     const window = setupNote(async () => ({
       ok: true,

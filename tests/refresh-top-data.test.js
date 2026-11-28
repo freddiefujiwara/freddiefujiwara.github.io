@@ -500,7 +500,7 @@ describe('sns-count.json の生成', () => {
       reach_30d: null,
       saves_30d: null,
       site_views_28d: null,
-      followers_breakdown: { instagram: 1991, youtube: 9, threads: null, x: null },
+      followers_breakdown: { instagram: 1991, youtube: 9, threads: null, x: null, tiktok: null },
       updated_at: '2026-11-08T19:25:52.088Z',
     });
   });
@@ -534,7 +534,7 @@ describe('sns-count.json の生成', () => {
       reach_30d: null,
       saves_30d: null,
       site_views_28d: null,
-      followers_breakdown: { instagram: 1998, youtube: 10, threads: 252, x: null },
+      followers_breakdown: { instagram: 1998, youtube: 10, threads: 252, x: null, tiktok: null },
       updated_at: '2026-11-08T23:46:47.185Z',
     });
   });
@@ -564,6 +564,37 @@ describe('sns-count.json の生成', () => {
       youtube: 10,
       threads: 252,
       x: 321,
+      tiktok: null,
+    });
+  });
+
+  it('fetchSnsCounts はフラットな応答の TikTok フォロワー数も合計と内訳に入れる', async () => {
+    const fetchImpl = async () =>
+      okResponse({
+        ok: true,
+        action: 'sns_counts',
+        collected_at: '2026-11-28T00:00:00.000Z',
+        youtube: { subscribers: 10 },
+        instagram: {
+          freddiefujiwara: 2000,
+          anemone_cancer: null,
+          media_count: 2420,
+          views_30d: 580289,
+          non_follower_pct: 94.5,
+          insights_error: null,
+        },
+        threads: { followers: 252 },
+        x: { followers: 321 },
+        tiktok: { followers: 80 },
+      });
+    const payload = await fetchSnsCounts('https://example.invalid/exec', fetchImpl);
+    expect(payload.total).toBe(2000 + 10 + 252 + 321 + 80);
+    expect(payload.followers_breakdown).toEqual({
+      instagram: 2000,
+      youtube: 10,
+      threads: 252,
+      x: 321,
+      tiktok: 80,
     });
   });
 
@@ -729,7 +760,7 @@ describe('sns-count.json の生成', () => {
       reach_30d: 132312,
       saves_30d: 1197,
       site_views_28d: 7521,
-      followers_breakdown: { instagram: 1988, youtube: null, threads: null, x: null },
+      followers_breakdown: { instagram: 1988, youtube: null, threads: null, x: null, tiktok: null },
       updated_at: 't1',
     });
   });
@@ -844,7 +875,7 @@ describe('sns-count.json の生成', () => {
       // 59人は合計には入るが内訳には含めない）。
       expect(JSON.parse(readFileSync(file, 'utf8'))).toEqual({
         total: 2059,
-        followers_breakdown: { instagram: 1991, youtube: 9, threads: null, x: null },
+        followers_breakdown: { instagram: 1991, youtube: 9, threads: null, x: null, tiktok: null },
         updated_at: '2026-11-08T19:25:52.088Z',
       });
     } finally {

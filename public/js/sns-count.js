@@ -162,6 +162,7 @@
         ["youtube", "YouTube"],
         ["threads", "Threads"],
         ["x", "X"],
+        ["tiktok", "TikTok"],
       ];
       var names = [];
       networks.forEach(function (pair) {
