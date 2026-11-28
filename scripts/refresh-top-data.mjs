@@ -313,8 +313,9 @@ export const refreshPopularArticlesJson = async ({
 };
 
 // The SNS accounts included in the hero's combined follower total:
-// the main and secondary Instagram accounts, Threads and YouTube.
-const SNS_COUNT_KEYS = ["instagram", "instagram_anemone", "threads", "youtube", "x"];
+// the main and secondary Instagram accounts, Threads, YouTube, X
+// and TikTok.
+const SNS_COUNT_KEYS = ["instagram", "instagram_anemone", "threads", "youtube", "x", "tiktok"];
 
 // The Instagram-only metrics the hero also shows: the post count,
 // the last 30 days of views, and the non-follower share of those
@@ -382,6 +383,10 @@ const extractFollowersBreakdown = (data) => {
       data.x && typeof data.x === "object"
         ? number(data.x.followers)
         : null,
+    tiktok:
+      data.tiktok && typeof data.tiktok === "object"
+        ? number(data.tiktok.followers)
+        : null,
   };
   return Object.values(breakdown).some((value) => value !== null)
     ? breakdown
@@ -393,7 +398,8 @@ const extractFollowersBreakdown = (data) => {
 // Instagram-only metrics the hero shows alongside it. The GAS
 // side returns a flat response with one object per network
 // (youtube.subscribers, instagram.freddiefujiwara /
-// instagram.anemone_cancer, threads.followers, x.followers);
+// instagram.anemone_cancer, threads.followers, x.followers,
+// tiktok.followers);
 // networks that are missing or null are left out of the sum. A ready-made `total`
 // wins when present, and the older flat `counts` map is still
 // accepted for backward compatibility. Anything else is rejected
@@ -448,6 +454,9 @@ export const fetchSnsCounts = async (apiUrl, fetchImpl = fetch) => {
       }
       if (data.x && typeof data.x === "object") {
         add(data.x.followers);
+      }
+      if (data.tiktok && typeof data.tiktok === "object") {
+        add(data.tiktok.followers);
       }
     }
     if (seen) {
@@ -546,7 +555,7 @@ export const refreshSnsCountJson = async ({
     obj && typeof obj.followers_breakdown === "object"
       ? obj.followers_breakdown
       : null;
-  const breakdownKeys = ["instagram", "youtube", "threads", "x"];
+  const breakdownKeys = ["instagram", "youtube", "threads", "x", "tiktok"];
   const nextBreakdown = breakdownOf(values);
   const previousBreakdown = breakdownOf(previous);
   const breakdownUnchanged =
